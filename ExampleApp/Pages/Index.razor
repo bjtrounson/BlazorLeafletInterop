@@ -1,13 +1,12 @@
 ﻿@page "/"
 
 @using BlazorLeafletInterop.Components
+@using BlazorLeafletInterop.Components.Base
 @using BlazorLeafletInterop.Models
 @using BlazorLeafletInterop.Models.Basics
 
 <Map @ref="Map" Options="Options">
-    <TileLayer @ref="TileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png">
-        
-    </TileLayer>
+	<TileLayer @ref="TileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
 </Map>
 
 @code {

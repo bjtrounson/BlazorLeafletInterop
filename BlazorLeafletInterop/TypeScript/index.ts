@@ -1,10 +1,11 @@
 ﻿import * as L from "leaflet";
 
+export * from "./evented";
+
 export function jsonToObject(json: string) {
     return JSON.parse(json);
 }
 export function createMap(id: string, options: L.MapOptions): L.Map {
-    console.log(options)
     return L.map(id, options);
 }
 

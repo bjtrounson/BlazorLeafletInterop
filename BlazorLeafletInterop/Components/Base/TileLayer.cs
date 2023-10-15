@@ -5,10 +5,10 @@ using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Microsoft.AspNetCore.Components;
 
-namespace BlazorLeafletInterop.Components;
+namespace BlazorLeafletInterop.Components.Base;
 
 [SupportedOSPlatform("browser")]
-public partial class TileLayer
+public partial class TileLayer : GridLayer
 {
     [CascadingParameter]
     public JSObject? MapRef { get; set; }
@@ -36,9 +36,7 @@ public partial class TileLayer
     {
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
-        static Interop()
-        {
-        }
+        static Interop() {}
 
         [JSImport("createTileLayer", "BlazorLeafletInterop/TileLayer")]
         public static partial JSObject CreateTileLayer(string urlTemplate, [JSMarshalAs<JSType.Any>] object options);

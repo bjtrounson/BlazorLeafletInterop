@@ -25,7 +25,7 @@ public partial class Map
     protected override async Task OnInitializedAsync()
     {
         if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
-        await JSHost.ImportAsync("BlazorLeafletInterop/LeafletInterop", "../_content/BlazorLeafletInterop/bundle.js");
+        await base.OnInitializedAsync();
         await JSHost.ImportAsync("BlazorLeafletInterop/Map", "../_content/BlazorLeafletInterop/bundle.js");
         MapRef = CreateMap("map", Options);
         if (MapRef is not null) IsRendered = true;
