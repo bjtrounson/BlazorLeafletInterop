@@ -1,0 +1,17 @@
+﻿@page "/"
+
+@using BlazorLeafletInterop.Components
+@using BlazorLeafletInterop.Models
+@using BlazorLeafletInterop.Models.Basics
+
+<Map @ref="Map" Options="Options">
+    <TileLayer @ref="TileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png">
+        
+    </TileLayer>
+</Map>
+
+@code {
+    private Map? Map { get; set; }
+    private TileLayer? TileLayer { get; set; }
+    private MapOptions Options { get; set; } = new() { Center = new LatLng(50, 9), Zoom = 13 };
+}
