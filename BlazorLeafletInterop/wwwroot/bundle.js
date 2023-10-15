@@ -24,9 +24,9 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
   mod
 ));
 
-// ../node_modules/leaflet/dist/leaflet-src.js
+// node_modules/leaflet/dist/leaflet-src.js
 var require_leaflet_src = __commonJS({
-  "../node_modules/leaflet/dist/leaflet-src.js"(exports, module) {
+  "node_modules/leaflet/dist/leaflet-src.js"(exports, module) {
     (function(global, factory) {
       typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.leaflet = {}));
     })(exports, function(exports2) {

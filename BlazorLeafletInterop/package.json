@@ -5,11 +5,17 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bundler:dev": "esbuild --bundle --format=esm --target=chrome58,firefox57,safari11,edge16 --outfile=wwwroot/bundle.js --watch --sourcemap TypeScript/index.ts"
+    "bundler:dev": "esbuild --bundle --format=esm --target=chrome58,firefox57,safari11,edge16 --outfile=wwwroot/bundle.js --watch --sourcemap TypeScript/index.ts",
+    "bundler:prod": "esbuild --bundle --format=esm --target=chrome58,firefox57,safari11,edge16 --outfile=wwwroot/bundle.js --minify TypeScript/index.ts"
   },
-  "author": "",
+  "author": "Benjamin Trounson",
   "license": "MIT",
   "devDependencies": {
+    "@types/leaflet": "^1.9.6",
+    "esbuild": "^0.19.4",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4"
   }
 }
