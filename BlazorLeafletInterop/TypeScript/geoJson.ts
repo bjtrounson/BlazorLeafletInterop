@@ -7,5 +7,11 @@ export function createGeoJson(geoJson: any,
                         onEachFeature: (feature: geojson.Feature, layer: L.Layer) => void,
                         filter: (geoJsonFeature: geojson.Feature) => boolean,
                         markersInheritOptions: boolean): L.GeoJSON {
-    return L.geoJSON(geoJson);
+    return L.geoJSON(geoJson, {
+        pointToLayer: pointToLayer,
+        style: style,
+        onEachFeature: onEachFeature,
+        filter: filter,
+        markersInheritOptions: markersInheritOptions
+    });
 }
