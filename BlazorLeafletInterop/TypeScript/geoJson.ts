@@ -8,7 +8,7 @@ export function createGeoJson(geoJson: any,
                         filter: (geoJsonFeature: geojson.Feature) => boolean | undefined | null,
                         markersInheritOptions: boolean): L.GeoJSON {
     const options = {
-        pointToLayer: pointToLayer ?? undefined,
+        pointToLayer: pointToLayer,
         style: style ?? undefined,
         onEachFeature: onEachFeature ?? undefined,
         filter: filter ?? undefined,

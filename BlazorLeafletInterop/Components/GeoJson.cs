@@ -59,7 +59,7 @@ public partial class GeoJson : FeatureGroup
         [JSImport("createGeoJson", "BlazorLeafletInterop/GeoJson")]
         public static partial JSObject CreateGeoJson(
             JSObject geoJsonData, 
-            [JSMarshalAs<JSType.Function<JSType.Object, JSType.Object>>] Action<JSObject, JSObject>? pointToLayer,
+            [JSMarshalAs<JSType.Function<JSType.Object, JSType.Object, JSType.Object>>] Func<JSObject, JSObject, JSObject>? pointToLayer,
             [JSMarshalAs<JSType.Function<JSType.Object>>] Action<JSObject>? style,
             [JSMarshalAs<JSType.Function<JSType.Object, JSType.Object>>] Action<JSObject, JSObject>? onEachFeature,
             [JSMarshalAs<JSType.Function<JSType.Object>>] Action<JSObject>? filter,
