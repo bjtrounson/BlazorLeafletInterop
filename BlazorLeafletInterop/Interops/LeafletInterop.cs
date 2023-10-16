@@ -24,7 +24,7 @@ public static partial class LeafletInterop
             NullValueHandling = NullValueHandling.Ignore
         });
     }
-    public static JSObject JsonToObject(string json)
+    public static JSObject JsonToJsObject(string json)
     {
         return Interop.JsonToObject(json);
     }

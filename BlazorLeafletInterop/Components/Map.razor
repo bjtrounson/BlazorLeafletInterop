@@ -1,6 +1,6 @@
 ﻿@inherits BlazorLeafletInterop.Components.Base.Evented
 
-<div id="map" style="width: 100vh; height: 100vh">
+<div id="@Id" class="@Class">
     <CascadingValue Name="MapRef" Value="MapRef">
         <CascadingValue Name="IsRendered" Value="IsRendered">
             @if(IsRendered) @ChildContent

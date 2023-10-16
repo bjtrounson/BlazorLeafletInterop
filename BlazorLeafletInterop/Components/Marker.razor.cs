@@ -49,7 +49,7 @@ public partial class Marker
     {
         var latLngJson = LeafletInterop.ObjectToJson(latLng);
         var optionsJson = LeafletInterop.ObjectToJson(options);
-        var marker = MarkerInterop.CreateMarker(LeafletInterop.JsonToObject(latLngJson), LeafletInterop.JsonToObject(optionsJson));
+        var marker = MarkerInterop.CreateMarker(LeafletInterop.JsonToJsObject(latLngJson), LeafletInterop.JsonToJsObject(optionsJson));
         if (Icon is null) return marker;
         var iconOptions = Icon.IconOptions;
         var icon = iconOptions is not null ? await Icon.CreateIcon(iconOptions) : await Icon.CreateDefaultIcon();

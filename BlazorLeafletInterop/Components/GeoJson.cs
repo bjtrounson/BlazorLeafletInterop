@@ -24,7 +24,7 @@ public partial class GeoJson : FeatureGroup
         await JSHost.ImportAsync("BlazorLeafletInterop/GeoJson", "../_content/BlazorLeafletInterop/bundle.js");
         var geoJsonData = LeafletInterop.ObjectToJson(GeoJsonData);
         GeoJsonRef = GeoJsonInterop.CreateGeoJson(
-            LeafletInterop.JsonToObject(geoJsonData),
+            LeafletInterop.JsonToJsObject(geoJsonData),
             GeoJsonOptions.MarkersInheritOptions,
             GeoJsonOptions.PointToLayer is null,
             GeoJsonOptions.Style is null,
@@ -43,7 +43,7 @@ public partial class GeoJson : FeatureGroup
         if (firstRender) return;
         var geoJsonData = LeafletInterop.ObjectToJson(GeoJsonData);
         if (GeoJsonRef is null) return;
-        GeoJsonInterop.AddData(GeoJsonRef, LeafletInterop.JsonToObject(geoJsonData));
+        GeoJsonInterop.AddData(GeoJsonRef, LeafletInterop.JsonToJsObject(geoJsonData));
     }
 
     public GeoJson AddTo(JSObject? map)
@@ -60,6 +60,21 @@ public partial class GeoJson : FeatureGroup
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
         static GeoJsonInterop() {}
         
+        /// <summary>
+        /// Creates GeoJson Layer for the map.
+        /// WARNING: The disable flags make sure that JS doesn't use the function pass from C# as it will always pass a function even if null
+        /// </summary>
+        /// <param name="geoJsonData"></param>
+        /// <param name="markersInheritOptions"></param>
+        /// <param name="disablePointToLayer"></param>
+        /// <param name="disableStyle"></param>
+        /// <param name="disableOnEachFeature"></param>
+        /// <param name="disableFilter"></param>
+        /// <param name="pointToLayer"></param>
+        /// <param name="style"></param>
+        /// <param name="onEachFeature"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         [JSImport("createGeoJson", "BlazorLeafletInterop/GeoJson")]
         public static partial JSObject CreateGeoJson(
             JSObject geoJsonData,

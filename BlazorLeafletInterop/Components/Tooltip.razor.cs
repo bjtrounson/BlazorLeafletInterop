@@ -22,7 +22,7 @@ public partial class Tooltip
         await JSHost.ImportAsync("BlazorLeafletInterop/Tooltip", "../_content/BlazorLeafletInterop/bundle.js");
         if (MarkerRef is null) return;
         var tooltipOptionsJson = LeafletInterop.ObjectToJson(TooltipOptions);
-        var tooltipOptions = LeafletInterop.JsonToObject(tooltipOptionsJson);
+        var tooltipOptions = LeafletInterop.JsonToJsObject(tooltipOptionsJson);
         var tooltipContent = LeafletInterop.GetElementInnerHtml(_id);
         TooltipInterop.BindPopup(MarkerRef, tooltipContent, tooltipOptions);
     }

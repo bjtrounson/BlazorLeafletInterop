@@ -32,7 +32,7 @@ public partial class LayerGroup
     public JSObject CreateLayerGroup(LayerGroupOptions options)
     {
         var layerGroupOptionsJson = LeafletInterop.ObjectToJson(options);
-        var layerGroupOptions = LeafletInterop.JsonToObject(layerGroupOptionsJson);
+        var layerGroupOptions = LeafletInterop.JsonToJsObject(layerGroupOptionsJson);
         return LayerGroupInterop.CreateLayerGroup(layerGroupOptions);
     }
     

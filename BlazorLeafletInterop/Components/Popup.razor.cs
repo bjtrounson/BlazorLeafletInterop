@@ -22,7 +22,7 @@ public partial class Popup
         await JSHost.ImportAsync("BlazorLeafletInterop/Popup", "../_content/BlazorLeafletInterop/bundle.js");
         if (MarkerRef is null) return;
         var popupOptionsJson = LeafletInterop.ObjectToJson(PopupOptions);
-        var popupOptions = LeafletInterop.JsonToObject(popupOptionsJson);
+        var popupOptions = LeafletInterop.JsonToJsObject(popupOptionsJson);
         var popupContent = LeafletInterop.GetElementInnerHtml(_id);
         PopupInterop.BindPopup(MarkerRef, popupContent, popupOptions);
     }

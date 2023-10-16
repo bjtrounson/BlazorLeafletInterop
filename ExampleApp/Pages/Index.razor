@@ -11,7 +11,7 @@
 
 @inject HttpClient HttpClient
 
-<Map @ref="Map" MapOptions="Options">
+<Map @ref="Map" Class="map" MapOptions="Options">
 	<TileLayer @ref="TileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
 	<GeoJson GeoJsonData="GeoJsonData" GeoJsonOptions="GeoJsonOptions">
 		<Marker Icon="IconRef" LatLng="new LatLng(50, 9)">
@@ -47,7 +47,7 @@
 			ClassName = "my-div-icon"
 		};
 		var jsonOptions = LeafletInterop.ObjectToJson(options);
-		var icon = Icon.IconInterop.CreateIcon(LeafletInterop.JsonToObject(jsonOptions));
+		var icon = Icon.IconInterop.CreateIcon(LeafletInterop.JsonToJsObject(jsonOptions));
 		var marker = Marker.MarkerInterop.CreateMarker(latLng, null);
 		Marker.MarkerInterop.SetIcon(marker, icon);
 		return marker;	
@@ -56,7 +56,7 @@
 	protected override async Task OnInitializedAsync()
 	{
 		await JSHost.ImportAsync("BlazorLeafletInterop/Marker", "../_content/BlazorLeafletInterop/bundle.js");
-		await JSHost.ImportAsync("BlazorLeafletInterop/Icon", "../_content/BlazorLeafletInterop/bundle.js");
+		await Icon.Initialize();
 		GeoJsonOptions.PointToLayer = PointToLayer;
 		var options = new IconOptions()
 		{

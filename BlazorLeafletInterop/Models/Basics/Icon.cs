@@ -21,7 +21,7 @@ public partial class Icon
     
     public JSObject? IconRef { get; set; }
 
-    protected static async Task Initialize()
+    public static async Task Initialize()
     {
         if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
         await JSHost.ImportAsync("BlazorLeafletInterop/Icon", "../_content/BlazorLeafletInterop/bundle.js");
@@ -31,7 +31,7 @@ public partial class Icon
     {
         await Initialize();
         var jsonOptions = LeafletInterop.ObjectToJson(iconOptions);
-        return IconInterop.CreateIcon(LeafletInterop.JsonToObject(jsonOptions));
+        return IconInterop.CreateIcon(LeafletInterop.JsonToJsObject(jsonOptions));
     }
     
     public static async Task<JSObject> CreateDefaultIcon()

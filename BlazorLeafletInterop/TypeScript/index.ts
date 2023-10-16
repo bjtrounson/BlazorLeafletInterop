@@ -36,6 +36,10 @@ export function getElementInnerHtml(id: string): string {
     return element.innerHTML;
 }
 
+export function setUrl(layer: L.TileLayer, url: string, noRedraw: boolean): L.TileLayer {
+    return layer.setUrl(url, noRedraw);
+}
+
 export function jsonToObject(json: string) {
     return JSON.parse(json);
 }

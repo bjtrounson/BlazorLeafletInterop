@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Components;
 namespace BlazorLeafletInterop.Components.Base;
 
 [SupportedOSPlatform("browser")]
-public partial class TileLayer : GridLayer
+public partial class TileLayer : GridLayer, IDisposable
 {
     [CascadingParameter(Name = "MapRef")]
     public JSObject? MapRef { get; set; }
@@ -25,7 +25,7 @@ public partial class TileLayer : GridLayer
         await base.OnInitializedAsync();
         await JSHost.ImportAsync("BlazorLeafletInterop/TileLayer", "../_content/BlazorLeafletInterop/bundle.js");
         var jsonOptions = LeafletInterop.ObjectToJson(TileLayerOptions);
-        TileRef = Interop.CreateTileLayer(UrlTemplate, jsonOptions);
+        TileRef = Interop.CreateTileLayer(UrlTemplate, LeafletInterop.JsonToJsObject(jsonOptions));
         AddTo(MapRef);
     }
     
@@ -44,6 +44,14 @@ public partial class TileLayer : GridLayer
         static Interop() {}
 
         [JSImport("createTileLayer", "BlazorLeafletInterop/TileLayer")]
-        public static partial JSObject CreateTileLayer(string urlTemplate, [JSMarshalAs<JSType.Any>] object options);
+        public static partial JSObject CreateTileLayer(string urlTemplate, JSObject options);
+        
+        [JSImport("setUrl", "BlazorLeafletInterop/TileLayer")]
+        public static partial void SetUrl(JSObject tileLayer, string url, bool noRedraw);
+    }
+
+    public void Dispose()
+    {
+        TileRef?.Dispose();
     }
 }

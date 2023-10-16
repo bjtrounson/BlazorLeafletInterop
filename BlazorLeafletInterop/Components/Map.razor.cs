@@ -11,13 +11,19 @@ using Microsoft.AspNetCore.Components;
 namespace BlazorLeafletInterop.Components;
 
 [SupportedOSPlatform("browser")]
-public partial class Map
+public partial class Map : IDisposable
 {
     [Parameter]
     public MapOptions MapOptions { get; set; } = new();
     
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
+    
+    [Parameter]
+    public string Id { get; set; } = Guid.NewGuid().ToString();
+    
+    [Parameter]
+    public string? Class { get; set; }
 
     public JSObject? MapRef { get; set; }
     public bool IsRendered { get; set; }
@@ -33,13 +39,8 @@ public partial class Map
 
     private JSObject CreateMap(string id, MapOptions options)
     {
-        var lowerCamelCaseOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            IgnoreNullValues = true,
-        };
-        var optionsJson = JsonSerializer.Serialize(options, lowerCamelCaseOptions);
-        return Interop.CreateMap(id, LeafletInterop.JsonToObject(optionsJson));
+        var optionsJson = LeafletInterop.ObjectToJson(options);
+        return Interop.CreateMap(id, LeafletInterop.JsonToJsObject(optionsJson));
     }
 
     [SupportedOSPlatform("browser")]
@@ -53,5 +54,10 @@ public partial class Map
         
         [JSImport("createMap", "BlazorLeafletInterop/Map")]
         public static partial JSObject CreateMap(string id, JSObject options);
+    }
+
+    public void Dispose()
+    {
+        MapRef?.Dispose();
     }
 }
