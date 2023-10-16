@@ -6,6 +6,9 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>11</LangVersion>
+        <PackageId>BlazorLeafletInterop</PackageId>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/bjtrounson/BlazorLeafletInterop.git</RepositoryUrl>
     </PropertyGroup>
 
 
