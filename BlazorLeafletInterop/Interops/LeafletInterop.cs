@@ -25,6 +25,11 @@ public static partial class LeafletInterop
         return Interop.JsonToObject(json);
     }
     
+    public static string GetElementInnerHtml(string elementId)
+    {
+        return Interop.GetElementInnerHtml(elementId);
+    }
+    
     [SupportedOSPlatform("browser")]
     public static partial class Interop
     {
@@ -36,5 +41,8 @@ public static partial class LeafletInterop
 
         [JSImport("jsonToObject", "BlazorLeafletInterop/LeafletInterop")]
         public static partial JSObject JsonToObject(string json);
+        
+        [JSImport("getElementInnerHtml", "BlazorLeafletInterop/LeafletInterop")]
+        public static partial string GetElementInnerHtml(string elementId);
     }
 }

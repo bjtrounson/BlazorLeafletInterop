@@ -7,7 +7,11 @@
 
 <Map @ref="Map" MapOptions="Options">
 	<TileLayer @ref="TileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
-	<Marker Icon="IconRef" LatLng="new LatLng(50, 9)" />
+	<Marker Icon="IconRef" LatLng="new LatLng(50, 9)">
+		<Popup>
+			Testing Popup Content
+		</Popup>
+	</Marker>
 </Map>
 
 @code {
