@@ -1,12 +1,11 @@
-﻿using System.ComponentModel;
-using System.Runtime.InteropServices.JavaScript;
+﻿using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Versioning;
 using BlazorLeafletInterop.Models.Basics;
 
 namespace BlazorLeafletInterop.Models;
 
 [SupportedOSPlatform("browser")]
-public class MapOptions
+public class MapOptions : LayerOptions
 {
     #region Options
 

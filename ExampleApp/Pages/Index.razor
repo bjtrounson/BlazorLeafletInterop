@@ -5,12 +5,32 @@
 @using BlazorLeafletInterop.Models
 @using BlazorLeafletInterop.Models.Basics
 
-<Map @ref="Map" Options="Options">
+<Map @ref="Map" MapOptions="Options">
 	<TileLayer @ref="TileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
+	<Marker Icon="IconRef" LatLng="new LatLng(50, 9)" />
 </Map>
 
 @code {
     private Map? Map { get; set; }
     private TileLayer? TileLayer { get; set; }
     private MapOptions Options { get; set; } = new() { Center = new LatLng(50, 9), Zoom = 13 };
+	private Icon? IconRef { get; set; }
+
+	protected override Task OnInitializedAsync()
+	{
+		var options = new IconOptions()
+		{
+			IconUrl = "https://leafletjs.com/examples/custom-icons/leaf-green.png", 
+			IconSize = new Point(38, 95), 
+			IconAnchor = new Point(22, 94), 
+			PopupAnchor = new Point(-3, -76), 
+			ShadowUrl = "https://leafletjs.com/examples/custom-icons/leaf-shadow.png", 
+			ShadowSize = new Point(50, 64), 
+			ShadowAnchor = new Point(4, 62), 
+			ClassName = "my-div-icon"
+		};
+		IconRef = new Icon(options);
+		return base.OnInitializedAsync();
+	}
+
 }

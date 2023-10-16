@@ -1,2 +1,8 @@
-﻿<div></div>
+﻿@inherits BlazorLeafletInterop.Components.Base.InteractiveLayer
+
+<div>
+	<CascadingValue Name="MarkerRef" Value="MarkerRef">
+		@ChildContent	
+	</CascadingValue>
+</div>
 

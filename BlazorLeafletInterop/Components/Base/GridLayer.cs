@@ -3,12 +3,16 @@ using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Versioning;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using BlazorLeafletInterop.Models;
+using Microsoft.AspNetCore.Components;
 
 namespace BlazorLeafletInterop.Components.Base;
 
 [SupportedOSPlatform("browser")]
 public partial class GridLayer : Layer
 {
+    public GridLayerOptions GridLayerOptions { get; set; } = new();
+
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
@@ -30,7 +34,7 @@ public partial class GridLayer : Layer
         [JSImport("getContainer", "BlazorLeafletInterop/GridLayer")]
         public static partial JSObject GetContainer(JSObject gridLayer);
         
-        [JSImport("setOpacity", "BlazorLeafletInterop/GridLayer")]
+        [JSImport("setGridOpacity", "BlazorLeafletInterop/GridLayer")]
         public static partial JSObject SetOpacity(JSObject gridLayer, double opacity);
         
         [JSImport("setZIndex", "BlazorLeafletInterop/GridLayer")]

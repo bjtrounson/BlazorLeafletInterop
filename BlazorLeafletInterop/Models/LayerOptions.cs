@@ -2,6 +2,6 @@
 
 public class LayerOptions
 {
-    public string Pane { get; set; } = "overlayPane";
+    public virtual string Pane { get; set; } = "overlayPane";
     public string? Attribution { get; set; }
 }

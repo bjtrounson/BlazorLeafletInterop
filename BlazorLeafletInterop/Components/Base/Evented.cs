@@ -3,6 +3,7 @@ using System.Runtime.InteropServices.JavaScript;
 using System.Runtime.Versioning;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using BlazorLeafletInterop.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace BlazorLeafletInterop.Components.Base;

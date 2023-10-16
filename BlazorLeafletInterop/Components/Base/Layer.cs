@@ -4,15 +4,13 @@ using System.Runtime.Versioning;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using BlazorLeafletInterop.Models;
-using Microsoft.AspNetCore.Components;
 
 namespace BlazorLeafletInterop.Components.Base;
 
 [SupportedOSPlatform("browser")]
 public partial class Layer : Evented
 {
-    [Parameter]
-    public LayerOptions Options { get; set; } = new();
+    public LayerOptions LayerOptions { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -21,7 +19,7 @@ public partial class Layer : Evented
         await JSHost.ImportAsync("BlazorLeafletInterop/Layer", "../_content/BlazorLeafletInterop/bundle.js");
     }
 
-    public static partial class LayerInterop
+    protected static partial class LayerInterop
     {
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]

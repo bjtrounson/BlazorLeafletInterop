@@ -1,6 +1,11 @@
 ﻿import * as L from "leaflet";
 
 export * from "./evented";
+export * from "./layer";
+export * from "./gridLayer";
+export * from "./marker";
+export * from "./icon";
+export * from "./divOverlay";
 
 export function jsonToObject(json: string) {
     return JSON.parse(json);
@@ -13,6 +18,6 @@ export function createTileLayer(urlTemplate: string, options: L.TileLayerOptions
     return L.tileLayer(urlTemplate, options);
 }
 
-export function addTileLayer(tileLayer: L.TileLayer, layer: L.Map | L.LayerGroup): L.TileLayer {
-    return tileLayer.addTo(layer);
+export function log(message: string) {
+    console.log(message);
 }

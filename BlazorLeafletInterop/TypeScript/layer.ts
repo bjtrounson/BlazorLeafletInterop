@@ -1,6 +1,6 @@
 import * as L from 'leaflet';
 
-export function addTo(map: L.Map | L.LayerGroup, layer: L.Layer): L.Layer {
+export function addTo(layer: L.Layer, map: L.Map | L.LayerGroup): L.Layer {
     return layer.addTo(map);
 }
 
@@ -8,7 +8,7 @@ export function remove(layer: L.Layer): L.Layer {
     return layer.remove();
 }
 
-export function removeFrom(map: L.Map | L.LayerGroup, layer: L.Layer): L.Layer {
+export function removeFrom(layer: L.Layer, map: L.Map | L.LayerGroup): L.Layer {
     if (map instanceof L.LayerGroup) return map.removeLayer(layer);
     return layer.removeFrom(map);
 }

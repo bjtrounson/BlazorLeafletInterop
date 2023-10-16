@@ -14,7 +14,7 @@ namespace BlazorLeafletInterop.Components;
 public partial class Map
 {
     [Parameter]
-    public MapOptions Options { get; set; } = new();
+    public MapOptions MapOptions { get; set; } = new();
     
     [Parameter]
     public RenderFragment? ChildContent { get; set; }
@@ -27,7 +27,7 @@ public partial class Map
         if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
         await base.OnInitializedAsync();
         await JSHost.ImportAsync("BlazorLeafletInterop/Map", "../_content/BlazorLeafletInterop/bundle.js");
-        MapRef = CreateMap("map", Options);
+        MapRef = CreateMap("map", MapOptions);
         if (MapRef is not null) IsRendered = true;
     }
 
