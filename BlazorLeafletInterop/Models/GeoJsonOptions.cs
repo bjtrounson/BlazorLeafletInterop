@@ -5,9 +5,9 @@ namespace BlazorLeafletInterop.Models;
 
 public class GeoJsonOptions : InteractiveLayer
 {
-    public Action<JSObject, JSObject>? OnEachFeature { get; set; } 
-    public Action<JSObject, JSObject>? PointToLayer { get; set; }
-    public Action<JSObject>? Style { get; set; }
-    public Action<JSObject>? Filter { get; set; }
+    public Action<JSObject, JSObject>? OnEachFeature { get; set; } = null;
+    public Action<JSObject, JSObject>? PointToLayer { get; set; } = null;
+    public Action<JSObject>? Style { get; set; } = null;
+    public Action<JSObject>? Filter { get; set; } = null;
     public bool MarkersInheritOptions { get; set; } = false;
 }

@@ -45,7 +45,7 @@
 		};
 		IconRef = new Icon(options);
 
-		var res = await HttpClient.GetAsync("https://gist.githubusercontent.com/wavded/1200773/raw/e122cf709898c09758aecfef349964a8d73a83f3/sample.json");
+		var res = await HttpClient.GetAsync("https://raw.githubusercontent.com/openlayers/openlayers/main/examples/data/geojson/point-samples.geojson");
 		var json = await res.Content.ReadAsStringAsync();
 		GeoJsonData = JsonConvert.DeserializeObject<FeatureCollection>(json);
 	}

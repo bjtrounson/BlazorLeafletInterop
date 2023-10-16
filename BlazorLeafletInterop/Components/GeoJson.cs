@@ -33,7 +33,15 @@ public partial class GeoJson : FeatureGroup
         );
         AddTo(MapRef);
     }
-    
+
+    protected override Task OnParametersSetAsync()
+    {
+        if (GeoJsonRef is null) throw new NullReferenceException();
+        var geoJsonData = LeafletInterop.ObjectToJson(GeoJsonData);
+        GeoJsonInterop.AddData(GeoJsonRef, LeafletInterop.JsonToObject(geoJsonData));
+        return base.OnParametersSetAsync();
+    }
+
     public GeoJson AddTo(JSObject? map)
     {
         if (GeoJsonRef is null || map is null) throw new NullReferenceException();
@@ -57,6 +65,9 @@ public partial class GeoJson : FeatureGroup
             [JSMarshalAs<JSType.Function<JSType.Object>>] Action<JSObject>? filter,
             bool markersInheritOptions
         );
+        
+        [JSImport("addData", "BlazorLeafletInterop/GeoJson")]
+        public static partial void AddData(JSObject geoJson, JSObject geoJsonData);
     }
 }
     

@@ -16,11 +16,12 @@ public static partial class LeafletInterop
     {
         var defaultContractResolver = new DefaultContractResolver
         {
-            NamingStrategy = new CamelCaseNamingStrategy()
+            NamingStrategy = new CamelCaseNamingStrategy(),
         };
         return JsonConvert.SerializeObject(obj, new JsonSerializerSettings()
         {
-            ContractResolver = defaultContractResolver
+            ContractResolver = defaultContractResolver,
+            NullValueHandling = NullValueHandling.Ignore
         });
     }
     public static JSObject JsonToObject(string json)
