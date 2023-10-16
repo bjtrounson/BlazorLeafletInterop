@@ -34,7 +34,7 @@ public partial class GridLayer : Layer
         [JSImport("getContainer", "BlazorLeafletInterop/GridLayer")]
         public static partial JSObject GetContainer(JSObject gridLayer);
         
-        [JSImport("setGridOpacity", "BlazorLeafletInterop/GridLayer")]
+        [JSImport("setOpacity", "BlazorLeafletInterop/GridLayer")]
         public static partial JSObject SetOpacity(JSObject gridLayer, double opacity);
         
         [JSImport("setZIndex", "BlazorLeafletInterop/GridLayer")]

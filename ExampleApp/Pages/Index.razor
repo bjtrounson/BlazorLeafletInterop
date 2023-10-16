@@ -4,14 +4,23 @@
 @using BlazorLeafletInterop.Components.Base
 @using BlazorLeafletInterop.Models
 @using BlazorLeafletInterop.Models.Basics
+@using GeoJSON.Net.Feature
+@using Newtonsoft.Json
+
+@inject HttpClient HttpClient
 
 <Map @ref="Map" MapOptions="Options">
 	<TileLayer @ref="TileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
-	<Marker Icon="IconRef" LatLng="new LatLng(50, 9)">
-		<Popup>
-			Testing Popup Content
-		</Popup>
-	</Marker>
+	<GeoJson GeoJsonData="GeoJsonData">
+		<Marker Icon="IconRef" LatLng="new LatLng(50, 9)">
+        	<Popup>
+        		Testing Popup Content
+        	</Popup>
+        	<Tooltip>
+        		Testing Tooltip Content
+        	</Tooltip>
+        </Marker>	
+	</GeoJson>
 </Map>
 
 @code {
@@ -19,8 +28,9 @@
     private TileLayer? TileLayer { get; set; }
     private MapOptions Options { get; set; } = new() { Center = new LatLng(50, 9), Zoom = 13 };
 	private Icon? IconRef { get; set; }
+	private FeatureCollection? GeoJsonData { get; set; }
 
-	protected override Task OnInitializedAsync()
+	protected override async Task OnInitializedAsync()
 	{
 		var options = new IconOptions()
 		{
@@ -34,7 +44,10 @@
 			ClassName = "my-div-icon"
 		};
 		IconRef = new Icon(options);
-		return base.OnInitializedAsync();
+
+		var res = await HttpClient.GetAsync("https://gist.githubusercontent.com/wavded/1200773/raw/e122cf709898c09758aecfef349964a8d73a83f3/sample.json");
+		var json = await res.Content.ReadAsStringAsync();
+		GeoJsonData = JsonConvert.DeserializeObject<FeatureCollection>(json);
 	}
 
 }

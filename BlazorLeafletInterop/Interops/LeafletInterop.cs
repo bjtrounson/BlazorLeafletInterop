@@ -4,6 +4,8 @@ using System.Runtime.Versioning;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace BlazorLeafletInterop.Interops;
 
@@ -12,13 +14,14 @@ public static partial class LeafletInterop
 {
     public static string ObjectToJson(object obj)
     {
-        var serializerOptions = new JsonSerializerOptions
+        var defaultContractResolver = new DefaultContractResolver
         {
-            IgnoreNullValues = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
+            NamingStrategy = new CamelCaseNamingStrategy()
         };
-        return JsonSerializer.Serialize(obj, serializerOptions);
+        return JsonConvert.SerializeObject(obj, new JsonSerializerSettings()
+        {
+            ContractResolver = defaultContractResolver
+        });
     }
     public static JSObject JsonToObject(string json)
     {
@@ -31,7 +34,7 @@ public static partial class LeafletInterop
     }
     
     [SupportedOSPlatform("browser")]
-    public static partial class Interop
+    private static partial class Interop
     {
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]

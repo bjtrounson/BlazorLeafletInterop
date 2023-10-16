@@ -20,10 +20,6 @@ export function setIcon(marker: L.Marker, icon: L.Icon): void {
     marker.setIcon(icon);
 }
 
-export function setOpacity(marker: L.Marker, opacity: number): void {
-    marker.setOpacity(opacity);
-}
-
 export function setZIndexOffset(marker: L.Marker, zIndexOffset: number): void {
     marker.setZIndexOffset(zIndexOffset);
 }

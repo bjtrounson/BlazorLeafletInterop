@@ -18,6 +18,7 @@ public partial class Marker
     [Parameter] public MarkerOptions Options { get; set; } = new();
     [Parameter] public RenderFragment? ChildContent { get; set; }
     
+    [CascadingParameter(Name = "LayerGroup")] public LayerGroup? LayerGroup { get; set; }
     [CascadingParameter(Name = "MapRef")] public JSObject? MapRef { get; set; }
     
     public JSObject? MarkerRef { get; set; }
@@ -28,6 +29,11 @@ public partial class Marker
         await base.OnInitializedAsync();
         await JSHost.ImportAsync("BlazorLeafletInterop/Marker", "../_content/BlazorLeafletInterop/bundle.js");
         MarkerRef = await CreateMarker(LatLng, Options);
+        if (LayerGroup is not null && MarkerRef is not null)
+        {
+            LayerGroup.AddLayer(MarkerRef);
+            return;
+        }
         if (MapRef is null || MarkerRef is null) return;
         AddTo(MapRef);
     }

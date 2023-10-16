@@ -6,6 +6,28 @@ export * from "./gridLayer";
 export * from "./marker";
 export * from "./icon";
 export * from "./divOverlay";
+export * from "./layerGroup";
+export * from "./geoJson";
+
+export function getLatLng(divOverlay: L.DivOverlay | L.Marker): L.LatLng {
+    return divOverlay.getLatLng();
+}
+
+export function setLatLng(divOverlay: L.DivOverlay | L.Marker, latLng: L.LatLngExpression): L.DivOverlay | L.Marker {
+    return divOverlay.setLatLng(latLng);
+}
+
+export function setOpacity(layer: L.GridLayer | L.Marker, opacity: number): L.GridLayer | L.Marker {
+    return layer.setOpacity(opacity);
+}
+
+export function bringToFront(layer: L.GridLayer | L.FeatureGroup): L.GridLayer | L.FeatureGroup | L.DivOverlay {
+    return layer.bringToFront();
+}
+
+export function bringToBack(layer: L.GridLayer | L.FeatureGroup): L.GridLayer | L.FeatureGroup | L.DivOverlay {
+    return layer.bringToBack();
+}
 
 export function getElementInnerHtml(id: string): string {
     const element = document.getElementById(id);

@@ -32,10 +32,10 @@ public partial class DivOverlay : InteractiveLayer
         [JSImport("toggle", "BlazorLeafletInterop/DivOverlay")]
         public static partial JSObject Toggle(JSObject divOverlay, JSObject? layer);
         
-        [JSImport("getOverlayLatLng", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("getLatLng", "BlazorLeafletInterop/DivOverlay")]
         public static partial JSObject GetLatLng(JSObject divOverlay);
         
-        [JSImport("setOverlayLatLng", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("setLatLng", "BlazorLeafletInterop/DivOverlay")]
         public static partial JSObject SetLatLng(JSObject divOverlay, JSObject latLng);
         
         [JSImport("getContent", "BlazorLeafletInterop/DivOverlay")]
@@ -53,10 +53,10 @@ public partial class DivOverlay : InteractiveLayer
         [JSImport("isOpen", "BlazorLeafletInterop/DivOverlay")]
         public static partial bool IsOpen(JSObject divOverlay);
         
-        [JSImport("bringOverlayToFront", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("bringToFront", "BlazorLeafletInterop/DivOverlay")]
         public static partial JSObject BringToFront(JSObject divOverlay);
         
-        [JSImport("bringOverlayToBack", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("bringToBack", "BlazorLeafletInterop/DivOverlay")]
         public static partial JSObject BringToBack(JSObject divOverlay);
     }
 }

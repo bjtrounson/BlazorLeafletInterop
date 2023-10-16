@@ -7,8 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="GeoJSON.Net" Version="1.2.19" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.4" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.4" PrivateAssets="all" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
     <ItemGroup>
