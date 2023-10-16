@@ -55,6 +55,8 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		await JSHost.ImportAsync("BlazorLeafletInterop/Marker", "../_content/BlazorLeafletInterop/bundle.js");
+		await JSHost.ImportAsync("BlazorLeafletInterop/Icon", "../_content/BlazorLeafletInterop/bundle.js");
 		GeoJsonOptions.PointToLayer = PointToLayer;
 		var options = new IconOptions()
 		{

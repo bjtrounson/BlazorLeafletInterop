@@ -25,11 +25,15 @@ public partial class GeoJson : FeatureGroup
         var geoJsonData = LeafletInterop.ObjectToJson(GeoJsonData);
         GeoJsonRef = GeoJsonInterop.CreateGeoJson(
             LeafletInterop.JsonToObject(geoJsonData),
-            GeoJsonOptions.PointToLayer, 
-            GeoJsonOptions.Style, 
-            GeoJsonOptions.OnEachFeature, 
-            GeoJsonOptions.Filter, 
-            GeoJsonOptions.MarkersInheritOptions
+            GeoJsonOptions.MarkersInheritOptions,
+            GeoJsonOptions.PointToLayer is null,
+            GeoJsonOptions.Style is null,
+            GeoJsonOptions.OnEachFeature is null,
+            GeoJsonOptions.Filter is null,
+            GeoJsonOptions.PointToLayer,
+            GeoJsonOptions.Style,
+            GeoJsonOptions.OnEachFeature,
+            GeoJsonOptions.Filter
         );
         AddTo(MapRef);
     }
@@ -58,12 +62,16 @@ public partial class GeoJson : FeatureGroup
         
         [JSImport("createGeoJson", "BlazorLeafletInterop/GeoJson")]
         public static partial JSObject CreateGeoJson(
-            JSObject geoJsonData, 
+            JSObject geoJsonData,
+            bool markersInheritOptions,
+            bool disablePointToLayer,
+            bool disableStyle,
+            bool disableOnEachFeature,
+            bool disableFilter,
             [JSMarshalAs<JSType.Function<JSType.Object, JSType.Object, JSType.Object>>] Func<JSObject, JSObject, JSObject>? pointToLayer,
             [JSMarshalAs<JSType.Function<JSType.Object>>] Action<JSObject>? style,
             [JSMarshalAs<JSType.Function<JSType.Object, JSType.Object>>] Action<JSObject, JSObject>? onEachFeature,
-            [JSMarshalAs<JSType.Function<JSType.Object>>] Action<JSObject>? filter,
-            bool markersInheritOptions
+            [JSMarshalAs<JSType.Function<JSType.Object>>] Action<JSObject>? filter
         );
         
         [JSImport("addData", "BlazorLeafletInterop/GeoJson")]
