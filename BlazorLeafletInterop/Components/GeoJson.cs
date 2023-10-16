@@ -13,7 +13,7 @@ namespace BlazorLeafletInterop.Components;
 [SupportedOSPlatform("browser")]
 public partial class GeoJson : FeatureGroup
 {
-    [Parameter] public FeatureCollection GeoJsonData { get; set; } = null!;
+    [Parameter] public FeatureCollection GeoJsonData { get; set; } = new();
     [Parameter] public GeoJsonOptions GeoJsonOptions { get; set; } = new();
 
     private JSObject? GeoJsonRef { get; set; }
@@ -34,12 +34,12 @@ public partial class GeoJson : FeatureGroup
         AddTo(MapRef);
     }
 
-    protected override Task OnParametersSetAsync()
+    protected override void OnAfterRender(bool firstRender)
     {
-        if (GeoJsonRef is null) throw new NullReferenceException();
+        if (firstRender) return;
         var geoJsonData = LeafletInterop.ObjectToJson(GeoJsonData);
+        if (GeoJsonRef is null) return;
         GeoJsonInterop.AddData(GeoJsonRef, LeafletInterop.JsonToObject(geoJsonData));
-        return base.OnParametersSetAsync();
     }
 
     public GeoJson AddTo(JSObject? map)
