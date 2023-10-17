@@ -44,4 +44,9 @@
       <None Include="wwwroot\**" Pack="true" PackagePath="staticwebassets\" />
       <None Include="..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
+    </ItemGroup>
+
 </Project>
