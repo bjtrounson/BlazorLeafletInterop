@@ -27,7 +27,7 @@ public partial class Tooltip
         var tooltipOptions = LeafletInterop.JsonToJsObject(tooltipOptionsJson);
         var tooltipContent = LeafletInterop.GetElementInnerHtml(Id);
         TooltipInterop.BindPopup(MarkerRef, tooltipContent, tooltipOptions);
-        //TooltipRef = TooltipInterop.GetTooltip(MarkerRef);
+        TooltipRef = TooltipInterop.GetTooltip(MarkerRef);
     }
 
     public static partial class TooltipInterop

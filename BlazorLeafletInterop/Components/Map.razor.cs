@@ -36,7 +36,7 @@ public partial class Map
         if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
         await base.OnInitializedAsync();
         await JSHost.ImportAsync("BlazorLeafletInterop/Map", "../_content/BlazorLeafletInterop/bundle.js");
-        MapRef = CreateMap("map", MapOptions);
+        MapRef = CreateMap(Id, MapOptions);
         if (MapRef is not null) IsRendered = true;
     }
 

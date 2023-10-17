@@ -27,7 +27,7 @@ public partial class Popup
         var popupOptions = LeafletInterop.JsonToJsObject(popupOptionsJson);
         var popupContent = LeafletInterop.GetElementInnerHtml(Id);
         PopupInterop.BindPopup(MarkerRef, popupContent, popupOptions);
-        //PopupRef = PopupInterop.GetPopup(MarkerRef);
+        PopupRef = PopupInterop.GetPopup(MarkerRef);
     }
 
     public static partial class PopupInterop
