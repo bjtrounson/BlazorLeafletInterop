@@ -15,6 +15,8 @@ public partial class Popup
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [CascadingParameter( Name = "MarkerRef")] public JSObject? MarkerRef { get; set; }
     
+    public JSObject? PopupRef { get; set; }
+    
     protected override async Task OnInitializedAsync()
     {
         if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
@@ -25,6 +27,7 @@ public partial class Popup
         var popupOptions = LeafletInterop.JsonToJsObject(popupOptionsJson);
         var popupContent = LeafletInterop.GetElementInnerHtml(Id);
         PopupInterop.BindPopup(MarkerRef, popupContent, popupOptions);
+        PopupRef = PopupInterop.GetPopup(MarkerRef);
     }
 
     public static partial class PopupInterop
@@ -38,5 +41,8 @@ public partial class Popup
         
         [JSImport("bindPopup", "BlazorLeafletInterop/Popup")]
         public static partial JSObject BindPopup(JSObject marker, string content, JSObject options);
+        
+        [JSImport("getPopup", "BlazorLeafletInterop/Popup")]
+        public static partial JSObject GetPopup(JSObject marker);
     }
 }
