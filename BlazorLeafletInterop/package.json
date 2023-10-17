@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "bundler:dev": "esbuild --bundle --format=esm --target=chrome58,firefox57,safari11,edge16 --outfile=wwwroot/bundle.js --watch --sourcemap TypeScript/index.ts",
+    "bundler:dev": "esbuild --bundle --format=esm --target=chrome58,firefox57,safari11,edge16 --outfile=wwwroot/bundle.js --sourcemap TypeScript/index.ts",
     "bundler:prod": "esbuild --bundle --format=esm --target=chrome58,firefox57,safari11,edge16 --outfile=wwwroot/bundle.js --minify TypeScript/index.ts"
   },
   "author": "Benjamin Trounson",

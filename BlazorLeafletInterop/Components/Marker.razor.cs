@@ -13,6 +13,7 @@ namespace BlazorLeafletInterop.Components;
 [SupportedOSPlatform("browser")]
 public partial class Marker
 {
+    [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
     [Parameter] public LatLng LatLng { get; set; } = new();
     [Parameter] public Icon? Icon { get; set; }
     [Parameter] public MarkerOptions Options { get; set; } = new();

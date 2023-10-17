@@ -10,7 +10,7 @@ namespace BlazorLeafletInterop.Components;
 
 public partial class Popup
 {
-    private readonly string _id = Guid.NewGuid().ToString();
+    [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
     [Parameter] public PopupOptions PopupOptions { get; set; } = new();
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [CascadingParameter( Name = "MarkerRef")] public JSObject? MarkerRef { get; set; }
@@ -23,7 +23,7 @@ public partial class Popup
         if (MarkerRef is null) return;
         var popupOptionsJson = LeafletInterop.ObjectToJson(PopupOptions);
         var popupOptions = LeafletInterop.JsonToJsObject(popupOptionsJson);
-        var popupContent = LeafletInterop.GetElementInnerHtml(_id);
+        var popupContent = LeafletInterop.GetElementInnerHtml(Id);
         PopupInterop.BindPopup(MarkerRef, popupContent, popupOptions);
     }
 

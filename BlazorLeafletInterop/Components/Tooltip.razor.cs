@@ -10,7 +10,7 @@ namespace BlazorLeafletInterop.Components;
 
 public partial class Tooltip
 {
-    private readonly string _id = Guid.NewGuid().ToString();
+    [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
     [Parameter] public TooltipOptions TooltipOptions { get; set; } = new();
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [CascadingParameter( Name = "MarkerRef")] public JSObject? MarkerRef { get; set; }
@@ -23,7 +23,7 @@ public partial class Tooltip
         if (MarkerRef is null) return;
         var tooltipOptionsJson = LeafletInterop.ObjectToJson(TooltipOptions);
         var tooltipOptions = LeafletInterop.JsonToJsObject(tooltipOptionsJson);
-        var tooltipContent = LeafletInterop.GetElementInnerHtml(_id);
+        var tooltipContent = LeafletInterop.GetElementInnerHtml(Id);
         TooltipInterop.BindPopup(MarkerRef, tooltipContent, tooltipOptions);
     }
 
