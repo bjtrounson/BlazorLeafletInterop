@@ -21,14 +21,13 @@
         <Touch Files="node_modules/.install-stamp" AlwaysCreate="true" />
     </Target>
   
-    <Target Name="NpmRunBundler" BeforeTargets="Build">
+    <Target Name="NpmRunBundler" BeforeTargets="Build" DependsOnTargets="NpmInstall">
         <Exec Command="npm run bundler:dev" Condition="'$(Configuration)' == 'Debug'" />
         <Exec Command="npm run bundler:prod" Condition="'$(Configuration)' == 'Release'" />
     </Target>
 
     <ItemGroup>
         <SupportedPlatform Include="browser" />
-        <Content Update="wwwroot\**" Pack="true" />
     </ItemGroup>
 
     <ItemGroup>
@@ -42,11 +41,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Include="wwwroot\**" Pack="true" PackagePath="staticwebassets\" />
       <None Include="..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="wwwroot\" />
-    </ItemGroup>
-
 </Project>
