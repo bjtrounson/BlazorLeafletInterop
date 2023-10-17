@@ -41,8 +41,5 @@ public partial class Tooltip
         
         [JSImport("bindTooltip", "BlazorLeafletInterop/Tooltip")]
         public static partial JSObject BindPopup(JSObject marker, string content, JSObject options);
-        
-        [JSImport("getTooltip", "BlazorLeafletInterop/Tooltip")]
-        public static partial JSObject GetTooltip(JSObject marker);
     }
 }
