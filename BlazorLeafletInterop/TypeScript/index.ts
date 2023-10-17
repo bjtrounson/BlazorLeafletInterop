@@ -57,6 +57,7 @@ export function createMap(id: string, options: L.MapOptions): L.Map {
 }
 
 export function createTileLayer(urlTemplate: string, options: L.TileLayerOptions): L.TileLayer {
+    console.log(options)
     return L.tileLayer(urlTemplate, options);
 }
 
