@@ -28,7 +28,6 @@
 
     <ItemGroup>
         <SupportedPlatform Include="browser" />
-        <Content Update="wwwroot\**" Pack="true" />
     </ItemGroup>
 
     <ItemGroup>
