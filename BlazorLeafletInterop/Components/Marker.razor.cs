@@ -57,6 +57,50 @@ public partial class Marker
         MarkerInterop.SetIcon(marker, icon);
         return marker;
     }
+    
+    public void SetLatLng(LatLng latLng)
+    {
+        if (MarkerRef is null) throw new NullReferenceException();
+        var latLngJson = LeafletInterop.ObjectToJson(latLng);
+        MarkerInterop.SetLatLng(MarkerRef, LeafletInterop.JsonToJsObject(latLngJson));
+    }
+    
+    public void SetOpacity(double opacity)
+    {
+        if (MarkerRef is null) throw new NullReferenceException();
+        MarkerInterop.SetOpacity(MarkerRef, opacity);
+    }
+    
+    public void SetZIndexOffset(double zIndexOffset)
+    {
+        if (MarkerRef is null) throw new NullReferenceException();
+        MarkerInterop.SetZIndexOffset(MarkerRef, zIndexOffset);
+    }
+    
+    public string ToGeoJson(double? precision)
+    {
+        if (MarkerRef is null) throw new NullReferenceException();
+        return MarkerInterop.ToGeoJson(MarkerRef, precision);
+    }
+    
+    public JSObject? GetPopup()
+    {
+        if (MarkerRef is null) throw new NullReferenceException();
+        return MarkerInterop.GetPopup(MarkerRef);
+    }
+    
+    public JSObject? OpenPopup()
+    {
+        if (MarkerRef is null) throw new NullReferenceException();
+        return MarkerInterop.OpenPopup(MarkerRef);
+    }
+    
+    public LatLng? GetLatLng()
+    {
+        if (MarkerRef is null) throw new NullReferenceException();
+        var latLng = MarkerInterop.GetLatLng(MarkerRef);
+        return LeafletInterop.JsonToObject<LatLng>(latLng);
+    }
 
     public static partial class MarkerInterop
     {
@@ -68,7 +112,7 @@ public partial class Marker
         public static partial JSObject CreateMarker(JSObject latLng, JSObject options);
         
         [JSImport("getLatLng", "BlazorLeafletInterop/Marker")]
-        public static partial JSObject GetLatLng(JSObject marker);
+        public static partial string GetLatLng(JSObject marker);
         
         [JSImport("setLatLng", "BlazorLeafletInterop/Marker")]
         public static partial void SetLatLng(JSObject marker, JSObject latLng);
@@ -83,9 +127,12 @@ public partial class Marker
         public static partial void SetZIndexOffset(JSObject marker, double zIndexOffset);
         
         [JSImport("toGeoJSON", "BlazorLeafletInterop/Marker")]
-        public static partial JSObject ToGeoJson(JSObject marker, double? precision);
+        public static partial string ToGeoJson(JSObject marker, double? precision);
         
-        [JSImport("log", "BlazorLeafletInterop/Marker")]
-        public static partial void Log(string message);
+        [JSImport("getPopup", "BlazorLeafletInterop/Marker")]
+        public static partial JSObject GetPopup(JSObject marker);
+        
+        [JSImport("openPopup", "BlazorLeafletInterop/Marker")]
+        public static partial JSObject OpenPopup(JSObject marker);
     }
 }

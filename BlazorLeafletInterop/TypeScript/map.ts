@@ -103,3 +103,43 @@ export function invalidateSize(map: L.Map, animate: boolean): L.Map {
 export function stop(map: L.Map): L.Map {
     return map.stop();
 }
+
+export function getCenter(map: L.Map): string {
+    return JSON.stringify(map.getCenter());
+}
+
+export function getZoom(map: L.Map): number {
+    return map.getZoom();
+}
+
+export function getBounds(map: L.Map): string {
+    return JSON.stringify(map.getBounds());
+}
+
+export function getMinZoom(map: L.Map): number {
+    return map.getMinZoom();
+}
+
+export function getMaxZoom(map: L.Map): number {
+    return map.getMaxZoom();
+}
+
+export function getBoundsZoom(map: L.Map, bounds: L.LatLngBoundsExpression, inside?: boolean, padding?: L.Point): number {
+    return map.getBoundsZoom(bounds, inside, padding);
+}
+
+export function getSize(map: L.Map): string {
+    return JSON.stringify(map.getSize());
+}
+
+export function getPixelBounds(map: L.Map): string {
+    return JSON.stringify(map.getPixelBounds());
+}
+
+export function getPixelOrigin(map: L.Map): string {
+    return JSON.stringify(map.getPixelOrigin());
+}
+
+export function getPixelWorldBounds(map: L.Map): string {
+    return JSON.stringify(map.getPixelWorldBounds());
+}

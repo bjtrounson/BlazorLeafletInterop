@@ -29,6 +29,11 @@ public static partial class LeafletInterop
         return Interop.JsonToObject(json);
     }
     
+    public static T? JsonToObject<T>(string json)
+    {
+        return JsonConvert.DeserializeObject<T>(json);
+    }
+    
     public static string GetElementInnerHtml(string elementId)
     {
         return Interop.GetElementInnerHtml(elementId);

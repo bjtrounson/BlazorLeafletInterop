@@ -341,18 +341,68 @@ public partial class Map
         Interop.SetZoomAround(MapRef, latLng.ToJsObject(), zoom, options?.ToJsObject());
         return this;
     }
+    
+    #region Methods for Getting Map State
+    
+    public LatLng? GetCenter()
+    {
+        if (MapRef is null) throw new NullReferenceException("MapRef is null");
+        var center = Interop.GetCenter(MapRef);
+        return JsonSerializer.Deserialize<LatLng>(center);
+    }
+    
+    public double GetZoom()
+    {
+        if (MapRef is null) throw new NullReferenceException("MapRef is null");
+        return Interop.GetZoom(MapRef);
+    }
+    
+    public LatLngBounds? GetBounds()
+    {
+        if (MapRef is null) throw new NullReferenceException("MapRef is null");
+        var bounds = Interop.GetBounds(MapRef);
+        return JsonSerializer.Deserialize<LatLngBounds>(bounds);
+    }
+    
+    public double GetMinZoom()
+    {
+        if (MapRef is null) throw new NullReferenceException("MapRef is null");
+        return Interop.GetMinZoom(MapRef);
+    }
+    
+    public double GetMaxZoom()
+    {
+        if (MapRef is null) throw new NullReferenceException("MapRef is null");
+        return Interop.GetMaxZoom(MapRef);
+    }
+    
+    public Point? GetSize()
+    {
+        if (MapRef is null) throw new NullReferenceException("MapRef is null");
+        var size = Interop.GetSize(MapRef);
+        return JsonSerializer.Deserialize<Point>(size);
+    }
+    
+    public Point? GetPixelOrigin()
+    {
+        if (MapRef is null) throw new NullReferenceException("MapRef is null");
+        var pixelOrigin = Interop.GetPixelOrigin(MapRef);
+        return JsonSerializer.Deserialize<Point>(pixelOrigin);
+    }
+    
+    #endregion
 
     [SupportedOSPlatform("browser")]
     public partial class Interop
     {
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
-        static Interop()
-        {
-        }
+        static Interop() {}
         
         [JSImport("createMap", "BlazorLeafletInterop/Map")]
         public static partial JSObject CreateMap(string id, JSObject options);
+
+        #region Method for Layers and Controls
         
         [JSImport("addControl", "BlazorLeafletInterop/Map")]
         public static partial JSObject AddControl(JSObject map, JSObject control);
@@ -384,8 +434,9 @@ public partial class Map
         [JSImport("closeMapTooltip", "BlazorLeafletInterop/Map")]
         public static partial JSObject CloseTooltip(JSObject map, JSObject tooltip);
         
-        [JSImport("fitBounds", "BlazorLeafletInterop/Map")]
-        public static partial JSObject FitBounds(JSObject map, JSObject bounds);
+        #endregion
+        
+        #region Methods for modifiying map state
         
         [JSImport("setView", "BlazorLeafletInterop/Map")]
         public static partial JSObject SetView(JSObject map, JSObject latLng, double zoom);
@@ -440,5 +491,41 @@ public partial class Map
         
         [JSImport("stop", "BlazorLeafletInterop/Map")]
         public static partial JSObject Stop(JSObject map);
+        
+        #endregion
+        
+        #region Methods for Getting Map State
+        
+        [JSImport("getCenter", "BlazorLeafletInterop/Map")]
+        public static partial string GetCenter(JSObject map);
+            
+        [JSImport("getZoom", "BlazorLeafletInterop/Map")]
+        public static partial double GetZoom(JSObject map);
+        
+        [JSImport("getBounds", "BlazorLeafletInterop/Map")]
+        public static partial string GetBounds(JSObject map);
+        
+        [JSImport("getMinZoom", "BlazorLeafletInterop/Map")]
+        public static partial double GetMinZoom(JSObject map);
+        
+        [JSImport("getMaxZoom", "BlazorLeafletInterop/Map")]
+        public static partial double GetMaxZoom(JSObject map);
+        
+        [JSImport("getBoundsZoom", "BlazorLeafletInterop/Map")]
+        public static partial double GetBoundsZoom(JSObject map, JSObject bounds, bool? inside, JSObject? padding);
+        
+        [JSImport("getSize", "BlazorLeafletInterop/Map")]
+        public static partial string GetSize(JSObject map);
+        
+        [JSImport("getPixelBounds", "BlazorLeafletInterop/Map")]
+        public static partial string GetPixelBounds(JSObject map);
+        
+        [JSImport("getPixelOrigin", "BlazorLeafletInterop/Map")]
+        public static partial string GetPixelOrigin(JSObject map);
+        
+        [JSImport("getPixelWorldBounds", "BlazorLeafletInterop/Map")]
+        public static partial string GetPixelWorldBounds(JSObject map, int? zoom);
+        
+        #endregion
     }
 }

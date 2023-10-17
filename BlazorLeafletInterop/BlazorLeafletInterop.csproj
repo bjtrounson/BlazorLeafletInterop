@@ -7,8 +7,12 @@
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>11</LangVersion>
         <PackageId>BlazorLeafletInterop</PackageId>
+        <PackageTags>blazor; leaflet; interop; wasm;</PackageTags>
+        <Description>Blazor WASM interop for Leaflet</Description>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/bjtrounson/BlazorLeafletInterop.git</RepositoryUrl>
+        
     </PropertyGroup>
   
     <Target Name="NpmInstall" Inputs="package.json" Outputs="node_modules/.install-stamp" BeforeTargets="Build">
@@ -36,6 +40,8 @@
       <_ContentIncludedByDefault Remove="wwwroot\bundle.js" />
     </ItemGroup>
 
-
+    <ItemGroup>
+      <None Include="..\README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
 
 </Project>
