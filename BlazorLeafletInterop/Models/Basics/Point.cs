@@ -1,7 +1,11 @@
-﻿using System.Text.Json;
+﻿using System.Runtime.InteropServices.JavaScript;
+using System.Runtime.Versioning;
+using System.Text.Json;
+using BlazorLeafletInterop.Interops;
 
 namespace BlazorLeafletInterop.Models.Basics;
 
+[SupportedOSPlatform("browser")]
 public class Point : ICloneable
 {
     public double X { get; set; }
@@ -102,5 +106,10 @@ public class Point : ICloneable
     public override string ToString()
     {
         return $"Point({X}, {Y})";
+    }
+    
+    public JSObject ToJsObject()
+    {
+        return LeafletInterop.JsonToJsObject(LeafletInterop.ObjectToJson(this));
     }
 }

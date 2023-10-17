@@ -2,7 +2,7 @@
 using System.Runtime.Versioning;
 using BlazorLeafletInterop.Models.Basics;
 
-namespace BlazorLeafletInterop.Models;
+namespace BlazorLeafletInterop.Models.Map;
 
 [SupportedOSPlatform("browser")]
 public class MapOptions : LayerOptions

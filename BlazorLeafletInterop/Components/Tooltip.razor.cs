@@ -15,6 +15,8 @@ public partial class Tooltip
     [Parameter] public RenderFragment? ChildContent { get; set; }
     [CascadingParameter( Name = "MarkerRef")] public JSObject? MarkerRef { get; set; }
     
+    public JSObject? TooltipRef { get; set; }
+    
     protected override async Task OnInitializedAsync()
     {
         if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
@@ -25,6 +27,7 @@ public partial class Tooltip
         var tooltipOptions = LeafletInterop.JsonToJsObject(tooltipOptionsJson);
         var tooltipContent = LeafletInterop.GetElementInnerHtml(Id);
         TooltipInterop.BindPopup(MarkerRef, tooltipContent, tooltipOptions);
+        //TooltipRef = TooltipInterop.GetTooltip(MarkerRef);
     }
 
     public static partial class TooltipInterop
@@ -38,5 +41,8 @@ public partial class Tooltip
         
         [JSImport("bindTooltip", "BlazorLeafletInterop/Tooltip")]
         public static partial JSObject BindPopup(JSObject marker, string content, JSObject options);
+        
+        [JSImport("getTooltip", "BlazorLeafletInterop/Tooltip")]
+        public static partial JSObject GetTooltip(JSObject marker);
     }
 }
