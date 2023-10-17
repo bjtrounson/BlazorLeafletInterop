@@ -41,5 +41,8 @@ public partial class Popup
         
         [JSImport("bindPopup", "BlazorLeafletInterop/Popup")]
         public static partial JSObject BindPopup(JSObject marker, string content, JSObject options);
+        
+        [JSImport("getPopup", "BlazorLeafletInterop/Popup")]
+        public static partial JSObject GetPopup(JSObject marker);
     }
 }
