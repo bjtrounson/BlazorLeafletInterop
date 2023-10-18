@@ -10,12 +10,6 @@ public partial class DivOverlay : InteractiveLayer
 {
     public DivOverlayOptions DivOverlayOptions { get; set; } = new();
 
-    protected override async Task OnInitializedAsync()
-    {
-        if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
-        await base.OnInitializedAsync();
-    }
-
     public static partial class DivOverlayInterop
     {
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]

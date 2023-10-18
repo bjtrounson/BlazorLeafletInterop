@@ -12,12 +12,6 @@ public partial class InteractiveLayer : Layer
 {
     public InteractiveLayerOptions InteractiveLayerOptions { get; set; } = new();
 
-    protected override async Task OnInitializedAsync()
-    {
-        if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
-        await base.OnInitializedAsync();
-    }
-
     public static partial class InteractiveLayerInterop
     {
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]

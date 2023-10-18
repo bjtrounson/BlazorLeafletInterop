@@ -10,14 +10,14 @@ using Microsoft.AspNetCore.Components;
 namespace BlazorLeafletInterop.Components;
 
 [SupportedOSPlatform("browser")]
-public partial class Popup
+public partial class Popup : IDisposable
 {
     [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
     [Parameter] public PopupOptions PopupOptions { get; set; } = new();
     [Parameter] public RenderFragment? ChildContent { get; set; }
-    [CascadingParameter( Name = "MarkerRef")] public JSObject? MarkerRef { get; set; }
+    [CascadingParameter( Name = "MarkerRef")] public object? MarkerRef { get; set; }
     
-    public JSObject? PopupRef { get; set; }
+    public object? PopupRef { get; set; }
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -38,12 +38,22 @@ public partial class Popup
         static PopupInterop() { }
         
         [JSImport("openOn", "BlazorLeafletInterop")]
-        public static partial JSObject OpenOn(JSObject popup, JSObject map);
+        public static partial JSObject OpenOn([JSMarshalAs<JSType.Any>] object popup, [JSMarshalAs<JSType.Any>] object map);
         
         [JSImport("bindPopup", "BlazorLeafletInterop")]
-        public static partial JSObject BindPopup(JSObject marker, string content, JSObject options);
+        public static partial JSObject BindPopup([JSMarshalAs<JSType.Any>] object marker, string content, [JSMarshalAs<JSType.Any>] object options);
+        
+        [JSImport("unbindPopup", "BlazorLeafletInterop")]
+        public static partial JSObject UnbindPopup([JSMarshalAs<JSType.Any>] object marker);
         
         [JSImport("getPopup", "BlazorLeafletInterop")]
-        public static partial JSObject GetPopup(JSObject marker);
+        public static partial JSObject GetPopup([JSMarshalAs<JSType.Any>] object marker);
+    }
+
+    public void Dispose()
+    {
+        if (MarkerRef is null) return;
+        PopupInterop.UnbindPopup(MarkerRef);
+        GC.SuppressFinalize(this);
     }
 }

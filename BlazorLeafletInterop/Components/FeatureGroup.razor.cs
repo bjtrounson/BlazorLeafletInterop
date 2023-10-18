@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorLeafletInterop.Components;
 
-public partial class FeatureGroup
+public partial class FeatureGroup : IDisposable
 {
     public static partial class FeatureGroupInterop
     {
@@ -15,18 +15,18 @@ public partial class FeatureGroup
         static FeatureGroupInterop() { }
         
         [JSImport("createFeatureGroup", "BlazorLeafletInterop")]
-        public static partial JSObject CreateFeatureGroup(JSObject options);
+        public static partial JSObject CreateFeatureGroup([JSMarshalAs<JSType.Any>] object options);
         
         [JSImport("setStyle", "BlazorLeafletInterop")]
-        public static partial JSObject SetStyle(JSObject featureGroup, JSObject style);
+        public static partial JSObject SetStyle([JSMarshalAs<JSType.Any>] object featureGroup, [JSMarshalAs<JSType.Any>] object style);
         
         [JSImport("bringToFront", "BlazorLeafletInterop")]
-        public static partial JSObject BringToFront(JSObject featureGroup);
+        public static partial JSObject BringToFront([JSMarshalAs<JSType.Any>] object featureGroup);
         
         [JSImport("bringToBack", "BlazorLeafletInterop")]
-        public static partial JSObject BringToBack(JSObject featureGroup);
+        public static partial JSObject BringToBack([JSMarshalAs<JSType.Any>] object featureGroup);
         
         [JSImport("getBounds", "BlazorLeafletInterop")]
-        public static partial JSObject GetBounds(JSObject featureGroup);
+        public static partial JSObject GetBounds([JSMarshalAs<JSType.Any>] object featureGroup);
     }
 }

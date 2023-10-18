@@ -16,7 +16,7 @@ public partial class GeoJson : FeatureGroup
     [Parameter] public FeatureCollection GeoJsonData { get; set; } = new();
     [Parameter] public GeoJsonOptions GeoJsonOptions { get; set; } = new();
 
-    private JSObject? GeoJsonRef { get; set; }
+    private object? GeoJsonRef { get; set; }
     
     protected override async Task OnInitializedAsync()
     {
@@ -45,7 +45,7 @@ public partial class GeoJson : FeatureGroup
         GeoJsonInterop.AddData(GeoJsonRef, LeafletInterop.JsonToJsObject(geoJsonData));
     }
 
-    public GeoJson AddTo(JSObject? map)
+    public GeoJson AddTo(object? map)
     {
         if (GeoJsonRef is null || map is null) throw new NullReferenceException();
         LayerInterop.AddTo(GeoJsonRef, map);
@@ -76,20 +76,27 @@ public partial class GeoJson : FeatureGroup
         /// <returns></returns>
         [JSImport("createGeoJson", "BlazorLeafletInterop")]
         public static partial JSObject CreateGeoJson(
-            JSObject geoJsonData,
+            [JSMarshalAs<JSType.Any>] object geoJsonData,
             bool markersInheritOptions,
             bool disablePointToLayer,
             bool disableStyle,
             bool disableOnEachFeature,
             bool disableFilter,
-            [JSMarshalAs<JSType.Function<JSType.Object, JSType.Object, JSType.Object>>] Func<JSObject, JSObject, JSObject>? pointToLayer,
-            [JSMarshalAs<JSType.Function<JSType.Object>>] Action<JSObject>? style,
-            [JSMarshalAs<JSType.Function<JSType.Object, JSType.Object>>] Action<JSObject, JSObject>? onEachFeature,
-            [JSMarshalAs<JSType.Function<JSType.Object>>] Action<JSObject>? filter
+            [JSMarshalAs<JSType.Function<JSType.Any, JSType.Any, JSType.Any>>] Func<object, object, object>? pointToLayer,
+            [JSMarshalAs<JSType.Function<JSType.Any>>] Action<object>? style,
+            [JSMarshalAs<JSType.Function<JSType.Any, JSType.Any>>] Action<object, object>? onEachFeature,
+            [JSMarshalAs<JSType.Function<JSType.Any>>] Action<object>? filter
         );
         
         [JSImport("addData", "BlazorLeafletInterop")]
-        public static partial void AddData(JSObject geoJson, JSObject geoJsonData);
+        public static partial void AddData([JSMarshalAs<JSType.Any>] object geoJson, [JSMarshalAs<JSType.Any>] object geoJsonData);
+    }
+    
+    public override void Dispose()
+    {
+        if (GeoJsonRef is null || MapRef is null) return;
+        LayerInterop.RemoveFrom(GeoJsonRef, MapRef);
+        GC.SuppressFinalize(this);
     }
 }
     

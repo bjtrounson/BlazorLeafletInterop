@@ -8,21 +8,40 @@
 
 <Map @ref="Map" Class="map" MapOptions="Options">
 	<TileLayer @ref="TileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
-	<Marker Icon="IconRef" LatLng="new LatLng(50, 9)">
-        <Popup>
-        	Testing Popup Content
-        </Popup>
-        <Tooltip>
-        	Testing Tooltip Content
-        </Tooltip>
-    </Marker>	
+	@if (IsFirstMarker)
+	{
+		<Marker Icon="IconRef" LatLng="new LatLng(50, 8.9)">
+			<Popup>
+				First Marker Popup Content
+			</Popup>
+			<Tooltip>
+				Second Marker Tooltip Content
+			</Tooltip>
+		</Marker>
+	}
+	else
+	{
+		<Marker Icon="IconRef" LatLng="new LatLng(50, 9)">
+			<Popup>
+				Testing Popup Content
+			</Popup>
+			<Tooltip>
+				Testing Tooltip Content
+			</Tooltip>
+		</Marker>
+	}
 </Map>
+<div style="position: absolute; top: 5%; left: 5%; z-index: 10000; background-color: aquamarine; padding: 10px; border-radius: 10px;">
+	<h3>Blazor Leaflet Interop</h3>
+	<button @onclick="SwitchMarkers">Switch Markers</button>
+</div>
 
 @code {
     private Map? Map { get; set; }
     private TileLayer? TileLayer { get; set; }
     private MapOptions Options { get; set; } = new() { Center = new LatLng(50, 9), Zoom = 13 };
 	private Icon? IconRef { get; set; }
+	private bool IsFirstMarker { get; set; } = true;
 
 	protected override Task OnInitializedAsync()
 	{
@@ -41,4 +60,9 @@
 		return base.OnInitializedAsync();
 	}
 
+	private void SwitchMarkers()
+	{
+		IsFirstMarker = !IsFirstMarker;
+		StateHasChanged();
+	}
 }

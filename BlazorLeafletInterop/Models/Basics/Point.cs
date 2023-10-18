@@ -108,7 +108,7 @@ public class Point : ICloneable
         return $"Point({X}, {Y})";
     }
     
-    public JSObject ToJsObject()
+    public object ToJsObject()
     {
         return LeafletInterop.JsonToJsObject(LeafletInterop.ObjectToJson(this));
     }

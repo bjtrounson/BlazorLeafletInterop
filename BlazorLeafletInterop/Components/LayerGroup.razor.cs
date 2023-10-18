@@ -10,14 +10,14 @@ using Microsoft.AspNetCore.Components;
 namespace BlazorLeafletInterop.Components;
 
 [SupportedOSPlatform("browser")]
-public partial class LayerGroup
+public partial class LayerGroup : IDisposable
 {
     [Parameter] public LayerGroupOptions LayerGroupOptions { get; set; } = new();
     [Parameter] public RenderFragment? ChildContent { get; set; }
     
-    [CascadingParameter(Name = "MapRef")] public JSObject? MapRef { get; set; }
+    [CascadingParameter(Name = "MapRef")] public object? MapRef { get; set; }
     
-    public JSObject? LayerGroupRef { get; set; }
+    public object? LayerGroupRef { get; set; }
     
     protected override async Task OnInitializedAsync()
     {
@@ -28,17 +28,24 @@ public partial class LayerGroup
         LayerInterop.AddTo(LayerGroupRef, MapRef);
     }
     
-    public JSObject CreateLayerGroup(LayerGroupOptions options)
+    public object CreateLayerGroup(LayerGroupOptions options)
     {
         var layerGroupOptionsJson = LeafletInterop.ObjectToJson(options);
         var layerGroupOptions = LeafletInterop.JsonToJsObject(layerGroupOptionsJson);
         return LayerGroupInterop.CreateLayerGroup(layerGroupOptions);
     }
     
-    public LayerGroup AddLayer(JSObject layer)
+    public LayerGroup AddLayer(object layer)
     {
         if (LayerGroupRef is null) throw new NullReferenceException();
         LayerGroupInterop.AddLayer(LayerGroupRef, layer);
+        return this;
+    }
+
+    public LayerGroup RemoveLayer(object layer)
+    {
+        if (LayerGroupRef is null) throw new NullReferenceException();
+        LayerGroupInterop.RemoveLayer(LayerGroupRef, layer);
         return this;
     }
 
@@ -49,9 +56,19 @@ public partial class LayerGroup
         static LayerGroupInterop() { }
         
         [JSImport("createLayerGroup", "BlazorLeafletInterop")]
-        public static partial JSObject CreateLayerGroup(JSObject options);
+        public static partial JSObject CreateLayerGroup([JSMarshalAs<JSType.Any>] object options);
         
         [JSImport("addLayer", "BlazorLeafletInterop")]
-        public static partial JSObject AddLayer(JSObject layerGroup, JSObject layer);
+        public static partial JSObject AddLayer([JSMarshalAs<JSType.Any>] object layerGroup, [JSMarshalAs<JSType.Any>] object layer);
+        
+        [JSImport("removeLayer", "BlazorLeafletInterop")]
+        public static partial JSObject RemoveLayer([JSMarshalAs<JSType.Any>] object layerGroup, [JSMarshalAs<JSType.Any>] object layer);
+    }
+
+    public virtual void Dispose()
+    {
+        if (LayerGroupRef is null || MapRef is null) return;
+        LayerInterop.RemoveFrom(LayerGroupRef, MapRef);
+        GC.SuppressFinalize(this);
     }
 }
