@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices.JavaScript;
-using BlazorLeafletInterop;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ExampleApp;
