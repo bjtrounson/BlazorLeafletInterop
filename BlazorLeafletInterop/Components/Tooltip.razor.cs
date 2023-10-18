@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices.JavaScript;
+using System.Runtime.Versioning;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using BlazorLeafletInterop.Interops;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace BlazorLeafletInterop.Components;
 
+[SupportedOSPlatform("browser")]
 public partial class Tooltip
 {
     [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
