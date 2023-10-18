@@ -21,13 +21,13 @@ public partial class Icon
     
     public JSObject? IconRef { get; set; }
     
-    public static JSObject CreateIcon(IconOptions iconOptions)
+    public static object CreateIcon(IconOptions iconOptions)
     {
         var jsonOptions = LeafletInterop.ObjectToJson(iconOptions);
         return IconInterop.CreateIcon(LeafletInterop.JsonToJsObject(jsonOptions));
     }
     
-    public static JSObject CreateDefaultIcon()
+    public static object CreateDefaultIcon()
     {
         return IconInterop.CreateDefaultIcon();
     }
@@ -44,7 +44,7 @@ public partial class Icon
         static IconInterop() {}
         
         [JSImport("createIcon", "BlazorLeafletInterop")]
-        public static partial JSObject CreateIcon(JSObject iconOptions);
+        public static partial JSObject CreateIcon([JSMarshalAs<JSType.Any>] object iconOptions);
         
         [JSImport("createDefaultIcon", "BlazorLeafletInterop")]
         public static partial JSObject CreateDefaultIcon();

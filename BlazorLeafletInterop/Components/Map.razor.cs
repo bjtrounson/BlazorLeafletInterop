@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Components;
 namespace BlazorLeafletInterop.Components;
 
 [SupportedOSPlatform("browser")]
-public partial class Map
+public partial class Map : IDisposable
 {
     [Parameter]
     public MapOptions MapOptions { get; set; } = new();
@@ -28,7 +28,7 @@ public partial class Map
     [Parameter]
     public string? Class { get; set; }
 
-    public JSObject? MapRef { get; set; }
+    public object? MapRef { get; set; }
     public bool IsRendered { get; set; }
 
     protected override void OnAfterRender(bool firstRender)
@@ -39,6 +39,13 @@ public partial class Map
         if (MapRef is null) return;
         IsRendered = true;
         StateHasChanged();
+    }
+    
+    public Map EachLayer(Action<object> fn, object? context)
+    {
+        if (MapRef is null) throw new NullReferenceException("MapRef is null");
+        Interop.EachLayer(MapRef, fn, context);
+        return this;
     }
 
     /// <summary>
@@ -399,132 +406,143 @@ public partial class Map
         static Interop() {}
         
         [JSImport("createMap", "BlazorLeafletInterop")]
-        public static partial JSObject CreateMap(string id, JSObject options);
+        public static partial JSObject CreateMap(string id, [JSMarshalAs<JSType.Any>] object options);
 
         #region Method for Layers and Controls
         
         [JSImport("addControl", "BlazorLeafletInterop")]
-        public static partial JSObject AddControl(JSObject map, JSObject control);
+        public static partial JSObject AddControl([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object control);
         
         [JSImport("removeControl", "BlazorLeafletInterop")]
-        public static partial JSObject RemoveControl(JSObject map, JSObject control);
+        public static partial JSObject RemoveControl([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object control);
         
         [JSImport("addLayer", "BlazorLeafletInterop")]
-        public static partial JSObject AddLayer(JSObject map, JSObject layer);
+        public static partial JSObject AddLayer([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object layer);
         
         [JSImport("removeLayer", "BlazorLeafletInterop")]
-        public static partial JSObject RemoveLayer(JSObject map, JSObject layer);
+        public static partial JSObject RemoveLayer([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object layer);
         
         [JSImport("hasLayer", "BlazorLeafletInterop")]
-        public static partial bool HasLayer(JSObject map, JSObject layer);
+        public static partial bool HasLayer([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object layer);
         
         [JSImport("eachLayer", "BlazorLeafletInterop")]
-        public static partial JSObject EachLayer(JSObject map, [JSMarshalAs<JSType.Function<JSType.Object>>] Action<JSObject> fn, JSObject? context);
+        public static partial JSObject EachLayer([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Function<JSType.Any>>] Action<object> fn, [JSMarshalAs<JSType.Any>] object? context);
         
         [JSImport("openMapPopup", "BlazorLeafletInterop")]
-        public static partial JSObject OpenPopup(JSObject map, JSObject popup);
+        public static partial JSObject OpenPopup([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object popup);
         
         [JSImport("closeMapPopup", "BlazorLeafletInterop")]
-        public static partial JSObject ClosePopup(JSObject map, JSObject? popup);
+        public static partial JSObject ClosePopup([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object? popup);
         
         [JSImport("openMapTooltip", "BlazorLeafletInterop")]
-        public static partial JSObject OpenTooltip(JSObject map, JSObject tooltip);
+        public static partial JSObject OpenTooltip([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object tooltip);
         
         [JSImport("closeMapTooltip", "BlazorLeafletInterop")]
-        public static partial JSObject CloseTooltip(JSObject map, JSObject tooltip);
+        public static partial JSObject CloseTooltip([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object tooltip);
         
         #endregion
         
         #region Methods for modifiying map state
         
         [JSImport("setView", "BlazorLeafletInterop")]
-        public static partial JSObject SetView(JSObject map, JSObject latLng, double zoom);
+        public static partial JSObject SetView([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object latLng, double zoom);
         
         [JSImport("setZoom", "BlazorLeafletInterop")]
-        public static partial JSObject SetZoom(JSObject map, double zoom);
+        public static partial JSObject SetZoom([JSMarshalAs<JSType.Any>] object map, double zoom);
         
         [JSImport("zoomIn", "BlazorLeafletInterop")]
-        public static partial JSObject ZoomIn(JSObject map, double delta, JSObject? options);
+        public static partial JSObject ZoomIn([JSMarshalAs<JSType.Any>] object map, double delta, [JSMarshalAs<JSType.Any>] object? options);
         
         [JSImport("zoomOut", "BlazorLeafletInterop")]
-        public static partial JSObject ZoomOut(JSObject map, double delta, JSObject? options);
+        public static partial JSObject ZoomOut([JSMarshalAs<JSType.Any>] object map, double delta, [JSMarshalAs<JSType.Any>] object? options);
         
         [JSImport("setZoomAround", "BlazorLeafletInterop")]
-        public static partial JSObject SetZoomAround(JSObject map, JSObject latLng, double zoom, JSObject? options);
+        public static partial JSObject SetZoomAround([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object latLng, double zoom, [JSMarshalAs<JSType.Any>] object? options);
         
         [JSImport("fitBounds", "BlazorLeafletInterop")]
-        public static partial JSObject FitBounds(JSObject map, JSObject bounds, JSObject? options);
+        public static partial JSObject FitBounds([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object bounds, [JSMarshalAs<JSType.Any>] object? options);
         
         [JSImport("fitWorld", "BlazorLeafletInterop")]
-        public static partial JSObject FitWorld(JSObject map, JSObject? options);
+        public static partial JSObject FitWorld([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object? options);
         
         [JSImport("panTo", "BlazorLeafletInterop")]
-        public static partial JSObject PanTo(JSObject map, JSObject latLng, JSObject? options);
+        public static partial JSObject PanTo([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object latLng, [JSMarshalAs<JSType.Any>] object? options);
         
         [JSImport("panBy", "BlazorLeafletInterop")]
-        public static partial JSObject PanBy(JSObject map, JSObject point, JSObject? options);
+        public static partial JSObject PanBy([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object point, [JSMarshalAs<JSType.Any>] object? options);
         
         [JSImport("flyTo", "BlazorLeafletInterop")]
-        public static partial JSObject FlyTo(JSObject map, JSObject latLng, double zoom);
+        public static partial JSObject FlyTo([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object latLng, double zoom);
         
         [JSImport("flyToBounds", "BlazorLeafletInterop")]
-        public static partial JSObject FlyToBounds(JSObject map, JSObject bounds, JSObject? options);
+        public static partial JSObject FlyToBounds([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object bounds, [JSMarshalAs<JSType.Any>] object? options);
         
         [JSImport("setMaxBounds", "BlazorLeafletInterop")]
-        public static partial JSObject SetMaxBounds(JSObject map, JSObject bounds);
+        public static partial JSObject SetMaxBounds([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object bounds);
         
         [JSImport("setMinZoom", "BlazorLeafletInterop")]
-        public static partial JSObject SetMinZoom(JSObject map, double zoom);
+        public static partial JSObject SetMinZoom([JSMarshalAs<JSType.Any>] object map, double zoom);
         
         [JSImport("setMaxZoom", "BlazorLeafletInterop")]
-        public static partial JSObject SetMaxZoom(JSObject map, double zoom);
+        public static partial JSObject SetMaxZoom([JSMarshalAs<JSType.Any>] object map, double zoom);
         
         [JSImport("panInsideBounds", "BlazorLeafletInterop")]
-        public static partial JSObject PanInsideBounds(JSObject map, JSObject bounds, JSObject? options);
+        public static partial JSObject PanInsideBounds([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object bounds, [JSMarshalAs<JSType.Any>] object? options);
         
         [JSImport("panInside", "BlazorLeafletInterop")]
-        public static partial JSObject PanInside(JSObject map, JSObject latLng, JSObject? options);
+        public static partial JSObject PanInside([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object latLng, [JSMarshalAs<JSType.Any>] object? options);
         
         [JSImport("invalidateSize", "BlazorLeafletInterop")]
-        public static partial JSObject InvalidateSize(JSObject map, bool animate);
+        public static partial JSObject InvalidateSize([JSMarshalAs<JSType.Any>] object map, bool animate);
         
         [JSImport("stop", "BlazorLeafletInterop")]
-        public static partial JSObject Stop(JSObject map);
+        public static partial JSObject Stop([JSMarshalAs<JSType.Any>] object map);
         
         #endregion
         
         #region Methods for Getting Map State
         
         [JSImport("getCenter", "BlazorLeafletInterop")]
-        public static partial string GetCenter(JSObject map);
+        public static partial string GetCenter([JSMarshalAs<JSType.Any>] object map);
             
         [JSImport("getZoom", "BlazorLeafletInterop")]
-        public static partial double GetZoom(JSObject map);
+        public static partial double GetZoom([JSMarshalAs<JSType.Any>] object map);
         
         [JSImport("getBounds", "BlazorLeafletInterop")]
-        public static partial string GetBounds(JSObject map);
+        public static partial string GetBounds([JSMarshalAs<JSType.Any>] object map);
         
         [JSImport("getMinZoom", "BlazorLeafletInterop")]
-        public static partial double GetMinZoom(JSObject map);
+        public static partial double GetMinZoom([JSMarshalAs<JSType.Any>] object map);
         
         [JSImport("getMaxZoom", "BlazorLeafletInterop")]
-        public static partial double GetMaxZoom(JSObject map);
+        public static partial double GetMaxZoom([JSMarshalAs<JSType.Any>] object map);
         
         [JSImport("getBoundsZoom", "BlazorLeafletInterop")]
-        public static partial double GetBoundsZoom(JSObject map, JSObject bounds, bool? inside, JSObject? padding);
+        public static partial double GetBoundsZoom([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object bounds, bool? inside, [JSMarshalAs<JSType.Any>] object? padding);
         
         [JSImport("getSize", "BlazorLeafletInterop")]
-        public static partial string GetSize(JSObject map);
+        public static partial string GetSize([JSMarshalAs<JSType.Any>] object map);
         
         [JSImport("getPixelBounds", "BlazorLeafletInterop")]
-        public static partial string GetPixelBounds(JSObject map);
+        public static partial string GetPixelBounds([JSMarshalAs<JSType.Any>] object map);
         
         [JSImport("getPixelOrigin", "BlazorLeafletInterop")]
-        public static partial string GetPixelOrigin(JSObject map);
+        public static partial string GetPixelOrigin([JSMarshalAs<JSType.Any>] object map);
         
         [JSImport("getPixelWorldBounds", "BlazorLeafletInterop")]
-        public static partial string GetPixelWorldBounds(JSObject map, int? zoom);
+        public static partial string GetPixelWorldBounds([JSMarshalAs<JSType.Any>] object map, int? zoom);
         
         #endregion
+        
+        [JSImport("remove", "BlazorLeafletInterop")]
+        public static partial void Remove([JSMarshalAs<JSType.Any>] object map);
+    }
+
+    public void Dispose()
+    {
+        if (MapRef is null) return;
+        Interop.EachLayer(MapRef, Interop.Remove, null);
+        Interop.Remove(MapRef);
+        GC.SuppressFinalize(this);
     }
 }

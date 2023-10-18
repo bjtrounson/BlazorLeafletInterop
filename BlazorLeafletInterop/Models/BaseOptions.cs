@@ -7,7 +7,7 @@ namespace BlazorLeafletInterop.Models;
 [SupportedOSPlatform("browser")]
 public class BaseOptions
 {
-    public JSObject ToJsObject()
+    public object ToJsObject()
     {
         return LeafletInterop.JsonToJsObject(LeafletInterop.ObjectToJson(this));
     }

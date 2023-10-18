@@ -10,15 +10,15 @@ using Microsoft.AspNetCore.Components;
 namespace BlazorLeafletInterop.Components.Base;
 
 [SupportedOSPlatform("browser")]
-public partial class TileLayer : GridLayer
+public partial class TileLayer : GridLayer, IDisposable
 {
     [CascadingParameter(Name = "MapRef")]
-    public JSObject? MapRef { get; set; }
+    public object? MapRef { get; set; }
 
     [Parameter] public string UrlTemplate { get; set; } = "";
     [Parameter] public TileLayerOptions TileLayerOptions{ get; set; } = new();
 
-    private JSObject? TileRef { get; set; } = null;
+    private object? TileRef { get; set; } = null;
 
     protected override async Task OnInitializedAsync()
     {
@@ -27,7 +27,7 @@ public partial class TileLayer : GridLayer
         AddTo(MapRef);
     }
     
-    public TileLayer AddTo(JSObject? map)
+    public TileLayer AddTo(object? map)
     {
         if (TileRef is null || map is null) throw new NullReferenceException();
         LayerInterop.AddTo(TileRef, map);
@@ -42,9 +42,18 @@ public partial class TileLayer : GridLayer
         static Interop() {}
 
         [JSImport("createTileLayer", "BlazorLeafletInterop")]
-        public static partial JSObject CreateTileLayer(string urlTemplate, JSObject options);
+        public static partial JSObject CreateTileLayer(string urlTemplate, [JSMarshalAs<JSType.Any>] object options);
         
         [JSImport("setUrl", "BlazorLeafletInterop")]
-        public static partial void SetUrl(JSObject tileLayer, string url, bool noRedraw);
+        public static partial void SetUrl([JSMarshalAs<JSType.Any>] object tileLayer, string url, bool noRedraw);
+    }
+
+    public void Dispose()
+    {
+        if (TileRef is null) return;
+        if (MapRef is not null) LayerInterop.RemoveFrom(TileRef, MapRef);
+        else LayerInterop.Remove(TileRef);
+        TileRef = null;
+        GC.SuppressFinalize(this);
     }
 }

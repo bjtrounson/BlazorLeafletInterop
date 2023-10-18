@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Components;
 namespace BlazorLeafletInterop.Components;
 
 [SupportedOSPlatform("browser")]
-public partial class Marker
+public partial class Marker : IDisposable
 {
     [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
     [Parameter] public LatLng LatLng { get; set; } = new();
@@ -20,9 +20,9 @@ public partial class Marker
     [Parameter] public RenderFragment? ChildContent { get; set; }
     
     [CascadingParameter(Name = "LayerGroup")] public LayerGroup? LayerGroup { get; set; }
-    [CascadingParameter(Name = "MapRef")] public JSObject? MapRef { get; set; }
+    [CascadingParameter(Name = "MapRef")] public object? MapRef { get; set; }
     
-    public JSObject? MarkerRef { get; set; }
+    public object? MarkerRef { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -38,14 +38,14 @@ public partial class Marker
         AddTo(MapRef);
     }
     
-    public Marker AddTo(JSObject? map)
+    public Marker AddTo(object? map)
     {
         if (MarkerRef is null || map is null) throw new NullReferenceException();
         LayerInterop.AddTo(MarkerRef, map);
         return this;
     }
     
-    public JSObject CreateMarker(LatLng latLng, MarkerOptions options)
+    public object CreateMarker(LatLng latLng, MarkerOptions options)
     {
         var latLngJson = LeafletInterop.ObjectToJson(latLng);
         var optionsJson = LeafletInterop.ObjectToJson(options);
@@ -82,13 +82,13 @@ public partial class Marker
         return MarkerInterop.ToGeoJson(MarkerRef, precision);
     }
     
-    public JSObject? GetPopup()
+    public object? GetPopup()
     {
         if (MarkerRef is null) throw new NullReferenceException();
         return MarkerInterop.GetPopup(MarkerRef);
     }
     
-    public JSObject? OpenPopup()
+    public object? OpenPopup()
     {
         if (MarkerRef is null) throw new NullReferenceException();
         return MarkerInterop.OpenPopup(MarkerRef);
@@ -108,30 +108,38 @@ public partial class Marker
         static MarkerInterop() { }
         
         [JSImport("createMarker", "BlazorLeafletInterop")]
-        public static partial JSObject CreateMarker(JSObject latLng, JSObject options);
+        public static partial JSObject CreateMarker([JSMarshalAs<JSType.Any>] object latLng, [JSMarshalAs<JSType.Any>] object options);
         
         [JSImport("getLatLng", "BlazorLeafletInterop")]
-        public static partial string GetLatLng(JSObject marker);
+        public static partial string GetLatLng([JSMarshalAs<JSType.Any>] object marker);
         
         [JSImport("setLatLng", "BlazorLeafletInterop")]
-        public static partial void SetLatLng(JSObject marker, JSObject latLng);
+        public static partial void SetLatLng([JSMarshalAs<JSType.Any>] object marker, [JSMarshalAs<JSType.Any>] object latLng);
         
         [JSImport("setIcon", "BlazorLeafletInterop")]
-        public static partial void SetIcon(JSObject marker, JSObject icon);
+        public static partial void SetIcon([JSMarshalAs<JSType.Any>] object marker, [JSMarshalAs<JSType.Any>] object icon);
         
         [JSImport("setOpacity", "BlazorLeafletInterop")]
-        public static partial void SetOpacity(JSObject marker, double opacity);
+        public static partial void SetOpacity([JSMarshalAs<JSType.Any>] object marker, double opacity);
         
         [JSImport("setZIndexOffset", "BlazorLeafletInterop")]
-        public static partial void SetZIndexOffset(JSObject marker, double zIndexOffset);
+        public static partial void SetZIndexOffset([JSMarshalAs<JSType.Any>] object marker, double zIndexOffset);
         
         [JSImport("toGeoJSON", "BlazorLeafletInterop")]
-        public static partial string ToGeoJson(JSObject marker, double? precision);
+        public static partial string ToGeoJson([JSMarshalAs<JSType.Any>] object marker, double? precision);
         
         [JSImport("getPopup", "BlazorLeafletInterop")]
-        public static partial JSObject GetPopup(JSObject marker);
+        public static partial JSObject GetPopup([JSMarshalAs<JSType.Any>] object marker);
         
         [JSImport("openPopup", "BlazorLeafletInterop")]
-        public static partial JSObject OpenPopup(JSObject marker);
+        public static partial JSObject OpenPopup([JSMarshalAs<JSType.Any>] object marker);
+    }
+
+    public void Dispose()
+    {
+        if (MarkerRef is null) return;
+        LayerGroup?.RemoveLayer(MarkerRef);
+        if (MapRef is not null) LayerInterop.RemoveFrom(MarkerRef, MapRef);
+        GC.SuppressFinalize(this);
     }
 }

@@ -108,7 +108,7 @@ public class LatLngBounds
         return SouthWest.Equals(bounds.SouthWest) && NorthEast.Equals(bounds.NorthEast);
     }
     
-    public JSObject ToJsObject()
+    public object ToJsObject()
     {
         return LeafletInterop.JsonToJsObject(LeafletInterop.ObjectToJson(this));
     }
