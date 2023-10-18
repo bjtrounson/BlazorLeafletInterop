@@ -21,7 +21,6 @@ public partial class GeoJson : FeatureGroup
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        await JSHost.ImportAsync("BlazorLeafletInterop/GeoJson", "../_content/BlazorLeafletInterop/bundle.js");
         var geoJsonData = LeafletInterop.ObjectToJson(GeoJsonData);
         GeoJsonRef = GeoJsonInterop.CreateGeoJson(
             LeafletInterop.JsonToJsObject(geoJsonData),
@@ -75,7 +74,7 @@ public partial class GeoJson : FeatureGroup
         /// <param name="onEachFeature"></param>
         /// <param name="filter"></param>
         /// <returns></returns>
-        [JSImport("createGeoJson", "BlazorLeafletInterop/GeoJson")]
+        [JSImport("createGeoJson", "BlazorLeafletInterop")]
         public static partial JSObject CreateGeoJson(
             JSObject geoJsonData,
             bool markersInheritOptions,
@@ -89,7 +88,7 @@ public partial class GeoJson : FeatureGroup
             [JSMarshalAs<JSType.Function<JSType.Object>>] Action<JSObject>? filter
         );
         
-        [JSImport("addData", "BlazorLeafletInterop/GeoJson")]
+        [JSImport("addData", "BlazorLeafletInterop")]
         public static partial void AddData(JSObject geoJson, JSObject geoJsonData);
     }
 }

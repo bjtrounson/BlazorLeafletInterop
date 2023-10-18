@@ -10,8 +10,14 @@ using Newtonsoft.Json.Serialization;
 namespace BlazorLeafletInterop.Interops;
 
 [SupportedOSPlatform("browser")]
-public static partial class LeafletInterop
+public partial class LeafletInterop
 {
+    [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
+    [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
+    static LeafletInterop()
+    {
+    }
+    
     public static string ObjectToJson(object obj)
     {
         var defaultContractResolver = new DefaultContractResolver
@@ -24,34 +30,15 @@ public static partial class LeafletInterop
             NullValueHandling = NullValueHandling.Ignore
         });
     }
-    public static JSObject JsonToJsObject(string json)
-    {
-        return Interop.JsonToObject(json);
-    }
     
     public static T? JsonToObject<T>(string json)
     {
         return JsonConvert.DeserializeObject<T>(json);
     }
-    
-    public static string GetElementInnerHtml(string elementId)
-    {
-        return Interop.GetElementInnerHtml(elementId);
-    }
-    
-    [SupportedOSPlatform("browser")]
-    private static partial class Interop
-    {
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
-        static Interop()
-        {
-        }
 
-        [JSImport("jsonToObject", "BlazorLeafletInterop/LeafletInterop")]
-        public static partial JSObject JsonToObject(string json);
-        
-        [JSImport("getElementInnerHtml", "BlazorLeafletInterop/LeafletInterop")]
-        public static partial string GetElementInnerHtml(string elementId);
-    }
+    [JSImport("jsonToObject", "BlazorLeafletInterop")]
+    public static partial JSObject JsonToJsObject(string json);
+    
+    [JSImport("getElementInnerHtml", "BlazorLeafletInterop")]
+    public static partial string GetElementInnerHtml(string elementId);
 }

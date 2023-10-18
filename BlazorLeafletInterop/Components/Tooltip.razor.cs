@@ -17,11 +17,10 @@ public partial class Tooltip
     
     public JSObject? TooltipRef { get; set; }
     
-    protected override async Task OnInitializedAsync()
+    protected override void OnAfterRender(bool firstRender)
     {
-        if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
-        await base.OnInitializedAsync();
-        await JSHost.ImportAsync("BlazorLeafletInterop/Tooltip", "../_content/BlazorLeafletInterop/bundle.js");
+        base.OnAfterRender(firstRender);
+        if (!firstRender) return;
         if (MarkerRef is null) return;
         var tooltipOptionsJson = LeafletInterop.ObjectToJson(TooltipOptions);
         var tooltipOptions = LeafletInterop.JsonToJsObject(tooltipOptionsJson);
@@ -36,13 +35,13 @@ public partial class Tooltip
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
         static TooltipInterop() { }
         
-        [JSImport("openOn", "BlazorLeafletInterop/Tooltip")]
+        [JSImport("openOn", "BlazorLeafletInterop")]
         public static partial JSObject OpenOn(JSObject popup, JSObject map);
         
-        [JSImport("bindTooltip", "BlazorLeafletInterop/Tooltip")]
+        [JSImport("bindTooltip", "BlazorLeafletInterop")]
         public static partial JSObject BindPopup(JSObject marker, string content, JSObject options);
         
-        [JSImport("getTooltip", "BlazorLeafletInterop/Tooltip")]
+        [JSImport("getTooltip", "BlazorLeafletInterop")]
         public static partial JSObject GetTooltip(JSObject marker);
     }
 }

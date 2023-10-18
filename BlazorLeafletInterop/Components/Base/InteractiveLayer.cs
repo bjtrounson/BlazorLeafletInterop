@@ -16,7 +16,6 @@ public partial class InteractiveLayer : Layer
     {
         if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
         await base.OnInitializedAsync();
-        await JSHost.ImportAsync("BlazorLeafletInterop/InteractiveLayer", "../_content/BlazorLeafletInterop/bundle.js");
     }
 
     public static partial class InteractiveLayerInterop

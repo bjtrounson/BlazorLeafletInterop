@@ -28,8 +28,7 @@ public partial class Marker
     {
         if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
         await base.OnInitializedAsync();
-        await JSHost.ImportAsync("BlazorLeafletInterop/Marker", "../_content/BlazorLeafletInterop/bundle.js");
-        MarkerRef = await CreateMarker(LatLng, Options);
+        MarkerRef = CreateMarker(LatLng, Options);
         if (LayerGroup is not null && MarkerRef is not null)
         {
             LayerGroup.AddLayer(MarkerRef);
@@ -46,14 +45,14 @@ public partial class Marker
         return this;
     }
     
-    public async Task<JSObject> CreateMarker(LatLng latLng, MarkerOptions options)
+    public JSObject CreateMarker(LatLng latLng, MarkerOptions options)
     {
         var latLngJson = LeafletInterop.ObjectToJson(latLng);
         var optionsJson = LeafletInterop.ObjectToJson(options);
         var marker = MarkerInterop.CreateMarker(LeafletInterop.JsonToJsObject(latLngJson), LeafletInterop.JsonToJsObject(optionsJson));
         if (Icon is null) return marker;
         var iconOptions = Icon.IconOptions;
-        var icon = iconOptions is not null ? await Icon.CreateIcon(iconOptions) : await Icon.CreateDefaultIcon();
+        var icon = iconOptions is not null ? Icon.CreateIcon(iconOptions) : Icon.CreateDefaultIcon();
         MarkerInterop.SetIcon(marker, icon);
         return marker;
     }
@@ -108,31 +107,31 @@ public partial class Marker
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
         static MarkerInterop() { }
         
-        [JSImport("createMarker", "BlazorLeafletInterop/Marker")]
+        [JSImport("createMarker", "BlazorLeafletInterop")]
         public static partial JSObject CreateMarker(JSObject latLng, JSObject options);
         
-        [JSImport("getLatLng", "BlazorLeafletInterop/Marker")]
+        [JSImport("getLatLng", "BlazorLeafletInterop")]
         public static partial string GetLatLng(JSObject marker);
         
-        [JSImport("setLatLng", "BlazorLeafletInterop/Marker")]
+        [JSImport("setLatLng", "BlazorLeafletInterop")]
         public static partial void SetLatLng(JSObject marker, JSObject latLng);
         
-        [JSImport("setIcon", "BlazorLeafletInterop/Marker")]
+        [JSImport("setIcon", "BlazorLeafletInterop")]
         public static partial void SetIcon(JSObject marker, JSObject icon);
         
-        [JSImport("setOpacity", "BlazorLeafletInterop/Marker")]
+        [JSImport("setOpacity", "BlazorLeafletInterop")]
         public static partial void SetOpacity(JSObject marker, double opacity);
         
-        [JSImport("setZIndexOffset", "BlazorLeafletInterop/Marker")]
+        [JSImport("setZIndexOffset", "BlazorLeafletInterop")]
         public static partial void SetZIndexOffset(JSObject marker, double zIndexOffset);
         
-        [JSImport("toGeoJSON", "BlazorLeafletInterop/Marker")]
+        [JSImport("toGeoJSON", "BlazorLeafletInterop")]
         public static partial string ToGeoJson(JSObject marker, double? precision);
         
-        [JSImport("getPopup", "BlazorLeafletInterop/Marker")]
+        [JSImport("getPopup", "BlazorLeafletInterop")]
         public static partial JSObject GetPopup(JSObject marker);
         
-        [JSImport("openPopup", "BlazorLeafletInterop/Marker")]
+        [JSImport("openPopup", "BlazorLeafletInterop")]
         public static partial JSObject OpenPopup(JSObject marker);
     }
 }
