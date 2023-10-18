@@ -9,7 +9,6 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-await JSHost.ImportAsync("BlazorLeafletInterop", "../_content/BlazorLeafletInterop/bundle.js");
-//await MapBundleImport.ImportAsync();
+await MapBundleImport.ImportAsync();
 
 await builder.Build().RunAsync();

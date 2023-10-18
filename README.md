@@ -1,8 +1,14 @@
 ﻿# Blazor Leaflet Interop
-This is a Blazor WASM library for [Leaflet](https://leafletjs.com/) maps. It is a wrapper around the [LeafletJS](https://leafletjs.com/) JavaScript library. 
+**WARNING: This is only works with Blazor WASM and not Blazor Server, since it uses the new JSImport / JSExport API** \
 It is a work in progress and only supports a small subset of the Leaflet API. 
 
-## Getting Started
+## Before you start
+Add this to your Program.cs
+```csharp
+await MapBundleImport.ImportAsync();
+```
+
+## Simple Usage
 To make a simple map use the following code:
 ```csharp
 @page "/"
