@@ -23,7 +23,6 @@ public partial class LayerGroup
     {
         if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
         await base.OnInitializedAsync();
-        await JSHost.ImportAsync("BlazorLeafletInterop/LayerGroup", "../_content/BlazorLeafletInterop/bundle.js");
         LayerGroupRef = CreateLayerGroup(LayerGroupOptions);
         if (MapRef is null || LayerGroupRef is null) return;
         LayerInterop.AddTo(LayerGroupRef, MapRef);
@@ -49,10 +48,10 @@ public partial class LayerGroup
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
         static LayerGroupInterop() { }
         
-        [JSImport("createLayerGroup", "BlazorLeafletInterop/LayerGroup")]
+        [JSImport("createLayerGroup", "BlazorLeafletInterop")]
         public static partial JSObject CreateLayerGroup(JSObject options);
         
-        [JSImport("addLayer", "BlazorLeafletInterop/LayerGroup")]
+        [JSImport("addLayer", "BlazorLeafletInterop")]
         public static partial JSObject AddLayer(JSObject layerGroup, JSObject layer);
     }
 }

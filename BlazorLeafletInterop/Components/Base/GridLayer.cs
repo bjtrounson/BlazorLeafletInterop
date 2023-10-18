@@ -13,40 +13,34 @@ public partial class GridLayer : Layer
 {
     public GridLayerOptions GridLayerOptions { get; set; } = new();
 
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        await JSHost.ImportAsync("BlazorLeafletInterop/GridLayer", "../_content/BlazorLeafletInterop/bundle.js");
-    }
-
     public static partial class GridLayerInterop
     {
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
         static GridLayerInterop() {}
         
-        [JSImport("bringToFront", "BlazorLeafletInterop/GridLayer")]
+        [JSImport("bringToFront", "BlazorLeafletInterop")]
         public static partial JSObject BringToFront(JSObject gridLayer);
         
-        [JSImport("bringToBack", "BlazorLeafletInterop/GridLayer")]
+        [JSImport("bringToBack", "BlazorLeafletInterop")]
         public static partial JSObject BringToBack(JSObject gridLayer);
         
-        [JSImport("getContainer", "BlazorLeafletInterop/GridLayer")]
+        [JSImport("getContainer", "BlazorLeafletInterop")]
         public static partial JSObject GetContainer(JSObject gridLayer);
         
-        [JSImport("setOpacity", "BlazorLeafletInterop/GridLayer")]
+        [JSImport("setOpacity", "BlazorLeafletInterop")]
         public static partial JSObject SetOpacity(JSObject gridLayer, double opacity);
         
-        [JSImport("setZIndex", "BlazorLeafletInterop/GridLayer")]
+        [JSImport("setZIndex", "BlazorLeafletInterop")]
         public static partial JSObject SetZIndex(JSObject gridLayer, int zIndex);
         
-        [JSImport("isLoading", "BlazorLeafletInterop/GridLayer")]
+        [JSImport("isLoading", "BlazorLeafletInterop")]
         public static partial bool IsLoading(JSObject gridLayer);
         
-        [JSImport("redraw", "BlazorLeafletInterop/GridLayer")]
+        [JSImport("redraw", "BlazorLeafletInterop")]
         public static partial JSObject Redraw(JSObject gridLayer);
         
-        [JSImport("getTileSize", "BlazorLeafletInterop/GridLayer")]
+        [JSImport("getTileSize", "BlazorLeafletInterop")]
         public static partial JSObject GetTileSize(JSObject gridLayer);
     }
 }

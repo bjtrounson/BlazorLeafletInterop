@@ -7,11 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BlazorLeafletInterop" Version="1.0.4" />
         <PackageReference Include="GeoJSON.Net" Version="1.2.19" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.12" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.12" PrivateAssets="all" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BlazorLeafletInterop\BlazorLeafletInterop.csproj" />
     </ItemGroup>
 
 </Project>

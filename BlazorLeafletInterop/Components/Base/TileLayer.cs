@@ -23,7 +23,6 @@ public partial class TileLayer : GridLayer
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        await JSHost.ImportAsync("BlazorLeafletInterop/TileLayer", "../_content/BlazorLeafletInterop/bundle.js");
         TileRef = Interop.CreateTileLayer(UrlTemplate, TileLayerOptions.ToJsObject());
         AddTo(MapRef);
     }
@@ -42,10 +41,10 @@ public partial class TileLayer : GridLayer
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
         static Interop() {}
 
-        [JSImport("createTileLayer", "BlazorLeafletInterop/TileLayer")]
+        [JSImport("createTileLayer", "BlazorLeafletInterop")]
         public static partial JSObject CreateTileLayer(string urlTemplate, JSObject options);
         
-        [JSImport("setUrl", "BlazorLeafletInterop/TileLayer")]
+        [JSImport("setUrl", "BlazorLeafletInterop")]
         public static partial void SetUrl(JSObject tileLayer, string url, bool noRedraw);
     }
 }

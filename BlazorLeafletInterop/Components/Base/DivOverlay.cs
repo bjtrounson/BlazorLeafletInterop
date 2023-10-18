@@ -14,7 +14,6 @@ public partial class DivOverlay : InteractiveLayer
     {
         if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
         await base.OnInitializedAsync();
-        await JSHost.ImportAsync("BlazorLeafletInterop/DivOverlay", "../_content/BlazorLeafletInterop/bundle.js");
     }
 
     public static partial class DivOverlayInterop
@@ -23,40 +22,40 @@ public partial class DivOverlay : InteractiveLayer
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
         static DivOverlayInterop() { }
         
-        [JSImport("openOn", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("openOn", "BlazorLeafletInterop")]
         public static partial JSObject OpenOn(JSObject divOverlay, JSObject map);
         
-        [JSImport("close", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("close", "BlazorLeafletInterop")]
         public static partial JSObject Close(JSObject divOverlay);
         
-        [JSImport("toggle", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("toggle", "BlazorLeafletInterop")]
         public static partial JSObject Toggle(JSObject divOverlay, JSObject? layer);
         
-        [JSImport("getLatLng", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("getLatLng", "BlazorLeafletInterop")]
         public static partial JSObject GetLatLng(JSObject divOverlay);
         
-        [JSImport("setLatLng", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("setLatLng", "BlazorLeafletInterop")]
         public static partial JSObject SetLatLng(JSObject divOverlay, JSObject latLng);
         
-        [JSImport("getContent", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("getContent", "BlazorLeafletInterop")]
         public static partial string GetContent(JSObject divOverlay);
         
-        [JSImport("setContent", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("setContent", "BlazorLeafletInterop")]
         public static partial JSObject SetContent(JSObject divOverlay, string content);
         
-        [JSImport("getElement", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("getElement", "BlazorLeafletInterop")]
         public static partial string GetElement(JSObject divOverlay);
         
-        [JSImport("update", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("update", "BlazorLeafletInterop")]
         public static partial void Update(JSObject divOverlay);
         
-        [JSImport("isOpen", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("isOpen", "BlazorLeafletInterop")]
         public static partial bool IsOpen(JSObject divOverlay);
         
-        [JSImport("bringToFront", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("bringToFront", "BlazorLeafletInterop")]
         public static partial JSObject BringToFront(JSObject divOverlay);
         
-        [JSImport("bringToBack", "BlazorLeafletInterop/DivOverlay")]
+        [JSImport("bringToBack", "BlazorLeafletInterop")]
         public static partial JSObject BringToBack(JSObject divOverlay);
     }
 }

@@ -20,23 +20,15 @@ public partial class Icon
     }
     
     public JSObject? IconRef { get; set; }
-
-    public static async Task Initialize()
-    {
-        if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
-        await JSHost.ImportAsync("BlazorLeafletInterop/Icon", "../_content/BlazorLeafletInterop/bundle.js");
-    }
     
-    public static async Task<JSObject> CreateIcon(IconOptions iconOptions)
+    public static JSObject CreateIcon(IconOptions iconOptions)
     {
-        await Initialize();
         var jsonOptions = LeafletInterop.ObjectToJson(iconOptions);
         return IconInterop.CreateIcon(LeafletInterop.JsonToJsObject(jsonOptions));
     }
     
-    public static async Task<JSObject> CreateDefaultIcon()
+    public static JSObject CreateDefaultIcon()
     {
-        await Initialize();
         return IconInterop.CreateDefaultIcon();
     }
     
@@ -51,10 +43,10 @@ public partial class Icon
         [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
         static IconInterop() {}
         
-        [JSImport("createIcon", "BlazorLeafletInterop/Icon")]
+        [JSImport("createIcon", "BlazorLeafletInterop")]
         public static partial JSObject CreateIcon(JSObject iconOptions);
         
-        [JSImport("createDefaultIcon", "BlazorLeafletInterop/Icon")]
+        [JSImport("createDefaultIcon", "BlazorLeafletInterop")]
         public static partial JSObject CreateDefaultIcon();
     }
 }
