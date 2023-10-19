@@ -5,16 +5,16 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using BlazorLeafletInterop.Components.Base;
+using BlazorLeafletInterop.Components.Layers.UI;
 using BlazorLeafletInterop.Interops;
 using BlazorLeafletInterop.Models;
 using BlazorLeafletInterop.Models.Basics;
-using BlazorLeafletInterop.Models.Map;
+using BlazorLeafletInterop.Models.Options.Map;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
 namespace BlazorLeafletInterop.Components;
 
-[SupportedOSPlatform("browser")]
 public partial class Map : IAsyncDisposable
 {
     [Parameter]

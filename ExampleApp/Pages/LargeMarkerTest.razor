@@ -2,8 +2,9 @@
 
 @using BlazorLeafletInterop.Components;
 @using BlazorLeafletInterop.Components.Base
+@using BlazorLeafletInterop.Components.Layers.Raster
 @using BlazorLeafletInterop.Models.Basics;
-@using BlazorLeafletInterop.Models.Map
+@using BlazorLeafletInterop.Models.Options.Map
 
 <Map @ref="_map" Class="map" MapOptions="Options">
 	<TileLayer @ref="_tileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />

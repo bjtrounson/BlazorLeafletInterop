@@ -1,4 +1,5 @@
 ﻿using BlazorLeafletInterop.Models;
+using BlazorLeafletInterop.Models.Options.Base;
 
 namespace BlazorLeafletInterop.Components.Base;
 

@@ -9,6 +9,7 @@ export * from "./divOverlay";
 export * from "./layerGroup";
 export * from "./geoJson";
 export * from "./map";
+export * from "./vectorLayer";
 
 export function getLatLng(divOverlay: L.DivOverlay | L.Marker): L.LatLng {
     return divOverlay.getLatLng();

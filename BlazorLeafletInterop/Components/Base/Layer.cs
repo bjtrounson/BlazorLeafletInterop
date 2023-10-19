@@ -1,5 +1,7 @@
 ﻿using BlazorLeafletInterop.Models;
 using BlazorLeafletInterop.Models.Basics;
+using BlazorLeafletInterop.Models.Options.Base;
+using BlazorLeafletInterop.Models.Options.Layer.UI;
 using Microsoft.JSInterop;
 
 namespace BlazorLeafletInterop.Components.Base;
