@@ -1,10 +1,5 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using System.Runtime.Versioning;
-using BlazorLeafletInterop.Interops;
+﻿namespace BlazorLeafletInterop.Models.Basics;
 
-namespace BlazorLeafletInterop.Models.Basics;
-
-[SupportedOSPlatform("browser")]
 public class LatLng
 {
     public LatLng()
@@ -59,10 +54,5 @@ public class LatLng
     public double GetDistanceToPointInMeters(LatLng to)
     {
         return GetDistanceToPointInKilometers(to) * 1000;
-    }
-    
-    public object ToJsObject()
-    {
-        return LeafletInterop.JsonToJsObject(LeafletInterop.ObjectToJson(this));
     }
 }

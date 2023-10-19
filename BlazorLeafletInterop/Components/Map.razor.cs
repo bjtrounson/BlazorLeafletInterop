@@ -5,16 +5,17 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using BlazorLeafletInterop.Components.Base;
+using BlazorLeafletInterop.Components.Layers.UI;
 using BlazorLeafletInterop.Interops;
 using BlazorLeafletInterop.Models;
 using BlazorLeafletInterop.Models.Basics;
-using BlazorLeafletInterop.Models.Map;
+using BlazorLeafletInterop.Models.Options.Map;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace BlazorLeafletInterop.Components;
 
-[SupportedOSPlatform("browser")]
-public partial class Map : IDisposable
+public partial class Map : IAsyncDisposable
 {
     [Parameter]
     public MapOptions MapOptions { get; set; } = new();
@@ -27,24 +28,50 @@ public partial class Map : IDisposable
     
     [Parameter]
     public string? Class { get; set; }
+    
+    [Parameter]
+    public Action<IJSObjectReference> EachLayerCallback { get; set; } = default!;
+    
+    [Parameter]
+    public Action AfterRender { get; set; } = () => { };
 
-    public object? MapRef { get; set; }
+    public IJSObjectReference? MapRef { get; set; }
     public bool IsRendered { get; set; }
+    
+    public DotNetObjectReference<Map>? MapRefDotNetObjectRef { get; set; }
+    
+    [JSInvokable]
+    public void EachLayerDotNetToJs(IJSObjectReference layer) => EachLayerCallback(layer);
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override void OnInitialized()
     {
-        base.OnAfterRender(firstRender);
+        MapRefDotNetObjectRef = DotNetObjectReference.Create(this);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
         if (!firstRender) return;
-        MapRef = Interop.CreateMap(Id, MapOptions.ToJsObject());
+        MapRef = await CreateMap(Id, MapOptions).ConfigureAwait(false);
         if (MapRef is null) return;
         IsRendered = true;
         StateHasChanged();
+        AfterRender();
     }
-    
-    public Map EachLayer(Action<object> fn, object? context)
+
+    private async Task<IJSObjectReference> CreateMap(string id, MapOptions options)
+    {
+        var bundleModule = await BundleInterop.GetModule();
+        var mapOptionsJson = LeafletInterop.ObjectToJson(options);
+        var mapOptionsObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", mapOptionsJson);
+        return await bundleModule.InvokeAsync<IJSObjectReference>("createMap", id, mapOptionsObject);
+    }
+
+    public async Task<Map> EachLayer(object? context)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.EachLayer(MapRef, fn, context);
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("eachLayer", MapRefDotNetObjectRef, "EachLayerDotNetToJs", MapRef, context);
         return this;
     }
 
@@ -54,10 +81,11 @@ public partial class Map : IDisposable
     /// <param name="popup"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map OpenPopup(Popup popup)
+    public async Task<Map> OpenPopup(Popup popup)
     {
         if (MapRef is null || popup.PopupRef is null) throw new NullReferenceException("MapRef is null or popup is null");
-        Interop.OpenPopup(MapRef, popup.PopupRef);
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("openMapPopup", MapRef, popup.PopupRef);
         return this;
     }
     
@@ -67,10 +95,11 @@ public partial class Map : IDisposable
     /// <param name="popup"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map ClosePopup(Popup popup)
+    public async Task<Map> ClosePopup(Popup popup)
     {
         if (MapRef is null || popup.PopupRef is null) throw new NullReferenceException("MapRef is null or popup is null");
-        Interop.ClosePopup(MapRef, popup.PopupRef);
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("closeMapPopup", MapRef, popup.PopupRef);
         return this;
     }
     
@@ -80,10 +109,11 @@ public partial class Map : IDisposable
     /// <param name="tooltip"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map OpenTooltip(Tooltip tooltip)
+    public async Task<Map> OpenTooltip(Tooltip tooltip)
     {
         if (MapRef is null || tooltip.TooltipRef is null) throw new NullReferenceException("MapRef is null or tooltip is null");
-        Interop.OpenTooltip(MapRef, tooltip.TooltipRef);
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("openMapTooltip", MapRef, tooltip.TooltipRef);
         return this;
     }
     
@@ -93,10 +123,11 @@ public partial class Map : IDisposable
     /// <param name="tooltip"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map CloseTooltip(Tooltip tooltip)
+    public async Task<Map> CloseTooltip(Tooltip tooltip)
     {
         if (MapRef is null || tooltip.TooltipRef is null) throw new NullReferenceException("MapRef is null or tooltip is null");
-        Interop.CloseTooltip(MapRef, tooltip.TooltipRef);
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("closeMapTooltip", MapRef, tooltip.TooltipRef);
         return this;
     }
     
@@ -107,10 +138,11 @@ public partial class Map : IDisposable
     /// <param name="zoom"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map FlyTo(LatLng latLng, double zoom)
+    public async Task<Map> FlyTo(LatLng latLng, double zoom)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.FlyTo(MapRef, latLng.ToJsObject(), zoom);
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("flyTo", MapRef, latLng, zoom);
         return this;
     }
     
@@ -121,10 +153,11 @@ public partial class Map : IDisposable
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map FlyToBounds(LatLngBounds bounds, FitBoundsOptions? options)
+    public async Task<Map> FlyToBounds(LatLngBounds bounds, FitBoundsOptions? options)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.FlyToBounds(MapRef, bounds.ToJsObject(), options?.ToJsObject());
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("flyToBounds", MapRef, bounds, options);
         return this;
     }
     
@@ -135,10 +168,11 @@ public partial class Map : IDisposable
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map FitBounds(LatLngBounds bounds, FitBoundsOptions? options)
+    public async Task<Map> FitBounds(LatLngBounds bounds, FitBoundsOptions? options)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.FitBounds(MapRef, bounds.ToJsObject(), options?.ToJsObject());
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("fitBounds", MapRef, bounds, options);
         return this;
     }
     
@@ -148,10 +182,11 @@ public partial class Map : IDisposable
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map FitWorld(FitBoundsOptions? options)
+    public async Task<Map> FitWorld(FitBoundsOptions? options)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.FitWorld(MapRef, options?.ToJsObject());
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("fitWorld", MapRef, options);
         return this;
     }
     
@@ -162,10 +197,11 @@ public partial class Map : IDisposable
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map PanTo(LatLng latLng, PanOptions? options)
+    public async Task<Map> PanTo(LatLng latLng, PanOptions? options)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.PanTo(MapRef, latLng.ToJsObject(), options?.ToJsObject());
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("panTo", MapRef, latLng, options);
         return this;
     }
     
@@ -176,10 +212,11 @@ public partial class Map : IDisposable
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map PanBy(Point point, PanOptions? options)
+    public async Task<Map> PanBy(Point point, PanOptions? options)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.PanBy(MapRef, point.ToJsObject(), options?.ToJsObject());
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("panBy", MapRef, point, options);
         return this;
     }
     
@@ -189,10 +226,11 @@ public partial class Map : IDisposable
     /// <param name="bounds"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map SetMaxBounds(LatLngBounds bounds)
+    public async Task<Map> SetMaxBounds(LatLngBounds bounds)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.SetMaxBounds(MapRef, bounds.ToJsObject());
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("setMaxBounds", MapRef, bounds);
         return this;
     }
     
@@ -202,10 +240,11 @@ public partial class Map : IDisposable
     /// <param name="zoom"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map SetMinZoom(double zoom)
+    public async Task<Map> SetMinZoom(double zoom)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.SetMinZoom(MapRef, zoom);
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("setMinZoom", MapRef, zoom);
         return this;
     }
     
@@ -215,10 +254,11 @@ public partial class Map : IDisposable
     /// <param name="zoom"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map SetMaxZoom(double zoom)
+    public async Task<Map> SetMaxZoom(double zoom)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.SetMaxZoom(MapRef, zoom);
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("setMaxZoom", MapRef, zoom);
         return this;
     }
     
@@ -229,10 +269,11 @@ public partial class Map : IDisposable
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map PanInsideBounds(LatLngBounds bounds, PanOptions? options)
+    public async Task<Map> PanInsideBounds(LatLngBounds bounds, PanOptions? options)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.PanInsideBounds(MapRef, bounds.ToJsObject(), options?.ToJsObject());
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("panInsideBounds", MapRef, bounds, options);
         return this;
     }
     
@@ -245,10 +286,11 @@ public partial class Map : IDisposable
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map PanInside(LatLng latLng, PanOptions? options)
+    public async Task<Map> PanInside(LatLng latLng, PanOptions? options)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.PanInside(MapRef, latLng.ToJsObject(), options?.ToJsObject());
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("panInside", MapRef, latLng, options);
         return this;
     }
     
@@ -259,10 +301,11 @@ public partial class Map : IDisposable
     /// <param name="animate"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map InvalidateSize(bool animate)
+    public async Task<Map> InvalidateSize(bool animate)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.InvalidateSize(MapRef, animate);
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("invalidateSize", MapRef, animate);
         return this;
     }
     
@@ -271,10 +314,11 @@ public partial class Map : IDisposable
     /// </summary>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map Stop()
+    public async Task<Map> Stop()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.Stop(MapRef);
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("stop", MapRef);
         return this;
     }
     
@@ -285,10 +329,11 @@ public partial class Map : IDisposable
     /// <param name="zoom"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map SetView(LatLng latLng, double zoom)
+    public async Task<Map> SetView(LatLng latLng, double zoom)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.SetView(MapRef, latLng.ToJsObject(), zoom);
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("setView", MapRef, latLng, zoom);
         return this;
     }
     
@@ -298,10 +343,11 @@ public partial class Map : IDisposable
     /// <param name="zoom"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map SetZoom(double zoom)
+    public async Task<Map> SetZoom(double zoom)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.SetZoom(MapRef, zoom);
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("setZoom", MapRef, zoom);
         return this;
     }
     
@@ -312,10 +358,11 @@ public partial class Map : IDisposable
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map ZoomIn(double delta, ZoomOptions? options)
+    public async Task<Map> ZoomIn(double delta, ZoomOptions? options)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.ZoomIn(MapRef, delta, options?.ToJsObject());
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("zoomIn", MapRef, delta, options);
         return this;
     }
     
@@ -326,10 +373,11 @@ public partial class Map : IDisposable
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map ZoomOut(double delta, ZoomOptions? options)
+    public async Task<Map> ZoomOut(double delta, ZoomOptions? options)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.ZoomOut(MapRef, delta, options?.ToJsObject());
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("zoomOut", MapRef, delta, options);
         return this;
     }
     
@@ -341,208 +389,84 @@ public partial class Map : IDisposable
     /// <param name="options"></param>
     /// <returns></returns>
     /// <exception cref="NullReferenceException"></exception>
-    public Map SetZoomAround(LatLng latLng, double zoom, ZoomOptions? options)
+    public async Task<Map> SetZoomAround(LatLng latLng, double zoom, ZoomOptions? options)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        Interop.SetZoomAround(MapRef, latLng.ToJsObject(), zoom, options?.ToJsObject());
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("setZoomAround", MapRef, latLng, zoom, options);
         return this;
     }
     
     #region Methods for Getting Map State
     
-    public LatLng? GetCenter()
+    public async Task<LatLng?> GetCenter()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        var center = Interop.GetCenter(MapRef);
+        var bundleModule = await BundleInterop.GetModule();
+        var center = await bundleModule.InvokeAsync<string>("getCenter", MapRef);
         return JsonSerializer.Deserialize<LatLng>(center);
     }
     
-    public double GetZoom()
+    public async Task<double> GetZoom()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        return Interop.GetZoom(MapRef);
+        var bundleModule = await BundleInterop.GetModule();
+        return await bundleModule.InvokeAsync<double>("getZoom", MapRef);
     }
     
-    public LatLngBounds? GetBounds()
+    public async Task<LatLngBounds?> GetBounds()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        var bounds = Interop.GetBounds(MapRef);
+        var bundleModule = await BundleInterop.GetModule();
+        var bounds = await bundleModule.InvokeAsync<string>("getBounds", MapRef);
         return JsonSerializer.Deserialize<LatLngBounds>(bounds);
     }
     
-    public double GetMinZoom()
+    public async Task<double> GetMinZoom()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        return Interop.GetMinZoom(MapRef);
+        var bundleModule = await BundleInterop.GetModule();
+        return await bundleModule.InvokeAsync<double>("getMinZoom", MapRef);
     }
     
-    public double GetMaxZoom()
+    public async Task<double> GetMaxZoom()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        return Interop.GetMaxZoom(MapRef);
+        var bundleModule = await BundleInterop.GetModule();
+        return await bundleModule.InvokeAsync<double>("getMaxZoom", MapRef);
     }
     
-    public Point? GetSize()
+    public async Task<Point?> GetSize()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        var size = Interop.GetSize(MapRef);
+        var bundleModule = await BundleInterop.GetModule();
+        var size = await bundleModule.InvokeAsync<string>("getSize", MapRef);
         return JsonSerializer.Deserialize<Point>(size);
     }
     
-    public Point? GetPixelOrigin()
+    public async Task<Point?> GetPixelOrigin()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
-        var pixelOrigin = Interop.GetPixelOrigin(MapRef);
+        var bundleModule = await BundleInterop.GetModule();
+        var pixelOrigin = await bundleModule.InvokeAsync<string>("getPixelOrigin", MapRef);
         return JsonSerializer.Deserialize<Point>(pixelOrigin);
     }
     
     #endregion
 
-    [SupportedOSPlatform("browser")]
-    public partial class Interop
+    public async Task RemoveLayer(IJSObjectReference layer)
     {
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
-        static Interop() {}
-        
-        [JSImport("createMap", "BlazorLeafletInterop")]
-        public static partial JSObject CreateMap(string id, [JSMarshalAs<JSType.Any>] object options);
-
-        #region Method for Layers and Controls
-        
-        [JSImport("addControl", "BlazorLeafletInterop")]
-        public static partial JSObject AddControl([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object control);
-        
-        [JSImport("removeControl", "BlazorLeafletInterop")]
-        public static partial JSObject RemoveControl([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object control);
-        
-        [JSImport("addLayer", "BlazorLeafletInterop")]
-        public static partial JSObject AddLayer([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("removeLayer", "BlazorLeafletInterop")]
-        public static partial JSObject RemoveLayer([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("hasLayer", "BlazorLeafletInterop")]
-        public static partial bool HasLayer([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("eachLayer", "BlazorLeafletInterop")]
-        public static partial JSObject EachLayer([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Function<JSType.Any>>] Action<object> fn, [JSMarshalAs<JSType.Any>] object? context);
-        
-        [JSImport("openMapPopup", "BlazorLeafletInterop")]
-        public static partial JSObject OpenPopup([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object popup);
-        
-        [JSImport("closeMapPopup", "BlazorLeafletInterop")]
-        public static partial JSObject ClosePopup([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object? popup);
-        
-        [JSImport("openMapTooltip", "BlazorLeafletInterop")]
-        public static partial JSObject OpenTooltip([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object tooltip);
-        
-        [JSImport("closeMapTooltip", "BlazorLeafletInterop")]
-        public static partial JSObject CloseTooltip([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object tooltip);
-        
-        #endregion
-        
-        #region Methods for modifiying map state
-        
-        [JSImport("setView", "BlazorLeafletInterop")]
-        public static partial JSObject SetView([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object latLng, double zoom);
-        
-        [JSImport("setZoom", "BlazorLeafletInterop")]
-        public static partial JSObject SetZoom([JSMarshalAs<JSType.Any>] object map, double zoom);
-        
-        [JSImport("zoomIn", "BlazorLeafletInterop")]
-        public static partial JSObject ZoomIn([JSMarshalAs<JSType.Any>] object map, double delta, [JSMarshalAs<JSType.Any>] object? options);
-        
-        [JSImport("zoomOut", "BlazorLeafletInterop")]
-        public static partial JSObject ZoomOut([JSMarshalAs<JSType.Any>] object map, double delta, [JSMarshalAs<JSType.Any>] object? options);
-        
-        [JSImport("setZoomAround", "BlazorLeafletInterop")]
-        public static partial JSObject SetZoomAround([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object latLng, double zoom, [JSMarshalAs<JSType.Any>] object? options);
-        
-        [JSImport("fitBounds", "BlazorLeafletInterop")]
-        public static partial JSObject FitBounds([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object bounds, [JSMarshalAs<JSType.Any>] object? options);
-        
-        [JSImport("fitWorld", "BlazorLeafletInterop")]
-        public static partial JSObject FitWorld([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object? options);
-        
-        [JSImport("panTo", "BlazorLeafletInterop")]
-        public static partial JSObject PanTo([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object latLng, [JSMarshalAs<JSType.Any>] object? options);
-        
-        [JSImport("panBy", "BlazorLeafletInterop")]
-        public static partial JSObject PanBy([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object point, [JSMarshalAs<JSType.Any>] object? options);
-        
-        [JSImport("flyTo", "BlazorLeafletInterop")]
-        public static partial JSObject FlyTo([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object latLng, double zoom);
-        
-        [JSImport("flyToBounds", "BlazorLeafletInterop")]
-        public static partial JSObject FlyToBounds([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object bounds, [JSMarshalAs<JSType.Any>] object? options);
-        
-        [JSImport("setMaxBounds", "BlazorLeafletInterop")]
-        public static partial JSObject SetMaxBounds([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object bounds);
-        
-        [JSImport("setMinZoom", "BlazorLeafletInterop")]
-        public static partial JSObject SetMinZoom([JSMarshalAs<JSType.Any>] object map, double zoom);
-        
-        [JSImport("setMaxZoom", "BlazorLeafletInterop")]
-        public static partial JSObject SetMaxZoom([JSMarshalAs<JSType.Any>] object map, double zoom);
-        
-        [JSImport("panInsideBounds", "BlazorLeafletInterop")]
-        public static partial JSObject PanInsideBounds([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object bounds, [JSMarshalAs<JSType.Any>] object? options);
-        
-        [JSImport("panInside", "BlazorLeafletInterop")]
-        public static partial JSObject PanInside([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object latLng, [JSMarshalAs<JSType.Any>] object? options);
-        
-        [JSImport("invalidateSize", "BlazorLeafletInterop")]
-        public static partial JSObject InvalidateSize([JSMarshalAs<JSType.Any>] object map, bool animate);
-        
-        [JSImport("stop", "BlazorLeafletInterop")]
-        public static partial JSObject Stop([JSMarshalAs<JSType.Any>] object map);
-        
-        #endregion
-        
-        #region Methods for Getting Map State
-        
-        [JSImport("getCenter", "BlazorLeafletInterop")]
-        public static partial string GetCenter([JSMarshalAs<JSType.Any>] object map);
-            
-        [JSImport("getZoom", "BlazorLeafletInterop")]
-        public static partial double GetZoom([JSMarshalAs<JSType.Any>] object map);
-        
-        [JSImport("getBounds", "BlazorLeafletInterop")]
-        public static partial string GetBounds([JSMarshalAs<JSType.Any>] object map);
-        
-        [JSImport("getMinZoom", "BlazorLeafletInterop")]
-        public static partial double GetMinZoom([JSMarshalAs<JSType.Any>] object map);
-        
-        [JSImport("getMaxZoom", "BlazorLeafletInterop")]
-        public static partial double GetMaxZoom([JSMarshalAs<JSType.Any>] object map);
-        
-        [JSImport("getBoundsZoom", "BlazorLeafletInterop")]
-        public static partial double GetBoundsZoom([JSMarshalAs<JSType.Any>] object map, [JSMarshalAs<JSType.Any>] object bounds, bool? inside, [JSMarshalAs<JSType.Any>] object? padding);
-        
-        [JSImport("getSize", "BlazorLeafletInterop")]
-        public static partial string GetSize([JSMarshalAs<JSType.Any>] object map);
-        
-        [JSImport("getPixelBounds", "BlazorLeafletInterop")]
-        public static partial string GetPixelBounds([JSMarshalAs<JSType.Any>] object map);
-        
-        [JSImport("getPixelOrigin", "BlazorLeafletInterop")]
-        public static partial string GetPixelOrigin([JSMarshalAs<JSType.Any>] object map);
-        
-        [JSImport("getPixelWorldBounds", "BlazorLeafletInterop")]
-        public static partial string GetPixelWorldBounds([JSMarshalAs<JSType.Any>] object map, int? zoom);
-        
-        #endregion
-        
-        [JSImport("remove", "BlazorLeafletInterop")]
-        public static partial void Remove([JSMarshalAs<JSType.Any>] object map);
+        var bundleModule = await BundleInterop.GetModule();
+        await bundleModule.InvokeVoidAsync("removeLayer", MapRef, layer);
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         if (MapRef is null) return;
-        Interop.EachLayer(MapRef, Interop.Remove, null);
-        Interop.Remove(MapRef);
+        async void LayerCallback(IJSObjectReference layer) => await RemoveLayer(layer);
+        EachLayerCallback = LayerCallback;
+        await EachLayer(null);
+        MapRefDotNetObjectRef?.Dispose();
         GC.SuppressFinalize(this);
     }
 }

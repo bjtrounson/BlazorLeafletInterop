@@ -1,10 +1,5 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using System.Runtime.Versioning;
-using BlazorLeafletInterop.Interops;
+﻿namespace BlazorLeafletInterop.Models.Basics;
 
-namespace BlazorLeafletInterop.Models.Basics;
-
-[SupportedOSPlatform("browser")]
 public class LatLngBounds
 {
     public LatLngBounds()
@@ -106,10 +101,5 @@ public class LatLngBounds
     public bool Equals(LatLngBounds bounds)
     {
         return SouthWest.Equals(bounds.SouthWest) && NorthEast.Equals(bounds.NorthEast);
-    }
-    
-    public object ToJsObject()
-    {
-        return LeafletInterop.JsonToJsObject(LeafletInterop.ObjectToJson(this));
     }
 }

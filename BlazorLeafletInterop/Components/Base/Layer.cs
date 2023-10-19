@@ -1,84 +1,180 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices.JavaScript;
-using System.Runtime.Versioning;
-using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
-using BlazorLeafletInterop.Models;
+﻿using BlazorLeafletInterop.Models;
+using BlazorLeafletInterop.Models.Basics;
+using BlazorLeafletInterop.Models.Options.Base;
+using BlazorLeafletInterop.Models.Options.Layer.UI;
+using Microsoft.JSInterop;
 
 namespace BlazorLeafletInterop.Components.Base;
 
-[SupportedOSPlatform("browser")]
-public partial class Layer : Evented
+public class Layer : Evented
 {
     public LayerOptions LayerOptions { get; set; } = new();
 
-    protected static partial class LayerInterop
+    public async Task<T> AddTo<T>(IJSObjectReference? map, IJSObjectReference? @ref)
     {
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
-        static LayerInterop() {}
-        
-        [JSImport("addTo", "BlazorLeafletInterop")]
-        public static partial JSObject AddTo([JSMarshalAs<JSType.Any>] object layer, [JSMarshalAs<JSType.Any>] object map);
-        
-        [JSImport("remove", "BlazorLeafletInterop")]
-        public static partial JSObject Remove([JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("removeFrom", "BlazorLeafletInterop")]
-        public static partial JSObject RemoveFrom([JSMarshalAs<JSType.Any>] object layer, [JSMarshalAs<JSType.Any>] object map);
-        
-        [JSImport("getPane", "BlazorLeafletInterop")]
-        public static partial JSObject GetPane([JSMarshalAs<JSType.Any>] object layer, string? name);
-        
-        [JSImport("getAttribution", "BlazorLeafletInterop")]
-        public static partial JSObject GetAttribution([JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("bindPopup", "BlazorLeafletInterop")]
-        public static partial JSObject BindPopup([JSMarshalAs<JSType.Any>] object layer, string content, [JSMarshalAs<JSType.Any>] object options);
-        
-        [JSImport("unbindPopup", "BlazorLeafletInterop")]
-        public static partial JSObject UnbindPopup([JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("openPopup", "BlazorLeafletInterop")]
-        public static partial JSObject OpenPopup([JSMarshalAs<JSType.Any>] object layer, [JSMarshalAs<JSType.Any>] object? latLng);
-        
-        [JSImport("closePopup", "BlazorLeafletInterop")]
-        public static partial JSObject ClosePopup([JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("togglePopup", "BlazorLeafletInterop")]
-        public static partial JSObject TogglePopup([JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("isPopupOpen", "BlazorLeafletInterop")]
-        public static partial bool IsPopupOpen([JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("setPopupContent", "BlazorLeafletInterop")]
-        public static partial JSObject SetPopupContent([JSMarshalAs<JSType.Any>] object layer, string content);
-        
-        [JSImport("getPopup", "BlazorLeafletInterop")]
-        public static partial JSObject GetPopup([JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("bindTooltip", "BlazorLeafletInterop")]
-        public static partial JSObject BindTooltip([JSMarshalAs<JSType.Any>] object layer, string content, [JSMarshalAs<JSType.Any>] object options);
-        
-        [JSImport("unbindTooltip", "BlazorLeafletInterop")]
-        public static partial JSObject UnbindTooltip([JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("openTooltip", "BlazorLeafletInterop")]
-        public static partial JSObject OpenTooltip([JSMarshalAs<JSType.Any>] object layer, [JSMarshalAs<JSType.Any>] object? latLng);
-        
-        [JSImport("closeTooltip", "BlazorLeafletInterop")]
-        public static partial JSObject CloseTooltip([JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("toggleTooltip", "BlazorLeafletInterop")]
-        public static partial JSObject ToggleTooltip([JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("isTooltipOpen", "BlazorLeafletInterop")]
-        public static partial bool IsTooltipOpen([JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("setTooltipContent", "BlazorLeafletInterop")]
-        public static partial JSObject SetTooltipContent([JSMarshalAs<JSType.Any>] object layer, string content);
-        
-        [JSImport("getTooltip", "BlazorLeafletInterop")]
-        public static partial JSObject GetTooltip([JSMarshalAs<JSType.Any>] object layer);
+        if (@ref is null || map is null) throw new NullReferenceException("Ref or map is null");
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("addTo", @ref, map);
+        return (T)(object)this;
+    }
+
+    public async Task<T> RemoveFrom<T>(IJSObjectReference? map, IJSObjectReference? @ref)
+    {
+        if (@ref is null || map is null) throw new NullReferenceException("Ref or map is null");
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("removeFrom", @ref, map);
+        return (T)(object)this;
+    }
+
+    public async Task<T> Remove<T>(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("remove", @ref);
+        return (T)(object)this;
+    }
+    
+    public async Task<IJSObjectReference> GetPane(string? name, IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var paneRef = await module.InvokeAsync<IJSObjectReference>("getPane", @ref, name);
+        return paneRef;
+    }
+    
+    public async Task<IJSObjectReference> GetAttribution(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var attributionRef = await module.InvokeAsync<IJSObjectReference>("getAttribution", @ref);
+        return attributionRef;
+    }
+    
+    public async Task<IJSObjectReference> BindPopup(IJSObjectReference? @ref, string content, PopupOptions? options)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var popupRef = await module.InvokeAsync<IJSObjectReference>("bindPopup", @ref, content, options);
+        return popupRef;
+    }
+    
+    public async Task<IJSObjectReference> UnbindPopup(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var popupRef = await module.InvokeAsync<IJSObjectReference>("unbindPopup", @ref);
+        return popupRef;
+    }
+    
+    public async Task<IJSObjectReference> OpenPopup(IJSObjectReference? @ref, LatLng? latLng)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var popupRef = await module.InvokeAsync<IJSObjectReference>("openPopup", @ref, latLng);
+        return popupRef;
+    }
+    
+    public async Task<IJSObjectReference> ClosePopup(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var popupRef = await module.InvokeAsync<IJSObjectReference>("closePopup", @ref);
+        return popupRef;
+    }
+    
+    public async Task<IJSObjectReference> TogglePopup(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var popupRef = await module.InvokeAsync<IJSObjectReference>("togglePopup", @ref);
+        return popupRef;
+    }
+    
+    public async Task<bool> IsPopupOpen(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var isOpen = await module.InvokeAsync<bool>("isPopupOpen", @ref);
+        return isOpen;
+    }
+    
+    public async Task<IJSObjectReference> SetPopupContent(IJSObjectReference? @ref, string content)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var popupRef = await module.InvokeAsync<IJSObjectReference>("setPopupContent", @ref, content);
+        return popupRef;
+    }
+    
+    public async Task<IJSObjectReference> GetPopup(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var popupRef = await module.InvokeAsync<IJSObjectReference>("getPopup", @ref);
+        return popupRef;
+    }
+    
+    public async Task<IJSObjectReference> BindTooltip(IJSObjectReference? @ref, string content, TooltipOptions? options)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var tooltipRef = await module.InvokeAsync<IJSObjectReference>("bindTooltip", @ref, content, options);
+        return tooltipRef;
+    }
+    
+    public async Task<IJSObjectReference> UnbindTooltip(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var tooltipRef = await module.InvokeAsync<IJSObjectReference>("unbindTooltip", @ref);
+        return tooltipRef;
+    }
+    
+    public async Task<IJSObjectReference> OpenTooltip(IJSObjectReference? @ref, LatLng? latLng)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var tooltipRef = await module.InvokeAsync<IJSObjectReference>("openTooltip", @ref, latLng);
+        return tooltipRef;
+    }
+    
+    public async Task<IJSObjectReference> CloseTooltip(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var tooltipRef = await module.InvokeAsync<IJSObjectReference>("closeTooltip", @ref);
+        return tooltipRef;
+    }
+    
+    public async Task<IJSObjectReference> ToggleTooltip(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var tooltipRef = await module.InvokeAsync<IJSObjectReference>("toggleTooltip", @ref);
+        return tooltipRef;
+    }
+    
+    public async Task<bool> IsTooltipOpen(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var isOpen = await module.InvokeAsync<bool>("isTooltipOpen", @ref);
+        return isOpen;
+    }
+    
+    public async Task<IJSObjectReference> SetTooltipContent(IJSObjectReference? @ref, string content)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var tooltipRef = await module.InvokeAsync<IJSObjectReference>("setTooltipContent", @ref, content);
+        return tooltipRef;
+    }
+    
+    public async Task<IJSObjectReference> GetTooltip(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException("Ref is null");
+        var module = await BundleInterop.GetModule();
+        var tooltipRef = await module.InvokeAsync<IJSObjectReference>("getTooltip", @ref);
+        return tooltipRef;
     }
 }

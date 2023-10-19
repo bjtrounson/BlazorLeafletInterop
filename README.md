@@ -1,11 +1,39 @@
 ﻿# Blazor Leaflet Interop
-**WARNING: This is only works with Blazor WASM and not Blazor Server, since it uses the new JSImport / JSExport API** \
-It is a work in progress and only supports a small subset of the Leaflet API. 
+**It is a work in progress and only supports parts of the Leaflet API.** \
+**I have only tested this on Blazor WASM but should work with Blazor Server.**
 
+## Implemented Features
+- Map
+- Events
+- Base Layers
+    - GridLayer
+    - Layer
+    - InteractiveLayer
+- Raster Layers
+  - TileLayer
+- UI Layers
+  - Marker
+  - Popup
+  - Tooltip
+  - DivOverlay
+- Basic
+  - LatLng
+  - LatLngBounds
+  - Icon (Create this via the IconFactoryInterop service)
+  - Point
+- Other Layers
+  - GeoJSON
+  - FeatureGroup
+  - LayerGroup
+- Vector Layers
+  - Path
+  - Polyline
+
+**Events should work but are not tested yet.**
 ## Before you start
-Add this to your Program.cs
+Add this service to your Program.cs
 ```csharp
-await MapBundleImport.ImportAsync();
+builder.Services.AddMapService();
 ```
 
 ## Simple Usage
@@ -18,9 +46,9 @@ To make a simple map use the following code:
 @using BlazorLeafletInterop.Models
 @using BlazorLeafletInterop.Models.Basics
 
-<Map @ref="Map" Class="map" MapOptions="Options">
+<Map Class="map" MapOptions="Options">
     <TileLayer @ref="TileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
-    <Marker Icon="IconRef" LatLng="new LatLng(50, 9)">
+    <Marker LatLng="new LatLng(50, 9)">
         <Popup>
             Testing Popup Content
         </Popup>
@@ -31,26 +59,18 @@ To make a simple map use the following code:
 </Map>
 
 @code {
-    private Map? Map { get; set; }
-    private TileLayer? TileLayer { get; set; }
     private MapOptions Options { get; set; } = new() { Center = new LatLng(50, 9), Zoom = 13 };
-    private Icon? IconRef { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-	    var options = new IconOptions()
-	    {
-		    IconUrl = "https://leafletjs.com/examples/custom-icons/leaf-green.png", 
-		    IconSize = new Point(38, 95), 
-		    IconAnchor = new Point(22, 94), 
-		    PopupAnchor = new Point(-3, -76), 
-		    ShadowUrl = "https://leafletjs.com/examples/custom-icons/leaf-shadow.png", 
-		    ShadowSize = new Point(50, 64), 
-		    ShadowAnchor = new Point(4, 62), 
-		    ClassName = "my-div-icon"
-	    };
-	    IconRef = new Icon(options);
-	}
 }
 ```
+
+## TODO
+- Add Controls
+- Add ImageOverlay, SVGOverlay, VideoOverlay
+- Add Renderers
+- Add Rectangle, Polygon, Circle, CircleMarker
+- Add Bounds, DivIcon
+- Plugin Support
+
+## Contributing
+If you want to contribute to this project, feel free to do so. Just fork the project and create a pull request.
 

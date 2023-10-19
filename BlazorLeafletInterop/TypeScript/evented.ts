@@ -1,4 +1,5 @@
 ﻿import * as L from 'leaflet';
+import DotNetObject = DotNet.DotNetObject;
 
 type Events = 
     "baselayerchange"
@@ -52,39 +53,39 @@ type Events =
     | "tileabort"
     | "tileerror";
 
-export function on(layer: L.Evented, event: string, callback: (event: any) => void): L.Evented {
-    return layer.on(event, callback);
+export function on(instance: DotNetObject, layer: L.Evented, event: string): L.Evented {
+    return layer.on(event, (e: any) => instance.invokeMethodAsync("OnEventCallback", e));
 }
 
-export function off(layer: L.Evented, event: string | undefined | null, callback: (event: any) => void | undefined | null): L.Evented {
+export function off(instance: DotNetObject, layer: L.Evented, event: string | undefined | null): L.Evented {
     if (event === undefined || event === null) {
         return layer.off();
     }
-    return layer.off(event, callback);
+    return layer.off(event, (e: any) => instance.invokeMethodAsync("OffEventCallback", e));
 }
 
-export function once(layer: L.Evented, event: string, callback: (event: any) => void): L.Evented {
-    return layer.once(event, callback);
+export function once(instance: DotNetObject, layer: L.Evented, event: string): L.Evented {
+    return layer.once(event, (e: any) => instance.invokeMethodAsync("OnceEventCallback", e));
 }
 
 export function fire(layer: L.Evented, event: string, data: any): L.Evented {
     return layer.fire(event, data);
 }
 
-export function addEventListener(layer: L.Evented, event: string, callback: (event: any) => void): L.Evented {
-    return layer.addEventListener(event, callback);
+export function addEventListener(instance: DotNetObject, layer: L.Evented, event: string): L.Evented {
+    return layer.addEventListener(event, (e: any) => instance.invokeMethodAsync("AddEventListenerEventCallback", e));
 }
 
-export function removeEventListener(layer: L.Evented, event: string, callback: (event: any) => void): L.Evented {
-    return layer.removeEventListener(event, callback);
+export function removeEventListener(instance: DotNetObject, layer: L.Evented, event: string): L.Evented {
+    return layer.removeEventListener(event, (e: any) => instance.invokeMethodAsync("RemoveEventListenerEventCallback", e));
 }
 
 export function clearAllEventListeners(layer: L.Evented): L.Evented {
     return layer.clearAllEventListeners();
 }
 
-export function addOneTimeEventListener(layer: L.Evented, event: string, callback: (event: any) => void): L.Evented {
-    return layer.addOneTimeEventListener(event, callback);
+export function addOneTimeEventListener(instance: DotNetObject, layer: L.Evented, event: string): L.Evented {
+    return layer.addOneTimeEventListener(event, (e: any) => instance.invokeMethodAsync("AddOneTimeEventListenerEventCallback", e));
 }
 
 export function fireEvent(layer: L.Evented, event: string, data: any): L.Evented {

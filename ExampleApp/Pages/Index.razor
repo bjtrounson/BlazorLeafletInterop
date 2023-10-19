@@ -1,16 +1,18 @@
 ﻿@page "/"
 
 @using BlazorLeafletInterop.Components
-@using BlazorLeafletInterop.Components.Base
-@using BlazorLeafletInterop.Models
+@using BlazorLeafletInterop.Components.Layers.Raster
+@using BlazorLeafletInterop.Components.Layers.Vector
+@using BlazorLeafletInterop.Interops
 @using BlazorLeafletInterop.Models.Basics
-@using BlazorLeafletInterop.Models.Map
+@using BlazorLeafletInterop.Components.Layers.UI
+@using BlazorLeafletInterop.Models.Options.Map
 
-<Map @ref="Map" Class="map" MapOptions="Options">
+<Map @ref="Map" Class="map" MapOptions="Options" AfterRender="@(() => AfterRender())">
 	<TileLayer @ref="TileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
 	@if (IsFirstMarker)
 	{
-		<Marker Icon="IconRef" LatLng="new LatLng(50, 8.9)">
+		<Marker LatLng="new LatLng(50, 8.9)">
 			<Popup>
 				First Marker Popup Content
 			</Popup>
@@ -21,7 +23,7 @@
 	}
 	else
 	{
-		<Marker Icon="IconRef" LatLng="new LatLng(50, 9)">
+		<Marker LatLng="new LatLng(50, 9)">
 			<Popup>
 				Testing Popup Content
 			</Popup>
@@ -37,27 +39,25 @@
 </div>
 
 @code {
+	[Inject]
+	public IIconFactoryInterop IconFactoryInterop { get; set; } = default!;
+	
+	[Inject]
+	public IBundleInterop BundleInterop { get; set; } = default!;
+	
     private Map? Map { get; set; }
     private TileLayer? TileLayer { get; set; }
-    private MapOptions Options { get; set; } = new() { Center = new LatLng(50, 9), Zoom = 13 };
-	private Icon? IconRef { get; set; }
+    private MapOptions Options { get; set; } = new() { PreferCanvas = true, Center = new LatLng(50, 9), Zoom = 13 };
 	private bool IsFirstMarker { get; set; } = true;
-
-	protected override Task OnInitializedAsync()
+	private Polyline? Polyline { get; set; }
+	
+	private async Task AfterRender()
 	{
-		var options = new IconOptions()
-		{
-			IconUrl = "https://leafletjs.com/examples/custom-icons/leaf-green.png", 
-			IconSize = new Point(38, 95), 
-			IconAnchor = new Point(22, 94), 
-			PopupAnchor = new Point(-3, -76), 
-			ShadowUrl = "https://leafletjs.com/examples/custom-icons/leaf-shadow.png", 
-			ShadowSize = new Point(50, 64), 
-			ShadowAnchor = new Point(4, 62), 
-			ClassName = "my-div-icon"
-		};
-		IconRef = new Icon(options);
-		return base.OnInitializedAsync();
+		Polyline = new Polyline();
+		if (Map is null) return;
+		await Polyline.Init(BundleInterop, Map.MapRef);
+		await Polyline.SetLatLngs(new List<LatLng>() { new LatLng(50, 8.9), new LatLng(50, 9) });
+		await Polyline.AddTo<Polyline>(Map.MapRef, Polyline.PolylineRef);
 	}
 
 	private void SwitchMarkers()

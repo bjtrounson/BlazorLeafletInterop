@@ -44,4 +44,16 @@
       <None Include="wwwroot\**" Pack="true" PackagePath="staticwebassets\" />
       <None Include="..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Components\Layers\Misc\FeatureGroup.razor" />
+      <AdditionalFiles Include="Components\Layers\Misc\LayerGroup.razor" />
+      <AdditionalFiles Include="Components\Layers\UI\Marker.razor" />
+      <AdditionalFiles Include="Components\Layers\UI\Popup.razor" />
+      <AdditionalFiles Include="Components\Layers\UI\Tooltip.razor" />
+    </ItemGroup>
 </Project>

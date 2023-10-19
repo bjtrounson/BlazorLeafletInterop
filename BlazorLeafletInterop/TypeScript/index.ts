@@ -9,6 +9,7 @@ export * from "./divOverlay";
 export * from "./layerGroup";
 export * from "./geoJson";
 export * from "./map";
+export * from "./vectorLayer";
 
 export function getLatLng(divOverlay: L.DivOverlay | L.Marker): L.LatLng {
     return divOverlay.getLatLng();
@@ -49,7 +50,7 @@ export function setUrl(layer: L.TileLayer, url: string, noRedraw: boolean): L.Ti
     return layer.setUrl(url, noRedraw);
 }
 
-export function jsonToObject(json: string) {
+export function jsonToJsObject(json: string) {
     return JSON.parse(json);
 }
 export function createMap(id: string, options: L.MapOptions): L.Map {
