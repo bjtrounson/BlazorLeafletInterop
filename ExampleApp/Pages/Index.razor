@@ -12,7 +12,7 @@
 	<TileLayer @ref="TileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
 	@if (IsFirstMarker)
 	{
-		<Marker LatLng="new LatLng(50, 8.9)">
+		<Marker @ref="Marker" LatLng="new LatLng(50, 8.9)">
 			<Popup>
 				First Marker Popup Content
 			</Popup>
@@ -50,6 +50,7 @@
     private MapOptions Options { get; set; } = new() { PreferCanvas = true, Center = new LatLng(50, 9), Zoom = 13 };
 	private bool IsFirstMarker { get; set; } = true;
 	private Polyline? Polyline { get; set; }
+	private Marker Marker { get; set; } = default!;
 	
 	private async Task AfterRender()
 	{
@@ -58,6 +59,8 @@
 		await Polyline.Init(BundleInterop, Map.MapRef);
 		await Polyline.SetLatLngs(new List<LatLng>() { new LatLng(50, 8.9), new LatLng(50, 9) });
 		await Polyline.AddTo<Polyline>(Map.MapRef, Polyline.PolylineRef);
+		var markerLatLng = await Marker.GetLatLng();
+		Console.WriteLine(markerLatLng?.Lat + " " + markerLatLng?.Lng);
 	}
 
 	private void SwitchMarkers()

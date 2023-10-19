@@ -11,8 +11,8 @@ export * from "./geoJson";
 export * from "./map";
 export * from "./vectorLayer";
 
-export function getLatLng(divOverlay: L.DivOverlay | L.Marker): L.LatLng {
-    return divOverlay.getLatLng();
+export function getLatLng(divOverlay: L.DivOverlay | L.Marker): string {
+    return JSON.stringify(divOverlay.getLatLng());
 }
 
 export function setLatLng(divOverlay: L.DivOverlay | L.Marker, latLng: L.LatLngExpression): L.DivOverlay | L.Marker {
@@ -23,8 +23,8 @@ export function addLayer(layerGroup: L.LayerGroup | L.Map, layer: L.Layer): L.La
     return layerGroup.addLayer(layer);
 }
 
-export function getBounds(layer: L.FeatureGroup | L.Map): L.LatLngBounds {
-    return layer.getBounds();
+export function getBounds(layer: L.FeatureGroup | L.Map): string {
+    return JSON.stringify(layer.getBounds());
 }
 
 export function setOpacity(layer: L.GridLayer | L.Marker, opacity: number): L.GridLayer | L.Marker {
