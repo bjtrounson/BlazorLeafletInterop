@@ -31,6 +31,9 @@ public partial class Map : IAsyncDisposable
     
     [Parameter]
     public Action<IJSObjectReference> EachLayerCallback { get; set; } = default!;
+    
+    [Parameter]
+    public Action AfterRender { get; set; } = () => { };
 
     public IJSObjectReference? MapRef { get; set; }
     public bool IsRendered { get; set; }
@@ -53,6 +56,7 @@ public partial class Map : IAsyncDisposable
         if (MapRef is null) return;
         IsRendered = true;
         StateHasChanged();
+        AfterRender();
     }
 
     private async Task<IJSObjectReference> CreateMap(string id, MapOptions options)

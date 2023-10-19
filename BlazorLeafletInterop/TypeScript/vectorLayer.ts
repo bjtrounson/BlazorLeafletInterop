@@ -20,12 +20,12 @@ export function createCircleMarker(latlng: L.LatLngExpression, options: L.PathOp
     return L.circleMarker(latlng, options);
 }
 
-export function addLatLng(poly: L.Polyline, latlng: L.LatLngExpression): void {
-    poly.addLatLng(latlng);
+export function addLatLng(poly: L.Polyline, latlng: L.LatLngExpression): L.Polyline {
+    return poly.addLatLng(latlng);
 }
 
-export function setLatLngs(poly: L.Polyline, latlngs: L.LatLngExpression[]): void {
-    poly.setLatLngs(latlngs);
+export function setLatLngs(poly: L.Polyline, latlngs: L.LatLngExpression[]): L.Polyline {
+    return poly.setLatLngs(latlngs);
 }
 
 export function getLatLngs(poly: L.Polyline): string {

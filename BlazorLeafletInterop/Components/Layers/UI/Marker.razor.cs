@@ -1,6 +1,5 @@
 ﻿using BlazorLeafletInterop.Components.Layers.Misc;
 using BlazorLeafletInterop.Interops;
-using BlazorLeafletInterop.Models;
 using BlazorLeafletInterop.Models.Basics;
 using BlazorLeafletInterop.Models.Options.Layer.UI;
 using Microsoft.AspNetCore.Components;

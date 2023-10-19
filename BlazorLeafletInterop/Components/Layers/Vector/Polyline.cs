@@ -24,10 +24,17 @@ public class Polyline : Path
         await SetLatLngs(LatLngs);
         await AddTo<Polyline>(MapRef, PolylineRef);
     }
+    
+    public async Task Init(IBundleInterop bundleInterop, IJSObjectReference? mapRef, PolylineOptions? options = null)
+    {
+        if (mapRef is null) return;
+        MapRef = mapRef;
+        BundleInterop = bundleInterop;
+        PolylineRef = await CreatePolyline(options ?? new PolylineOptions());
+    }
 
     public async Task<IJSObjectReference> CreatePolyline(PolylineOptions options)
     {
-        if (MapRef is null) throw new NullReferenceException("Ref or map is null");
         var module = await BundleInterop.GetModule();
         var optionsJson = LeafletInterop.ObjectToJson(options);
         var optionsObject = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", optionsJson);
@@ -36,22 +43,24 @@ public class Polyline : Path
         return await module.InvokeAsync<IJSObjectReference>("createPolyline", latLngsObject, optionsObject);
     }
     
-    public async Task<IJSObjectReference> SetLatLngs(List<LatLng> latLngs)
+    public async Task<Polyline> SetLatLngs(List<LatLng> latLngs)
     {
         if (PolylineRef is null) throw new NullReferenceException("Ref or map is null");
         var module = await BundleInterop.GetModule();
         var latLngsJson = LeafletInterop.ObjectToJson(latLngs);
         var latLngsObject = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", latLngsJson);
-        return await module.InvokeAsync<IJSObjectReference>("setLatLngs", PolylineRef, latLngsObject);
+        await module.InvokeAsync<IJSObjectReference>("setLatLngs", PolylineRef, latLngsObject);
+        return this;
     }
 
-    public async Task<IJSObjectReference> AddLatLng(LatLng latLng)
+    public async Task<Polyline> AddLatLng(LatLng latLng)
     {
         if (PolylineRef is null) throw new NullReferenceException("Ref or map is null");
         var module = await BundleInterop.GetModule();
         var latLngJson = LeafletInterop.ObjectToJson(latLng);
         var latLngObject = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", latLngJson);
-        return await module.InvokeAsync<IJSObjectReference>("addLatLng", PolylineRef, latLngObject);
+        await module.InvokeAsync<IJSObjectReference>("addLatLng", PolylineRef, latLngObject);
+        return this;
     }
     
     public async Task<LatLng[]?> GetLatLngs()
