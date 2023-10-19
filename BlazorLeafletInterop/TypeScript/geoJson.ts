@@ -12,10 +12,10 @@ export function createGeoJson(
 ): L.GeoJSON {
     // Check if option has a string of "disabled" if so, then remove it from the options object
     const options: L.GeoJSONOptions = {};
-    if (!disablePointToLayer) options.pointToLayer = instance.invokeMethod("PointToLayerCallback");
-    if (!disableStyle) options.style = instance.invokeMethod("StyleCallback");
-    if (!disableOnEachFeature) options.onEachFeature = instance.invokeMethod("OnEachFeatureCallback");
-    if (!disableFilter) options.filter = instance.invokeMethod("FilterCallback");
+    if (!disablePointToLayer) options.pointToLayer = (...args) => instance.invokeMethod("PointToLayerCallback", ...args);
+    if (!disableStyle) options.style = (...args) => instance.invokeMethod("StyleCallback", ...args);
+    if (!disableOnEachFeature) options.onEachFeature = (...args) => instance.invokeMethod("OnEachFeatureCallback", ...args);
+    if (!disableFilter) options.filter = (...args) => instance.invokeMethod("FilterCallback", ...args);
     options.markersInheritOptions = markersInheritOptions;
     return L.geoJSON(geoJson, options);
 }
