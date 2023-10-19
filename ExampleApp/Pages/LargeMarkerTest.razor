@@ -8,10 +8,12 @@
 <Map @ref="_map" Class="map" MapOptions="Options">
 	<TileLayer @ref="_tileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
 	@* Create a large amount of markers with random positions *@
-	@for (var i = 0; i < 1000; i++)
-	{
-		<Marker LatLng="@GetRandomLatLng()" />
-	}
+	<LayerGroup>
+		@for (var i = 0; i < 1000; i++)
+		{
+			<Marker LatLng="@GetRandomLatLng()" />
+		}
+	</LayerGroup>
 </Map>
 
 @code {

@@ -2,6 +2,7 @@
 
 @using BlazorLeafletInterop.Components
 @using BlazorLeafletInterop.Components.Base
+@using BlazorLeafletInterop.Interops
 @using BlazorLeafletInterop.Models
 @using BlazorLeafletInterop.Models.Basics
 @using BlazorLeafletInterop.Models.Map
@@ -37,13 +38,16 @@
 </div>
 
 @code {
+	[Inject]
+	public IIconFactoryInterop IconFactoryInterop { get; set; } = default!;
+	
     private Map? Map { get; set; }
     private TileLayer? TileLayer { get; set; }
-    private MapOptions Options { get; set; } = new() { Center = new LatLng(50, 9), Zoom = 13 };
-	private Icon? IconRef { get; set; }
+    private MapOptions Options { get; set; } = new() { PreferCanvas = true, Center = new LatLng(50, 9), Zoom = 13 };
+	private IJSObjectReference IconRef { get; set; } = default!;
 	private bool IsFirstMarker { get; set; } = true;
 
-	protected override Task OnInitializedAsync()
+	protected override async Task OnInitializedAsync()
 	{
 		var options = new IconOptions()
 		{
@@ -56,8 +60,7 @@
 			ShadowAnchor = new Point(4, 62), 
 			ClassName = "my-div-icon"
 		};
-		IconRef = new Icon(options);
-		return base.OnInitializedAsync();
+		IconRef = await IconFactoryInterop.CreateIcon(options);
 	}
 
 	private void SwitchMarkers()

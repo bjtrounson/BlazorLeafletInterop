@@ -6,54 +6,35 @@ using System.Text.Json.Serialization.Metadata;
 using BlazorLeafletInterop.Interops;
 using BlazorLeafletInterop.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace BlazorLeafletInterop.Components;
 
 [SupportedOSPlatform("browser")]
-public partial class Tooltip : IDisposable
+public partial class Tooltip : IAsyncDisposable
 {
     [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
     [Parameter] public TooltipOptions TooltipOptions { get; set; } = new();
     [Parameter] public RenderFragment? ChildContent { get; set; }
-    [CascadingParameter( Name = "MarkerRef")] public object? MarkerRef { get; set; }
+    [CascadingParameter( Name = "MarkerRef")] public IJSObjectReference? MarkerRef { get; set; }
     
-    public object? TooltipRef { get; set; }
+    public IJSObjectReference? TooltipRef { get; set; }
     
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        base.OnAfterRender(firstRender);
-        if (!firstRender) return;
+        await base.OnAfterRenderAsync(firstRender);
         if (MarkerRef is null) return;
-        var tooltipOptionsJson = LeafletInterop.ObjectToJson(TooltipOptions);
-        var tooltipOptions = LeafletInterop.JsonToJsObject(tooltipOptionsJson);
-        var tooltipContent = LeafletInterop.GetElementInnerHtml(Id);
-        TooltipInterop.BindPopup(MarkerRef, tooltipContent, tooltipOptions);
-        TooltipRef = TooltipInterop.GetTooltip(MarkerRef);
+        var module = await BundleInterop.GetModule();
+        var tooltipContent = await module.InvokeAsync<string>("getElementInnerHtml", Id);
+        await BindTooltip(MarkerRef, tooltipContent, TooltipOptions);
+        TooltipRef = await GetTooltip(MarkerRef);
     }
 
-    public static partial class TooltipInterop
-    {
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
-        static TooltipInterop() { }
-        
-        [JSImport("openOn", "BlazorLeafletInterop")]
-        public static partial JSObject OpenOn([JSMarshalAs<JSType.Any>] object popup, [JSMarshalAs<JSType.Any>] object map);
-        
-        [JSImport("bindTooltip", "BlazorLeafletInterop")]
-        public static partial JSObject BindPopup([JSMarshalAs<JSType.Any>] object marker, string content, [JSMarshalAs<JSType.Any>] object options);
-        
-        [JSImport("unbindTooltip", "BlazorLeafletInterop")]
-        public static partial JSObject UnbindPopup([JSMarshalAs<JSType.Any>] object marker);
-        
-        [JSImport("getTooltip", "BlazorLeafletInterop")]
-        public static partial JSObject GetTooltip([JSMarshalAs<JSType.Any>] object marker);
-    }
-
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         if (MarkerRef is null) return;
-        TooltipInterop.UnbindPopup(MarkerRef);
+        await UnbindTooltip(MarkerRef);
+        if (TooltipRef != null) await TooltipRef.DisposeAsync();
         GC.SuppressFinalize(this);
     }
 }

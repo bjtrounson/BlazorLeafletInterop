@@ -1,55 +1,93 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices.JavaScript;
-using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
-using BlazorLeafletInterop.Models;
+﻿using BlazorLeafletInterop.Models;
+using Microsoft.JSInterop;
 
 namespace BlazorLeafletInterop.Components.Base;
 
-public partial class DivOverlay : InteractiveLayer
+public class DivOverlay : InteractiveLayer
 {
     public DivOverlayOptions DivOverlayOptions { get; set; } = new();
-
-    public static partial class DivOverlayInterop
+    
+    public async Task<IJSObjectReference> OpenOn(IJSObjectReference? map, IJSObjectReference? @ref)
     {
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
-        static DivOverlayInterop() { }
-        
-        [JSImport("openOn", "BlazorLeafletInterop")]
-        public static partial JSObject OpenOn(JSObject divOverlay, JSObject map);
-        
-        [JSImport("close", "BlazorLeafletInterop")]
-        public static partial JSObject Close(JSObject divOverlay);
-        
-        [JSImport("toggle", "BlazorLeafletInterop")]
-        public static partial JSObject Toggle(JSObject divOverlay, JSObject? layer);
-        
-        [JSImport("getLatLng", "BlazorLeafletInterop")]
-        public static partial JSObject GetLatLng(JSObject divOverlay);
-        
-        [JSImport("setLatLng", "BlazorLeafletInterop")]
-        public static partial JSObject SetLatLng(JSObject divOverlay, JSObject latLng);
-        
-        [JSImport("getContent", "BlazorLeafletInterop")]
-        public static partial string GetContent(JSObject divOverlay);
-        
-        [JSImport("setContent", "BlazorLeafletInterop")]
-        public static partial JSObject SetContent(JSObject divOverlay, string content);
-        
-        [JSImport("getElement", "BlazorLeafletInterop")]
-        public static partial string GetElement(JSObject divOverlay);
-        
-        [JSImport("update", "BlazorLeafletInterop")]
-        public static partial void Update(JSObject divOverlay);
-        
-        [JSImport("isOpen", "BlazorLeafletInterop")]
-        public static partial bool IsOpen(JSObject divOverlay);
-        
-        [JSImport("bringToFront", "BlazorLeafletInterop")]
-        public static partial JSObject BringToFront(JSObject divOverlay);
-        
-        [JSImport("bringToBack", "BlazorLeafletInterop")]
-        public static partial JSObject BringToBack(JSObject divOverlay);
+        if (@ref is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<IJSObjectReference>("openOn", @ref, map);
+    }
+    
+    public async Task<IJSObjectReference> Close(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<IJSObjectReference>("close", @ref);
+    }
+    
+    public async Task<IJSObjectReference> Toggle(IJSObjectReference? layer, IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<IJSObjectReference>("toggle", @ref, layer);
+    }
+    
+    public async Task<IJSObjectReference> GetLatLng(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<IJSObjectReference>("getLatLng", @ref);
+    }
+    
+    public async Task<IJSObjectReference> SetLatLng(IJSObjectReference latLng, IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<IJSObjectReference>("setLatLng", @ref, latLng);
+    }
+    
+    public async Task<string> GetContent(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<string>("getContent", @ref);
+    }
+    
+    public async Task<IJSObjectReference> SetContent(string content, IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<IJSObjectReference>("setContent", @ref, content);
+    }
+    
+    public async Task<string> GetElement(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<string>("getElement", @ref);
+    }
+    
+    public async Task Update(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("update", @ref);
+    }
+    
+    public async Task<bool> IsOpen(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<bool>("isOpen", @ref);
+    }
+    
+    public async Task<IJSObjectReference> BringToFront(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<IJSObjectReference>("bringToFront", @ref);
+    }
+    
+    public async Task<IJSObjectReference> BringToBack(IJSObjectReference? @ref)
+    {
+        if (@ref is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<IJSObjectReference>("bringToBack", @ref);
     }
 }

@@ -5,10 +5,4 @@ using BlazorLeafletInterop.Interops;
 namespace BlazorLeafletInterop.Models;
 
 [SupportedOSPlatform("browser")]
-public class BaseOptions
-{
-    public object ToJsObject()
-    {
-        return LeafletInterop.JsonToJsObject(LeafletInterop.ObjectToJson(this));
-    }
-}
+public class BaseOptions { }

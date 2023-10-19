@@ -6,54 +6,35 @@ using System.Text.Json.Serialization.Metadata;
 using BlazorLeafletInterop.Interops;
 using BlazorLeafletInterop.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace BlazorLeafletInterop.Components;
 
 [SupportedOSPlatform("browser")]
-public partial class Popup : IDisposable
+public partial class Popup : IAsyncDisposable
 {
     [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
     [Parameter] public PopupOptions PopupOptions { get; set; } = new();
     [Parameter] public RenderFragment? ChildContent { get; set; }
-    [CascadingParameter( Name = "MarkerRef")] public object? MarkerRef { get; set; }
+    [CascadingParameter( Name = "MarkerRef")] public IJSObjectReference? MarkerRef { get; set; }
     
-    public object? PopupRef { get; set; }
+    public IJSObjectReference? PopupRef { get; set; }
 
-    protected override void OnAfterRender(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        base.OnAfterRender(firstRender);
-        if (!firstRender) return;
+        await base.OnAfterRenderAsync(firstRender);
         if (MarkerRef is null) return;
-        var popupOptionsJson = LeafletInterop.ObjectToJson(PopupOptions);
-        var popupOptions = LeafletInterop.JsonToJsObject(popupOptionsJson);
-        var popupContent = LeafletInterop.GetElementInnerHtml(Id);
-        PopupInterop.BindPopup(MarkerRef, popupContent, popupOptions);
-        PopupRef = PopupInterop.GetPopup(MarkerRef);
+        var module = await BundleInterop.GetModule();
+        var popupContent = await module.InvokeAsync<string>("getElementInnerHtml", Id);
+        await BindPopup(MarkerRef, popupContent, PopupOptions);
+        PopupRef = await GetPopup(MarkerRef);
     }
 
-    public static partial class PopupInterop
-    {
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
-        static PopupInterop() { }
-        
-        [JSImport("openOn", "BlazorLeafletInterop")]
-        public static partial JSObject OpenOn([JSMarshalAs<JSType.Any>] object popup, [JSMarshalAs<JSType.Any>] object map);
-        
-        [JSImport("bindPopup", "BlazorLeafletInterop")]
-        public static partial JSObject BindPopup([JSMarshalAs<JSType.Any>] object marker, string content, [JSMarshalAs<JSType.Any>] object options);
-        
-        [JSImport("unbindPopup", "BlazorLeafletInterop")]
-        public static partial JSObject UnbindPopup([JSMarshalAs<JSType.Any>] object marker);
-        
-        [JSImport("getPopup", "BlazorLeafletInterop")]
-        public static partial JSObject GetPopup([JSMarshalAs<JSType.Any>] object marker);
-    }
-
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         if (MarkerRef is null) return;
-        PopupInterop.UnbindPopup(MarkerRef);
+        await UnbindPopup(MarkerRef);
+        if (PopupRef != null) await PopupRef.DisposeAsync();
         GC.SuppressFinalize(this);
     }
 }

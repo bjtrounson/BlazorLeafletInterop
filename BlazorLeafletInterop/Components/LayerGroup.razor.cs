@@ -1,74 +1,56 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices.JavaScript;
-using System.Runtime.Versioning;
-using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
-using BlazorLeafletInterop.Interops;
+﻿using BlazorLeafletInterop.Interops;
 using BlazorLeafletInterop.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace BlazorLeafletInterop.Components;
 
-[SupportedOSPlatform("browser")]
-public partial class LayerGroup : IDisposable
+public partial class LayerGroup : IAsyncDisposable
 {
     [Parameter] public LayerGroupOptions LayerGroupOptions { get; set; } = new();
     [Parameter] public RenderFragment? ChildContent { get; set; }
     
-    [CascadingParameter(Name = "MapRef")] public object? MapRef { get; set; }
+    [CascadingParameter(Name = "MapRef")] public IJSObjectReference? MapRef { get; set; }
     
-    public object? LayerGroupRef { get; set; }
+    public IJSObjectReference? LayerGroupRef { get; set; }
     
     protected override async Task OnInitializedAsync()
     {
-        if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
         await base.OnInitializedAsync();
-        LayerGroupRef = CreateLayerGroup(LayerGroupOptions);
+        LayerGroupRef = await CreateLayerGroup(LayerGroupOptions);
         if (MapRef is null || LayerGroupRef is null) return;
-        LayerInterop.AddTo(LayerGroupRef, MapRef);
+        await AddTo<LayerGroup>(MapRef, LayerGroupRef);
     }
     
-    public object CreateLayerGroup(LayerGroupOptions options)
+    public async Task<IJSObjectReference> CreateLayerGroup(LayerGroupOptions options)
     {
         var layerGroupOptionsJson = LeafletInterop.ObjectToJson(options);
-        var layerGroupOptions = LeafletInterop.JsonToJsObject(layerGroupOptionsJson);
-        return LayerGroupInterop.CreateLayerGroup(layerGroupOptions);
+        var module = await BundleInterop.GetModule();
+        var layerGroupOptions = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", layerGroupOptionsJson);
+        return await module.InvokeAsync<IJSObjectReference>("createLayerGroup", layerGroupOptions);
     }
     
-    public LayerGroup AddLayer(object layer)
+    public async Task<LayerGroup> AddLayer(IJSObjectReference layer)
     {
         if (LayerGroupRef is null) throw new NullReferenceException();
-        LayerGroupInterop.AddLayer(LayerGroupRef, layer);
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("addLayer", LayerGroupRef, layer);
         return this;
     }
 
-    public LayerGroup RemoveLayer(object layer)
+    public async Task<LayerGroup> RemoveLayer(IJSObjectReference layer)
     {
         if (LayerGroupRef is null) throw new NullReferenceException();
-        LayerGroupInterop.RemoveLayer(LayerGroupRef, layer);
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("removeLayer", LayerGroupRef, layer);
         return this;
     }
 
-    public static partial class LayerGroupInterop
-    {
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
-        static LayerGroupInterop() { }
-        
-        [JSImport("createLayerGroup", "BlazorLeafletInterop")]
-        public static partial JSObject CreateLayerGroup([JSMarshalAs<JSType.Any>] object options);
-        
-        [JSImport("addLayer", "BlazorLeafletInterop")]
-        public static partial JSObject AddLayer([JSMarshalAs<JSType.Any>] object layerGroup, [JSMarshalAs<JSType.Any>] object layer);
-        
-        [JSImport("removeLayer", "BlazorLeafletInterop")]
-        public static partial JSObject RemoveLayer([JSMarshalAs<JSType.Any>] object layerGroup, [JSMarshalAs<JSType.Any>] object layer);
-    }
-
-    public virtual void Dispose()
+    public async ValueTask DisposeAsync()
     {
         if (LayerGroupRef is null || MapRef is null) return;
-        LayerInterop.RemoveFrom(LayerGroupRef, MapRef);
+        await RemoveFrom<LayerGroup>(LayerGroupRef, MapRef);
+        if (LayerGroupRef != null) await LayerGroupRef.DisposeAsync();
         GC.SuppressFinalize(this);
     }
 }

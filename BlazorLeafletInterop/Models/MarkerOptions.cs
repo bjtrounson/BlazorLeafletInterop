@@ -1,9 +1,9 @@
 ﻿using System.Runtime.Versioning;
 using BlazorLeafletInterop.Models.Basics;
+using Microsoft.JSInterop;
 
 namespace BlazorLeafletInterop.Models;
 
-[SupportedOSPlatform("browser")]
 public class MarkerOptions : InteractiveLayerOptions
 {
     public bool Keyboard { get; set; } = true;
@@ -22,7 +22,7 @@ public class MarkerOptions : InteractiveLayerOptions
 
     public bool Draggable { get; set; } = false;
     public bool AutoPan { get; set; } = false;
-    public Point AutoPanPadding { get; set; } = new Point(50, 50);
+    public Point AutoPanPadding { get; set; } = new(50, 50);
     public double AutoPanSpeed { get; set; } = 10.0;
 
     #endregion

@@ -49,7 +49,7 @@ export function setUrl(layer: L.TileLayer, url: string, noRedraw: boolean): L.Ti
     return layer.setUrl(url, noRedraw);
 }
 
-export function jsonToObject(json: string) {
+export function jsonToJsObject(json: string) {
     return JSON.parse(json);
 }
 export function createMap(id: string, options: L.MapOptions): L.Map {

@@ -9,15 +9,8 @@ using Newtonsoft.Json.Serialization;
 
 namespace BlazorLeafletInterop.Interops;
 
-[SupportedOSPlatform("browser")]
-public partial class LeafletInterop
+public class LeafletInterop
 {
-    [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
-    [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
-    static LeafletInterop()
-    {
-    }
-    
     public static string ObjectToJson(object obj)
     {
         var defaultContractResolver = new DefaultContractResolver
@@ -35,10 +28,4 @@ public partial class LeafletInterop
     {
         return JsonConvert.DeserializeObject<T>(json);
     }
-
-    [JSImport("jsonToObject", "BlazorLeafletInterop")]
-    public static partial JSObject JsonToJsObject(string json);
-    
-    [JSImport("getElementInnerHtml", "BlazorLeafletInterop")]
-    public static partial string GetElementInnerHtml(string elementId);
 }

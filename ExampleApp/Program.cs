@@ -1,4 +1,6 @@
 using BlazorLeafletInterop;
+using BlazorLeafletInterop.Interops;
+using BlazorLeafletInterop.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ExampleApp;
@@ -8,6 +10,6 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-await MapBundleImport.ImportAsync();
+builder.Services.AddMapService();
 
 await builder.Build().RunAsync();

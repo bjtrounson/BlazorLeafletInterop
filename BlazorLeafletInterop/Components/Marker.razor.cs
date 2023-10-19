@@ -7,139 +7,120 @@ using BlazorLeafletInterop.Interops;
 using BlazorLeafletInterop.Models;
 using BlazorLeafletInterop.Models.Basics;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace BlazorLeafletInterop.Components;
 
 [SupportedOSPlatform("browser")]
-public partial class Marker : IDisposable
+public partial class Marker : IAsyncDisposable
 {
     [Parameter] public string Id { get; set; } = Guid.NewGuid().ToString();
+    [Parameter] public IJSObjectReference? Icon { get; set; }
     [Parameter] public LatLng LatLng { get; set; } = new();
-    [Parameter] public Icon? Icon { get; set; }
     [Parameter] public MarkerOptions Options { get; set; } = new();
     [Parameter] public RenderFragment? ChildContent { get; set; }
     
     [CascadingParameter(Name = "LayerGroup")] public LayerGroup? LayerGroup { get; set; }
-    [CascadingParameter(Name = "MapRef")] public object? MapRef { get; set; }
+    [CascadingParameter(Name = "MapRef")] public IJSObjectReference? MapRef { get; set; }
     
-    public object? MarkerRef { get; set; }
+    public IJSObjectReference? MarkerRef { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         if (!OperatingSystem.IsBrowser()) throw new PlatformNotSupportedException();
         await base.OnInitializedAsync();
-        MarkerRef = CreateMarker(LatLng, Options);
+        MarkerRef = await CreateMarker(LatLng, Options);
         if (LayerGroup is not null && MarkerRef is not null)
         {
-            LayerGroup.AddLayer(MarkerRef);
+            await LayerGroup.AddLayer(MarkerRef);
             return;
         }
         if (MapRef is null || MarkerRef is null) return;
-        AddTo(MapRef);
+        await AddTo<Marker>(MapRef, MarkerRef).ConfigureAwait(false);
     }
     
-    public Marker AddTo(object? map)
-    {
-        if (MarkerRef is null || map is null) throw new NullReferenceException();
-        LayerInterop.AddTo(MarkerRef, map);
-        return this;
-    }
-    
-    public object CreateMarker(LatLng latLng, MarkerOptions options)
+    public async Task<IJSObjectReference> CreateMarker(LatLng latLng, MarkerOptions options)
     {
         var latLngJson = LeafletInterop.ObjectToJson(latLng);
         var optionsJson = LeafletInterop.ObjectToJson(options);
-        var marker = MarkerInterop.CreateMarker(LeafletInterop.JsonToJsObject(latLngJson), LeafletInterop.JsonToJsObject(optionsJson));
-        if (Icon is null) return marker;
-        var iconOptions = Icon.IconOptions;
-        var icon = iconOptions is not null ? Icon.CreateIcon(iconOptions) : Icon.CreateDefaultIcon();
-        MarkerInterop.SetIcon(marker, icon);
+        var module = await BundleInterop.GetModule();
+        var latLngObject = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", latLngJson);
+        var optionsObject = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", optionsJson);
+        var marker = await module.InvokeAsync<IJSObjectReference>("createMarker", latLngObject, optionsObject);
+        if (Icon is not null) await SetIcon(marker, Icon);
         return marker;
     }
     
-    public void SetLatLng(LatLng latLng)
+    public async Task SetLatLng(LatLng latLng)
     {
         if (MarkerRef is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
         var latLngJson = LeafletInterop.ObjectToJson(latLng);
-        MarkerInterop.SetLatLng(MarkerRef, LeafletInterop.JsonToJsObject(latLngJson));
+        await module.InvokeVoidAsync("setLatLng", MarkerRef, latLngJson);
     }
     
-    public void SetOpacity(double opacity)
+    public async Task SetOpacity(double opacity)
     {
         if (MarkerRef is null) throw new NullReferenceException();
-        MarkerInterop.SetOpacity(MarkerRef, opacity);
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("setOpacity", MarkerRef, opacity);
     }
     
-    public void SetZIndexOffset(double zIndexOffset)
+    public async Task SetZIndexOffset(double zIndexOffset)
     {
         if (MarkerRef is null) throw new NullReferenceException();
-        MarkerInterop.SetZIndexOffset(MarkerRef, zIndexOffset);
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("setZIndexOffset", MarkerRef, zIndexOffset);
     }
     
-    public string ToGeoJson(double? precision)
+    public async Task<string> ToGeoJson(double? precision)
     {
         if (MarkerRef is null) throw new NullReferenceException();
-        return MarkerInterop.ToGeoJson(MarkerRef, precision);
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<string>("toGeoJSON", MarkerRef, precision);
     }
     
-    public object? GetPopup()
+    public async Task<IJSObjectReference?> GetPopup()
     {
         if (MarkerRef is null) throw new NullReferenceException();
-        return MarkerInterop.GetPopup(MarkerRef);
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<IJSObjectReference>("getPopup", MarkerRef);
     }
     
-    public object? OpenPopup()
+    public async Task<IJSObjectReference?> OpenPopup()
     {
         if (MarkerRef is null) throw new NullReferenceException();
-        return MarkerInterop.OpenPopup(MarkerRef);
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<IJSObjectReference>("openPopup", MarkerRef);
     }
     
-    public LatLng? GetLatLng()
+    public async Task<LatLng?> GetLatLng()
     {
         if (MarkerRef is null) throw new NullReferenceException();
-        var latLng = MarkerInterop.GetLatLng(MarkerRef);
-        return LeafletInterop.JsonToObject<LatLng>(latLng);
+        var module = await BundleInterop.GetModule();
+        var latLngJson = await module.InvokeAsync<string>("getLatLng", MarkerRef);
+        return LeafletInterop.JsonToObject<LatLng>(latLngJson);
+    }
+    
+    public async Task SetIcon(IJSObjectReference icon)
+    {
+        if (MarkerRef is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("setIcon", MarkerRef, icon);
     }
 
-    public static partial class MarkerInterop
+    public async Task SetIcon(IJSObjectReference? markerRef, IJSObjectReference icon)
     {
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
-        static MarkerInterop() { }
-        
-        [JSImport("createMarker", "BlazorLeafletInterop")]
-        public static partial JSObject CreateMarker([JSMarshalAs<JSType.Any>] object latLng, [JSMarshalAs<JSType.Any>] object options);
-        
-        [JSImport("getLatLng", "BlazorLeafletInterop")]
-        public static partial string GetLatLng([JSMarshalAs<JSType.Any>] object marker);
-        
-        [JSImport("setLatLng", "BlazorLeafletInterop")]
-        public static partial void SetLatLng([JSMarshalAs<JSType.Any>] object marker, [JSMarshalAs<JSType.Any>] object latLng);
-        
-        [JSImport("setIcon", "BlazorLeafletInterop")]
-        public static partial void SetIcon([JSMarshalAs<JSType.Any>] object marker, [JSMarshalAs<JSType.Any>] object icon);
-        
-        [JSImport("setOpacity", "BlazorLeafletInterop")]
-        public static partial void SetOpacity([JSMarshalAs<JSType.Any>] object marker, double opacity);
-        
-        [JSImport("setZIndexOffset", "BlazorLeafletInterop")]
-        public static partial void SetZIndexOffset([JSMarshalAs<JSType.Any>] object marker, double zIndexOffset);
-        
-        [JSImport("toGeoJSON", "BlazorLeafletInterop")]
-        public static partial string ToGeoJson([JSMarshalAs<JSType.Any>] object marker, double? precision);
-        
-        [JSImport("getPopup", "BlazorLeafletInterop")]
-        public static partial JSObject GetPopup([JSMarshalAs<JSType.Any>] object marker);
-        
-        [JSImport("openPopup", "BlazorLeafletInterop")]
-        public static partial JSObject OpenPopup([JSMarshalAs<JSType.Any>] object marker);
+        if (markerRef is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("setIcon", markerRef, icon);
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         if (MarkerRef is null) return;
         LayerGroup?.RemoveLayer(MarkerRef);
-        if (MapRef is not null) LayerInterop.RemoveFrom(MarkerRef, MapRef);
+        if (MapRef is not null) await RemoveFrom<Marker>(MapRef, MarkerRef);
         GC.SuppressFinalize(this);
     }
 }

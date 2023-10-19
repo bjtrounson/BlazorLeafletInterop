@@ -1,4 +1,5 @@
 import * as L from "leaflet";
+import DotNetObject = DotNet.DotNetObject;
 
 export function addControl(map: L.Map, control: L.Control): L.Map {
     return map.addControl(control);
@@ -10,6 +11,10 @@ export function removeControl(map: L.Map, control: L.Control): L.Map {
 
 export function removeLayer(map: L.Map, layer: L.Layer): L.Map {
     return map.removeLayer(layer);
+}
+
+export function eachLayer(instance: DotNetObject, callbackMethod: string, map: L.Map, context?: any): L.Map {
+    return map.eachLayer((layer: L.Layer) => instance.invokeMethod(callbackMethod, layer), context);
 }
 
 export function HasLayer(map: L.Map, layer: L.Layer): boolean {

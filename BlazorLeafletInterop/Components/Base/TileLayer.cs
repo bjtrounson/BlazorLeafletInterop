@@ -6,54 +6,57 @@ using System.Text.Json.Serialization.Metadata;
 using BlazorLeafletInterop.Interops;
 using BlazorLeafletInterop.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace BlazorLeafletInterop.Components.Base;
 
 [SupportedOSPlatform("browser")]
-public partial class TileLayer : GridLayer, IDisposable
+public class TileLayer : GridLayer, IAsyncDisposable
 {
     [CascadingParameter(Name = "MapRef")]
-    public object? MapRef { get; set; }
+    public IJSObjectReference? MapRef { get; set; }
 
     [Parameter] public string UrlTemplate { get; set; } = "";
     [Parameter] public TileLayerOptions TileLayerOptions{ get; set; } = new();
 
-    private object? TileRef { get; set; } = null;
+    private IJSObjectReference? TileRef { get; set; } = null;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        TileRef = Interop.CreateTileLayer(UrlTemplate, TileLayerOptions.ToJsObject());
-        AddTo(MapRef);
+        TileRef = await CreateTileLayerAsync(UrlTemplate, TileLayerOptions);
+        await AddTo(MapRef).ConfigureAwait(false);
     }
     
-    public TileLayer AddTo(object? map)
+    private async Task<IJSObjectReference> CreateTileLayerAsync(string urlTemplate, TileLayerOptions tileLayerOptions)
     {
-        if (TileRef is null || map is null) throw new NullReferenceException();
-        LayerInterop.AddTo(TileRef, map);
+        var module = await BundleInterop.GetModule();
+        var tileLayerOptionsJson = LeafletInterop.ObjectToJson(tileLayerOptions);
+        var tileLayerOptionsObject = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", tileLayerOptionsJson);
+        return await module.InvokeAsync<IJSObjectReference>("createTileLayer", urlTemplate, tileLayerOptionsObject);
+    }
+    
+    public async Task<TileLayer> AddTo(IJSObjectReference? map)
+    {
+        if (TileRef is null || map is null) throw new NullReferenceException("TileRef or map is null");
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("addTo", TileRef, map);
         return this;
     }
-    
-    [SupportedOSPlatform("browser")]
-    public partial class Interop
-    {
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
-        static Interop() {}
 
-        [JSImport("createTileLayer", "BlazorLeafletInterop")]
-        public static partial JSObject CreateTileLayer(string urlTemplate, [JSMarshalAs<JSType.Any>] object options);
-        
-        [JSImport("setUrl", "BlazorLeafletInterop")]
-        public static partial void SetUrl([JSMarshalAs<JSType.Any>] object tileLayer, string url, bool noRedraw);
+    public async Task SetUrl(string url, bool noRedraw = false)
+    {
+        if (TileRef is null) throw new NullReferenceException("TileRef is null");
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("setUrl", TileRef, url, noRedraw);
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
         if (TileRef is null) return;
-        if (MapRef is not null) LayerInterop.RemoveFrom(TileRef, MapRef);
-        else LayerInterop.Remove(TileRef);
-        TileRef = null;
+        if (MapRef is not null) await RemoveFrom<TileLayer>(MapRef, TileRef);
+        else await Remove<TileLayer>(TileRef);
+        if (TileRef != null) await TileRef.DisposeAsync();
         GC.SuppressFinalize(this);
     }
 }

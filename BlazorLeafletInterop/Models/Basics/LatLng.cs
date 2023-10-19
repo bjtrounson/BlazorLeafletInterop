@@ -60,9 +60,4 @@ public class LatLng
     {
         return GetDistanceToPointInKilometers(to) * 1000;
     }
-    
-    public object ToJsObject()
-    {
-        return LeafletInterop.JsonToJsObject(LeafletInterop.ObjectToJson(this));
-    }
 }

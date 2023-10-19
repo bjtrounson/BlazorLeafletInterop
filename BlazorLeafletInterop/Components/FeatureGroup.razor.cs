@@ -1,32 +1,48 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices.JavaScript;
-using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
-using Microsoft.AspNetCore.Components;
+﻿using BlazorLeafletInterop.Interops;
+using Microsoft.JSInterop;
 
 namespace BlazorLeafletInterop.Components;
 
-public partial class FeatureGroup : IDisposable
+public partial class FeatureGroup
 {
-    public static partial class FeatureGroupInterop
+    public IJSObjectReference? FeatureGroupRef { get; set; }
+    
+    public async Task<IJSObjectReference> CreateFeatureGroup(LayerGroup options)
     {
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonTypeInfo))]
-        [DynamicDependency(DynamicallyAccessedMemberTypes.PublicMethods, typeof(JsonSerializerContext))]
-        static FeatureGroupInterop() { }
-        
-        [JSImport("createFeatureGroup", "BlazorLeafletInterop")]
-        public static partial JSObject CreateFeatureGroup([JSMarshalAs<JSType.Any>] object options);
-        
-        [JSImport("setStyle", "BlazorLeafletInterop")]
-        public static partial JSObject SetStyle([JSMarshalAs<JSType.Any>] object featureGroup, [JSMarshalAs<JSType.Any>] object style);
-        
-        [JSImport("bringToFront", "BlazorLeafletInterop")]
-        public static partial JSObject BringToFront([JSMarshalAs<JSType.Any>] object featureGroup);
-        
-        [JSImport("bringToBack", "BlazorLeafletInterop")]
-        public static partial JSObject BringToBack([JSMarshalAs<JSType.Any>] object featureGroup);
-        
-        [JSImport("getBounds", "BlazorLeafletInterop")]
-        public static partial JSObject GetBounds([JSMarshalAs<JSType.Any>] object featureGroup);
+        var module = await BundleInterop.GetModule();
+        var optionsJson = LeafletInterop.ObjectToJson(options);
+        var optionsObject = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", optionsJson);
+        return await module.InvokeAsync<IJSObjectReference>("createFeatureGroup", optionsObject);
+    }
+    
+    public async Task<FeatureGroup> SetStyle(object style)
+    {
+        if (FeatureGroupRef is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("setStyle", FeatureGroupRef, style);
+        return this;
+    }
+    
+    public async Task<FeatureGroup> BringToFront()
+    {
+        if (FeatureGroupRef is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("bringToFront", FeatureGroupRef);
+        return this;
+    }
+    
+    public async Task<FeatureGroup> BringToBack()
+    {
+        if (FeatureGroupRef is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        await module.InvokeVoidAsync("bringToBack", FeatureGroupRef);
+        return this;
+    }
+    
+    public async Task<IJSObjectReference> GetBounds()
+    {
+        if (FeatureGroupRef is null) throw new NullReferenceException();
+        var module = await BundleInterop.GetModule();
+        return await module.InvokeAsync<IJSObjectReference>("getBounds", FeatureGroupRef);
     }
 }
