@@ -60,6 +60,8 @@
 		await Polyline.Init(BundleInterop, Map.MapRef);
 		await Polyline.SetLatLngs(new List<LatLng>() { new LatLng(50, 8.9), new LatLng(50, 9) });
 		await Polyline.AddTo<Polyline>(Map.MapRef, Polyline.PolylineRef);
+		var markerLatLng = await Marker.GetLatLng();
+		Console.WriteLine(markerLatLng?.Lat + " " + markerLatLng?.Lng);
 	}
 
 	private void SwitchMarkers()
