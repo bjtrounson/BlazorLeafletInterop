@@ -33,6 +33,12 @@ public partial class Marker : IAsyncDisposable
         await AddTo<Marker>(MapRef, MarkerRef).ConfigureAwait(false);
     }
     
+    /// <summary>
+    /// Creates a marker with the given options at the given position and adds it to the map.
+    /// </summary>
+    /// <param name="latLng"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
     public async Task<IJSObjectReference> CreateMarker(LatLng latLng, MarkerOptions options)
     {
         var latLngJson = LeafletInterop.ObjectToJson(latLng);
@@ -45,6 +51,11 @@ public partial class Marker : IAsyncDisposable
         return marker;
     }
     
+    /// <summary>
+    /// Changes the marker position to the given point.
+    /// </summary>
+    /// <param name="latLng"></param>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task SetLatLng(LatLng latLng)
     {
         if (MarkerRef is null) throw new NullReferenceException();
@@ -53,6 +64,11 @@ public partial class Marker : IAsyncDisposable
         await module.InvokeVoidAsync("setLatLng", MarkerRef, latLngJson);
     }
     
+    /// <summary>
+    /// Changes the opacity of the marker.
+    /// </summary>
+    /// <param name="opacity"></param>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task SetOpacity(double opacity)
     {
         if (MarkerRef is null) throw new NullReferenceException();
@@ -60,6 +76,11 @@ public partial class Marker : IAsyncDisposable
         await module.InvokeVoidAsync("setOpacity", MarkerRef, opacity);
     }
     
+    /// <summary>
+    /// Changes the zIndex offset of the marker.
+    /// </summary>
+    /// <param name="zIndexOffset"></param>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task SetZIndexOffset(double zIndexOffset)
     {
         if (MarkerRef is null) throw new NullReferenceException();
@@ -67,6 +88,12 @@ public partial class Marker : IAsyncDisposable
         await module.InvokeVoidAsync("setZIndexOffset", MarkerRef, zIndexOffset);
     }
     
+    /// <summary>
+    /// Coordinates values are rounded with formatNum function with given precision. Returns a GeoJSON representation of the marker (as a GeoJSON Point Feature).
+    /// </summary>
+    /// <param name="precision"></param>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task<string> ToGeoJson(double? precision)
     {
         if (MarkerRef is null) throw new NullReferenceException();
@@ -74,6 +101,11 @@ public partial class Marker : IAsyncDisposable
         return await module.InvokeAsync<string>("toGeoJSON", MarkerRef, precision);
     }
     
+    /// <summary>
+    /// Gets the popup instance that is bound to this marker.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task<IJSObjectReference?> GetPopup()
     {
         if (MarkerRef is null) throw new NullReferenceException();
@@ -81,6 +113,11 @@ public partial class Marker : IAsyncDisposable
         return await module.InvokeAsync<IJSObjectReference>("getPopup", MarkerRef);
     }
     
+    /// <summary>
+    /// Opens the popup currently bound to the marker.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task<IJSObjectReference?> OpenPopup()
     {
         if (MarkerRef is null) throw new NullReferenceException();
@@ -88,6 +125,11 @@ public partial class Marker : IAsyncDisposable
         return await module.InvokeAsync<IJSObjectReference>("openPopup", MarkerRef);
     }
     
+    /// <summary>
+    /// Returns the current geographical position of the marker.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task<LatLng?> GetLatLng()
     {
         if (MarkerRef is null) throw new NullReferenceException();
@@ -96,6 +138,11 @@ public partial class Marker : IAsyncDisposable
         return LeafletInterop.JsonToObject<LatLng>(latLngJson);
     }
     
+    /// <summary>
+    /// Changes the marker icon.
+    /// </summary>
+    /// <param name="icon"></param>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task SetIcon(IJSObjectReference icon)
     {
         if (MarkerRef is null) throw new NullReferenceException();
@@ -103,6 +150,12 @@ public partial class Marker : IAsyncDisposable
         await module.InvokeVoidAsync("setIcon", MarkerRef, icon);
     }
 
+    /// <summary>
+    /// Changes the marker icon.
+    /// </summary>
+    /// <param name="markerRef"></param>
+    /// <param name="icon"></param>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task SetIcon(IJSObjectReference? markerRef, IJSObjectReference icon)
     {
         if (markerRef is null) throw new NullReferenceException();

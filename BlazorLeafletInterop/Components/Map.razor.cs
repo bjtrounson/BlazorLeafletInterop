@@ -67,6 +67,12 @@ public partial class Map : IAsyncDisposable
         return await bundleModule.InvokeAsync<IJSObjectReference>("createMap", id, mapOptionsObject);
     }
 
+    /// <summary>
+    /// Iterates over the layers of the map, optionally specifying context of the iterator function.
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task<Map> EachLayer(object? context)
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
@@ -142,7 +148,9 @@ public partial class Map : IAsyncDisposable
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
         var bundleModule = await BundleInterop.GetModule();
-        await bundleModule.InvokeVoidAsync("flyTo", MapRef, latLng, zoom);
+        var latLngJson = LeafletInterop.ObjectToJson(latLng);
+        var latLngObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", latLngJson);
+        await bundleModule.InvokeVoidAsync("flyTo", MapRef, latLngObject, zoom);
         return this;
     }
     
@@ -157,7 +165,16 @@ public partial class Map : IAsyncDisposable
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
         var bundleModule = await BundleInterop.GetModule();
-        await bundleModule.InvokeVoidAsync("flyToBounds", MapRef, bounds, options);
+        var boundsJson = LeafletInterop.ObjectToJson(bounds);
+        var boundsObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", boundsJson);
+        if (options is null)
+        {
+            await bundleModule.InvokeVoidAsync("flyToBounds", MapRef, boundsObject);
+            return this;
+        }
+        var optionsJson = LeafletInterop.ObjectToJson(options);
+        var optionsObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", optionsJson);
+        await bundleModule.InvokeVoidAsync("flyToBounds", MapRef, boundsObject, optionsObject);
         return this;
     }
     
@@ -172,7 +189,16 @@ public partial class Map : IAsyncDisposable
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
         var bundleModule = await BundleInterop.GetModule();
-        await bundleModule.InvokeVoidAsync("fitBounds", MapRef, bounds, options);
+        var boundsJson = LeafletInterop.ObjectToJson(bounds);
+        var boundsObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", boundsJson);
+        if (options is null)
+        {
+            await bundleModule.InvokeVoidAsync("fitBounds", MapRef, boundsObject);
+            return this;
+        }
+        var optionsJson = LeafletInterop.ObjectToJson(options);
+        var optionsObject = await bundleModule.InvokeAsync<IJSObjectReference?>("jsonToJsObject", optionsJson);
+        await bundleModule.InvokeVoidAsync("fitBounds", MapRef, boundsObject, optionsObject);
         return this;
     }
     
@@ -186,7 +212,14 @@ public partial class Map : IAsyncDisposable
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
         var bundleModule = await BundleInterop.GetModule();
-        await bundleModule.InvokeVoidAsync("fitWorld", MapRef, options);
+        if (options is null)
+        {
+            await bundleModule.InvokeVoidAsync("fitWorld", MapRef);
+            return this;
+        }
+        var optionsJson = LeafletInterop.ObjectToJson(options);
+        var optionsObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", optionsJson);
+        await bundleModule.InvokeVoidAsync("fitWorld", MapRef, optionsObject);
         return this;
     }
     
@@ -201,7 +234,16 @@ public partial class Map : IAsyncDisposable
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
         var bundleModule = await BundleInterop.GetModule();
-        await bundleModule.InvokeVoidAsync("panTo", MapRef, latLng, options);
+        var latLngJson = LeafletInterop.ObjectToJson(latLng);
+        var latLngObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", latLngJson);
+        if (options is null)
+        {
+            await bundleModule.InvokeVoidAsync("panTo", MapRef, latLngObject);
+            return this;
+        }
+        var optionsJson = LeafletInterop.ObjectToJson(options);
+        var optionsObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", optionsJson);
+        await bundleModule.InvokeVoidAsync("panTo", MapRef, latLngObject, optionsObject);
         return this;
     }
     
@@ -216,7 +258,16 @@ public partial class Map : IAsyncDisposable
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
         var bundleModule = await BundleInterop.GetModule();
-        await bundleModule.InvokeVoidAsync("panBy", MapRef, point, options);
+        var pointJson = LeafletInterop.ObjectToJson(point);
+        var pointObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", pointJson);
+        if (options is null)
+        {
+            await bundleModule.InvokeVoidAsync("panBy", MapRef, pointObject);
+            return this;
+        }
+        var optionsJson = LeafletInterop.ObjectToJson(options);
+        var optionsObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", optionsJson);
+        await bundleModule.InvokeVoidAsync("panBy", MapRef, pointObject, optionsObject);
         return this;
     }
     
@@ -230,7 +281,9 @@ public partial class Map : IAsyncDisposable
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
         var bundleModule = await BundleInterop.GetModule();
-        await bundleModule.InvokeVoidAsync("setMaxBounds", MapRef, bounds);
+        var boundsJson = LeafletInterop.ObjectToJson(bounds);
+        var boundsObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", boundsJson);
+        await bundleModule.InvokeVoidAsync("setMaxBounds", MapRef, boundsObject);
         return this;
     }
     
@@ -273,7 +326,16 @@ public partial class Map : IAsyncDisposable
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
         var bundleModule = await BundleInterop.GetModule();
-        await bundleModule.InvokeVoidAsync("panInsideBounds", MapRef, bounds, options);
+        var boundsJson = LeafletInterop.ObjectToJson(bounds);
+        var boundsObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", boundsJson);
+        if (options is null)
+        {
+            await bundleModule.InvokeVoidAsync("panInsideBounds", MapRef, boundsObject);
+            return this;
+        }
+        var optionsJson = LeafletInterop.ObjectToJson(options);
+        var optionsObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", optionsJson);
+        await bundleModule.InvokeVoidAsync("panInsideBounds", MapRef, boundsObject, optionsObject);
         return this;
     }
     
@@ -290,7 +352,16 @@ public partial class Map : IAsyncDisposable
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
         var bundleModule = await BundleInterop.GetModule();
-        await bundleModule.InvokeVoidAsync("panInside", MapRef, latLng, options);
+        var latLngJson = LeafletInterop.ObjectToJson(latLng);
+        var latLngObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", latLngJson);
+        if (options is null)
+        {
+            await bundleModule.InvokeVoidAsync("panInside", MapRef, latLngObject);
+            return this;
+        }
+        var optionsJson = LeafletInterop.ObjectToJson(options);
+        var optionsObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", optionsJson);
+        await bundleModule.InvokeVoidAsync("panInside", MapRef, latLngObject, optionsObject);
         return this;
     }
     
@@ -333,7 +404,9 @@ public partial class Map : IAsyncDisposable
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
         var bundleModule = await BundleInterop.GetModule();
-        await bundleModule.InvokeVoidAsync("setView", MapRef, latLng, zoom);
+        var latLngJson = LeafletInterop.ObjectToJson(latLng);
+        var latLngObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", latLngJson);
+        await bundleModule.InvokeVoidAsync("setView", MapRef, latLngObject, zoom);
         return this;
     }
     
@@ -362,7 +435,14 @@ public partial class Map : IAsyncDisposable
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
         var bundleModule = await BundleInterop.GetModule();
-        await bundleModule.InvokeVoidAsync("zoomIn", MapRef, delta, options);
+        if (options is null)
+        {
+            await bundleModule.InvokeVoidAsync("zoomIn", MapRef, delta);
+            return this;
+        }
+        var zoomOptionsJson = LeafletInterop.ObjectToJson(options);
+        var zoomOptionsObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", zoomOptionsJson);
+        await bundleModule.InvokeVoidAsync("zoomIn", MapRef, delta, zoomOptionsObject);
         return this;
     }
     
@@ -377,7 +457,14 @@ public partial class Map : IAsyncDisposable
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
         var bundleModule = await BundleInterop.GetModule();
-        await bundleModule.InvokeVoidAsync("zoomOut", MapRef, delta, options);
+        if (options is null)
+        {
+            await bundleModule.InvokeVoidAsync("zoomOut", MapRef, delta);
+            return this;
+        }
+        var zoomOptionsJson = LeafletInterop.ObjectToJson(options);
+        var zoomOptionsObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", zoomOptionsJson);
+        await bundleModule.InvokeVoidAsync("zoomOut", MapRef, delta, zoomOptionsObject);
         return this;
     }
     
@@ -393,12 +480,26 @@ public partial class Map : IAsyncDisposable
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
         var bundleModule = await BundleInterop.GetModule();
-        await bundleModule.InvokeVoidAsync("setZoomAround", MapRef, latLng, zoom, options);
+        var latLngJson = LeafletInterop.ObjectToJson(latLng);
+        var latLngObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", latLngJson);
+        if (options is null)
+        {
+            await bundleModule.InvokeVoidAsync("setZoomAround", MapRef, latLngObject, zoom);
+            return this;
+        }
+        var zoomOptionsJson = LeafletInterop.ObjectToJson(options);
+        var zoomOptionsObject = await bundleModule.InvokeAsync<IJSObjectReference>("jsonToJsObject", zoomOptionsJson);
+        await bundleModule.InvokeVoidAsync("setZoomAround", MapRef, latLngObject, zoom, zoomOptionsObject);
         return this;
     }
     
     #region Methods for Getting Map State
     
+    /// <summary>
+    /// Returns the geographical center of the map view.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task<LatLng?> GetCenter()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
@@ -407,6 +508,11 @@ public partial class Map : IAsyncDisposable
         return JsonSerializer.Deserialize<LatLng>(center);
     }
     
+    /// <summary>
+    /// Returns the current zoom of the map view.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task<double> GetZoom()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
@@ -414,6 +520,11 @@ public partial class Map : IAsyncDisposable
         return await bundleModule.InvokeAsync<double>("getZoom", MapRef);
     }
     
+    /// <summary>
+    /// Returns the minimum zoom level of the map.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task<LatLngBounds?> GetBounds()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
@@ -422,6 +533,11 @@ public partial class Map : IAsyncDisposable
         return JsonSerializer.Deserialize<LatLngBounds>(bounds);
     }
     
+    /// <summary>
+    /// Returns the maximum zoom level of the map.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task<double> GetMinZoom()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
@@ -429,6 +545,11 @@ public partial class Map : IAsyncDisposable
         return await bundleModule.InvokeAsync<double>("getMinZoom", MapRef);
     }
     
+    /// <summary>
+    /// Returns the maximum zoom level of the map.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task<double> GetMaxZoom()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
@@ -436,6 +557,11 @@ public partial class Map : IAsyncDisposable
         return await bundleModule.InvokeAsync<double>("getMaxZoom", MapRef);
     }
     
+    /// <summary>
+    /// Returns the current size of the map container.
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task<Point?> GetSize()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
@@ -444,6 +570,11 @@ public partial class Map : IAsyncDisposable
         return JsonSerializer.Deserialize<Point>(size);
     }
     
+    /// <summary>
+    /// Returns the bounds of the current map view in projected pixel coordinates (sometimes useful in layer and overlay implementations).
+    /// </summary>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task<Point?> GetPixelOrigin()
     {
         if (MapRef is null) throw new NullReferenceException("MapRef is null");
@@ -454,6 +585,10 @@ public partial class Map : IAsyncDisposable
     
     #endregion
 
+    /// <summary>
+    /// Removes the given layer to the map.
+    /// </summary>
+    /// <param name="layer"></param>
     public async Task RemoveLayer(IJSObjectReference layer)
     {
         var bundleModule = await BundleInterop.GetModule();
