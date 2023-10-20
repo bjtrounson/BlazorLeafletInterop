@@ -57,8 +57,14 @@ export function setZoomAround(map: L.Map, latlng: L.LatLngExpression, zoom: numb
     return map.setZoomAround(latlng, zoom, options);
 }
 
-export function fitBounds(map: L.Map, bounds: L.LatLngBoundsExpression, options?: L.FitBoundsOptions): L.Map {
-    return map.fitBounds(bounds, options);
+type LatLngBounds = {
+    southWest: L.LatLng,
+    northEast: L.LatLng
+};
+
+export function fitBounds(map: L.Map, bounds: LatLngBounds, options?: L.FitBoundsOptions): L.Map {
+    const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
+    return map.fitBounds(newBounds, options);
 }
 
 export function fitWorld(map: L.Map, options?: L.FitBoundsOptions): L.Map {
@@ -77,12 +83,14 @@ export function flyTo(map: L.Map, latlng: L.LatLngExpression, zoom?: number, opt
     return map.flyTo(latlng, zoom, options);
 }
 
-export function flyToBounds(map: L.Map, bounds: L.LatLngBoundsExpression, options?: L.FitBoundsOptions): L.Map {
-    return map.flyToBounds(bounds, options);
+export function flyToBounds(map: L.Map, bounds: LatLngBounds, options?: L.FitBoundsOptions): L.Map {
+    const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
+    return map.flyToBounds(newBounds, options);
 }
 
-export function setMaxBounds(map: L.Map, bounds: L.LatLngBoundsExpression): L.Map {
-    return map.setMaxBounds(bounds);
+export function setMaxBounds(map: L.Map, bounds: LatLngBounds): L.Map {
+    const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
+    return map.setMaxBounds(newBounds);
 }
 
 export function setMinZoom(map: L.Map, zoom: number): L.Map {
@@ -93,8 +101,9 @@ export function setMaxZoom(map: L.Map, zoom: number): L.Map {
     return map.setMaxZoom(zoom);
 }
 
-export function panInsideBounds(map: L.Map, bounds: L.LatLngBoundsExpression, options?: L.PanOptions): L.Map {
-    return map.panInsideBounds(bounds, options);
+export function panInsideBounds(map: L.Map, bounds: LatLngBounds, options?: L.PanOptions): L.Map {
+    const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
+    return map.panInsideBounds(newBounds, options);
 }
 
 export function panInside(map: L.Map, latlng: L.LatLngExpression, options?: L.PanOptions): L.Map {
@@ -129,8 +138,9 @@ export function getMaxZoom(map: L.Map): number {
     return map.getMaxZoom();
 }
 
-export function getBoundsZoom(map: L.Map, bounds: L.LatLngBoundsExpression, inside?: boolean, padding?: L.Point): number {
-    return map.getBoundsZoom(bounds, inside, padding);
+export function getBoundsZoom(map: L.Map, bounds: LatLngBounds, inside?: boolean, padding?: L.Point): number {
+    const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
+    return map.getBoundsZoom(newBounds, inside, padding);
 }
 
 export function getSize(map: L.Map): string {

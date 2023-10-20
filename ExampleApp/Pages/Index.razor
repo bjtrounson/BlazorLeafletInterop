@@ -36,6 +36,7 @@
 <div style="position: absolute; top: 5%; left: 5%; z-index: 10000; background-color: aquamarine; padding: 10px; border-radius: 10px;">
 	<h3>Blazor Leaflet Interop</h3>
 	<button @onclick="SwitchMarkers">Switch Markers</button>
+	<button @onclick="FitToBoundsTest">Fit To Bounds Test</button>
 </div>
 
 @code {
@@ -59,13 +60,17 @@
 		await Polyline.Init(BundleInterop, Map.MapRef);
 		await Polyline.SetLatLngs(new List<LatLng>() { new LatLng(50, 8.9), new LatLng(50, 9) });
 		await Polyline.AddTo<Polyline>(Map.MapRef, Polyline.PolylineRef);
-		var markerLatLng = await Marker.GetLatLng();
-		Console.WriteLine(markerLatLng?.Lat + " " + markerLatLng?.Lng);
 	}
 
 	private void SwitchMarkers()
 	{
 		IsFirstMarker = !IsFirstMarker;
 		StateHasChanged();
+	}
+	
+	private async void FitToBoundsTest()
+	{
+		if (Map is null) return;
+		await Map.FitBounds(new LatLngBounds(new LatLng(-44.079625, 171.650432), new LatLng(-43.53835, 172.56842)), null);
 	}
 }
