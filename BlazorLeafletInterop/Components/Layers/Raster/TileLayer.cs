@@ -22,9 +22,15 @@ public class TileLayer : GridLayer, IAsyncDisposable
     {
         await base.OnInitializedAsync();
         TileRef = await CreateTileLayerAsync(UrlTemplate, TileLayerOptions);
-        await AddTo(MapRef).ConfigureAwait(false);
+        await AddTo<TileLayer>(MapRef, TileRef).ConfigureAwait(false);
     }
     
+    /// <summary>
+    /// Instantiates a tile layer object given a URL template and optionally an options object.
+    /// </summary>
+    /// <param name="urlTemplate"></param>
+    /// <param name="tileLayerOptions"></param>
+    /// <returns></returns>
     private async Task<IJSObjectReference> CreateTileLayerAsync(string urlTemplate, TileLayerOptions tileLayerOptions)
     {
         var module = await BundleInterop.GetModule();
@@ -32,15 +38,14 @@ public class TileLayer : GridLayer, IAsyncDisposable
         var tileLayerOptionsObject = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", tileLayerOptionsJson);
         return await module.InvokeAsync<IJSObjectReference>("createTileLayer", urlTemplate, tileLayerOptionsObject);
     }
-    
-    public async Task<TileLayer> AddTo(IJSObjectReference? map)
-    {
-        if (TileRef is null || map is null) throw new NullReferenceException("TileRef or map is null");
-        var module = await BundleInterop.GetModule();
-        await module.InvokeVoidAsync("addTo", TileRef, map);
-        return this;
-    }
 
+    /// <summary>
+    /// Updates the layer's URL template and redraws it (unless noRedraw is set to true).
+    /// If the URL does not change, the layer will not be redrawn unless the noRedraw parameter is set to false.
+    /// </summary>
+    /// <param name="url"></param>
+    /// <param name="noRedraw"></param>
+    /// <exception cref="NullReferenceException"></exception>
     public async Task SetUrl(string url, bool noRedraw = false)
     {
         if (TileRef is null) throw new NullReferenceException("TileRef is null");
