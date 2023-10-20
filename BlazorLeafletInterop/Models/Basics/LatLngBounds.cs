@@ -14,8 +14,10 @@ public class LatLngBounds
         NorthEast = northeast;
     }
 
-    private LatLng SouthWest { get; set; }
-    private LatLng NorthEast { get; set; }
+    // ReSharper disable once MemberCanBePrivate.Global
+    public LatLng SouthWest { get; set; }
+    // ReSharper disable once MemberCanBePrivate.Global
+    public LatLng NorthEast { get; set; }
 
     public LatLngBounds Extend(LatLng point)
     {
@@ -44,8 +46,6 @@ public class LatLngBounds
     }
     
     public LatLng GetCenter() => new ((SouthWest.Lat + NorthEast.Lat) / 2, (SouthWest.Lng + NorthEast.Lng) / 2);
-    public LatLng GetSouthWest() => SouthWest;
-    public LatLng GetNorthEast() => NorthEast;
     public LatLng GetNorthWest() => new (NorthEast.Lat, SouthWest.Lng);
     public LatLng GetSouthEast() => new (SouthWest.Lat, NorthEast.Lng);
     public LatLng GetWest() => new ((SouthWest.Lat + NorthEast.Lat) / 2, SouthWest.Lng);
