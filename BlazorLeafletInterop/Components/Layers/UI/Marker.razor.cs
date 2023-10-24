@@ -37,7 +37,7 @@ public partial class Marker : IAsyncDisposable
 
     protected override async Task OnParametersSetAsync()
     {
-        if (Icon is not null) await SetIcon(MarkerRef, Icon);
+        if (Icon is not null && MarkerRef is not null) await SetIcon(MarkerRef, Icon);
     }
 
     public async Task Initialize(ILayerFactory layerFactory, Map map, LatLng? latLng, MarkerOptions? options)
