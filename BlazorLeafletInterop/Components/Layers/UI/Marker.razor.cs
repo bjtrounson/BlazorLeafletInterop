@@ -47,7 +47,7 @@ public partial class Marker : IAsyncDisposable
             await LayerGroup.AddLayer(MarkerRef);
             return;
         }
-        await AddTo<Marker>(Map.MapRef, MarkerRef);
+        await AddTo<Marker>(Map.MapRef, MarkerRef).ConfigureAwait(false);
     }
     
     /// <summary>
