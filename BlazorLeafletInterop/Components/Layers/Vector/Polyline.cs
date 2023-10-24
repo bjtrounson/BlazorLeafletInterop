@@ -20,7 +20,7 @@ public class Polyline : Path
     {
         await base.OnInitializedAsync();
         if (Map is null) return;
-        Module = Map.Module;
+        Module = await LayerFactory.GetModule();
         PolylineRef = await CreatePolyline(PolylineOptions);
         if (PolylineRef is null) return;
         await SetLatLngs(LatLngs);

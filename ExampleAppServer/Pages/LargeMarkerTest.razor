@@ -6,7 +6,6 @@
 @using BlazorLeafletInterop.Factories
 @using BlazorLeafletInterop.Models.Basics;
 @using BlazorLeafletInterop.Models.Options.Basic
-@using BlazorLeafletInterop.Models.Options.Layer.UI
 @using BlazorLeafletInterop.Models.Options.Map
 
 @inject IIconFactory IconFactory
@@ -26,8 +25,8 @@
 
 	private IJSObjectReference? _icon;
 
-	protected override async Task OnInitializedAsync()
-    {
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
 		_icon = await IconFactory.CreateIcon(new IconOptions()
 		{
 			IconUrl = "https://leafletjs.com/examples/custom-icons/leaf-green.png",

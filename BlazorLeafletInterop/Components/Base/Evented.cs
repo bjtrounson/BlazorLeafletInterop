@@ -20,8 +20,9 @@ public class Evented : ComponentBase
     private DotNetObjectReference<Evented>? DotNetRef { get; set; }
     public IJSObjectReference? Module { get; set; }
     
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (!firstRender) return;
         await base.OnInitializedAsync();
         DotNetRef = DotNetObjectReference.Create(this);
         Module = await LayerFactory.GetModule();

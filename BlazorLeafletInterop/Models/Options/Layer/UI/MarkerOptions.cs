@@ -1,10 +1,12 @@
 ﻿using BlazorLeafletInterop.Models.Basics;
 using BlazorLeafletInterop.Models.Options.Base;
+using Microsoft.JSInterop;
 
 namespace BlazorLeafletInterop.Models.Options.Layer.UI;
 
 public class MarkerOptions : InteractiveLayerOptions
 {
+    public IJSObjectReference? Icon { get; set; }
     public bool Keyboard { get; set; } = true;
     public string Title { get; set; } = "";
     public string Alt { get; set; } = "";
