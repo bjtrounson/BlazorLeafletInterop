@@ -4,24 +4,24 @@
 @using BlazorLeafletInterop.Components.Layers.Raster
 @using BlazorLeafletInterop.Components.Layers.Misc
 @using BlazorLeafletInterop.Components.Layers.UI
+@using BlazorLeafletInterop.Interops
 @using BlazorLeafletInterop.Models.Basics;
+@using BlazorLeafletInterop.Models.Options.Layer.Raster
 @using BlazorLeafletInterop.Models.Options.Map
 
-<Map @ref="_map" Class="map" MapOptions="Options">
-	<TileLayer @ref="_tileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
+@inject IBundleInterop BundleInterop
+
+<Map @ref="_map" Class="map" MapOptions="Options" AfterRender="OnMapReady">
 	@* Create a large amount of markers with random positions *@
-	<LayerGroup>
-		@for (var i = 0; i < 1000; i++)
-		{
-			<Marker LatLng="@GetRandomLatLng()" />
-		}
-	</LayerGroup>
+	@for (var i = 0; i < 500; i++)
+	{
+		<Marker LatLng="@GetRandomLatLng()" />
+	}
 </Map>
 
 @code {
 	private Map? _map;
-	private TileLayer? _tileLayer;
-	private MapOptions Options = new MapOptions() {  Center = new LatLng(0, 0), Zoom = 1 };
+	private MapOptions Options = new() {  Center = new LatLng(0, 0), Zoom = 1 };
 	
 	private LatLng GetRandomLatLng()
 	{
@@ -31,4 +31,10 @@
 		return new LatLng(lat, lng);
 	}
 	
+	private async void OnMapReady()
+	{
+		var tileLayer = new TileLayer();
+		if (_map == null) return;
+		await tileLayer.Initialize(BundleInterop, _map, "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", new TileLayerOptions());
+	}
 }

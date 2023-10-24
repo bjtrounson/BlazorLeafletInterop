@@ -1,6 +1,8 @@
-import * as L from 'leaflet';
+import type * as L from "leaflet";
+
 
 export function createMarker(latLng: L.LatLngExpression, options?: L.MarkerOptions): L.Marker {
+    // @ts-ignore
     return L.marker(latLng, options);
 }
 

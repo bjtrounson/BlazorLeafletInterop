@@ -31,6 +31,10 @@
 
 **Events should work but are not tested yet.**
 ## Before you start
+Add the latest leaflet version to your index.html
+```html
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+```
 Add this service to your Program.cs
 ```csharp
 builder.Services.AddMapService();

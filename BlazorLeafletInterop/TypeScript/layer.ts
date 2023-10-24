@@ -1,4 +1,4 @@
-import * as L from 'leaflet';
+import type * as L from "leaflet";
 
 export function addTo(layer: L.Layer, map: L.Map | L.LayerGroup): L.Layer {
     return layer.addTo(map);
@@ -9,6 +9,7 @@ export function remove(layer: L.Layer): L.Layer {
 }
 
 export function removeFrom(layer: L.Layer, map: L.Map | L.LayerGroup): L.Layer {
+    // @ts-ignore
     if (map instanceof L.LayerGroup) return map.removeLayer(layer);
     return layer.removeFrom(map);
 }

@@ -8,8 +8,8 @@
 @using BlazorLeafletInterop.Components.Layers.UI
 @using BlazorLeafletInterop.Models.Options.Map
 
-<Map @ref="Map" Class="map" MapOptions="Options" AfterRender="@(() => AfterRender())">
-	<TileLayer @ref="TileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
+<Map @ref="Map" Class="map" MapOptions="Options" AfterRender="AfterRender">
+	<TileLayer @ref="TileLayer" UrlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 	@if (IsFirstMarker)
 	{
 		<Marker @ref="Marker" LatLng="new LatLng(50, 8.9)">
@@ -51,15 +51,16 @@
     private MapOptions Options { get; set; } = new() { PreferCanvas = true, Center = new LatLng(50, 9), Zoom = 13 };
 	private bool IsFirstMarker { get; set; } = true;
 	private Polyline? Polyline { get; set; }
-	private Marker Marker { get; set; } = default!;
+	private Marker? Marker { get; set; } = default!;
 	
-	private async Task AfterRender()
+	private async void AfterRender()
 	{
 		Polyline = new Polyline();
 		if (Map is null) return;
-		await Polyline.Init(BundleInterop, Map.MapRef);
+		await Polyline.Initialize(BundleInterop, Map.MapRef);
 		await Polyline.SetLatLngs(new List<LatLng>() { new LatLng(50, 8.9), new LatLng(50, 9) });
 		await Polyline.AddTo<Polyline>(Map.MapRef, Polyline.PolylineRef);
+		if (Marker is null) return;
 		var markerLatLng = await Marker.GetLatLng();
 		Console.WriteLine(markerLatLng?.Lat + " " + markerLatLng?.Lng);
 	}
