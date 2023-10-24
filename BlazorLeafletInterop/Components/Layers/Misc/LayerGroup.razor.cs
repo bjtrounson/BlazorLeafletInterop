@@ -23,14 +23,14 @@ public partial class LayerGroup : IAsyncDisposable
     
     public async Task<IJSObjectReference> CreateLayerGroup(LayerGroupOptions options)
     {
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         return await Module.InvokeAsync<IJSObjectReference>("createLayerGroup", options);
     }
     
     public async Task<LayerGroup> AddLayer(IJSObjectReference layer)
     {
         if (LayerGroupRef is null) throw new NullReferenceException();
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         await Module.InvokeVoidAsync("addLayer", LayerGroupRef, layer);
         return this;
     }
@@ -38,7 +38,7 @@ public partial class LayerGroup : IAsyncDisposable
     public async Task<LayerGroup> RemoveLayer(IJSObjectReference layer)
     {
         if (LayerGroupRef is null) throw new NullReferenceException();
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         await Module.InvokeVoidAsync("removeLayer", LayerGroupRef, layer);
         return this;
     }

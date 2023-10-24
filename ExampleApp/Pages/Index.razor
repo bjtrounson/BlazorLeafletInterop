@@ -6,6 +6,7 @@
 @using BlazorLeafletInterop.Interops
 @using BlazorLeafletInterop.Models.Basics
 @using BlazorLeafletInterop.Components.Layers.UI
+@using BlazorLeafletInterop.Factories
 @using BlazorLeafletInterop.Models.Options.Map
 
 <Map @ref="Map" Class="map" MapOptions="Options" AfterRender="AfterRender">
@@ -44,7 +45,7 @@
 	public IIconFactoryInterop IconFactoryInterop { get; set; } = default!;
 	
 	[Inject]
-	public IBundleInterop BundleInterop { get; set; } = default!;
+	public ILayerFactory LayerFactory { get; set; } = default!;
 	
     private Map? Map { get; set; }
     private TileLayer? TileLayer { get; set; }
@@ -57,7 +58,7 @@
 	{
 		Polyline = new Polyline();
 		if (Map is null) return;
-		await Polyline.Initialize(BundleInterop, Map.MapRef);
+		await Polyline.Initialize(LayerFactory, Map);
 		await Polyline.SetLatLngs(new List<LatLng>() { new LatLng(50, 8.9), new LatLng(50, 9) });
 		await Polyline.AddTo<Polyline>(Map.MapRef, Polyline.PolylineRef);
 		if (Marker is null) return;

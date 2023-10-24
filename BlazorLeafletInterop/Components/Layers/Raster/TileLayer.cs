@@ -1,5 +1,7 @@
-﻿using BlazorLeafletInterop.Components.Base;
+﻿using System.Reflection;
+using BlazorLeafletInterop.Components.Base;
 using BlazorLeafletInterop.Components.Layers.Misc;
+using BlazorLeafletInterop.Factories;
 using BlazorLeafletInterop.Interops;
 using BlazorLeafletInterop.Models;
 using BlazorLeafletInterop.Models.Options.Layer.Raster;
@@ -20,32 +22,20 @@ public class TileLayer : GridLayer, IAsyncDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        TileRef = await CreateTileLayerAsync(UrlTemplate, TileLayerOptions);
+        Module = Map?.Module;
+        TileRef = await LayerFactory.CreateTileLayer(UrlTemplate, TileLayerOptions);
         if (Map is null || TileRef is null) return;
         await AddTo<TileLayer>(Map.MapRef, TileRef).ConfigureAwait(false);
     }
 
-    public async Task Initialize(IBundleInterop interop, Map map, string urlTemplate, TileLayerOptions options)
+    public async Task Initialize(ILayerFactory layerFactory, Map map, string urlTemplate, TileLayerOptions options)
     {
-        BundleInterop = interop;
+        LayerFactory = layerFactory;
         Map = map;
-        TileRef = await CreateTileLayerAsync(urlTemplate, options);
+        Module = await layerFactory.GetModule();
+        TileRef = await LayerFactory.CreateTileLayer(urlTemplate, options);
         if (Map is null || TileRef is null) return;
         await AddTo<TileLayer>(Map.MapRef, TileRef).ConfigureAwait(false);
-    }
-
-    /// <summary>
-    /// Instantiates a tile layer object given a URL template and optionally an options object.
-    /// </summary>
-    /// <param name="urlTemplate"></param>
-    /// <param name="tileLayerOptions"></param>
-    /// <returns></returns>
-    private async Task<IJSObjectReference> CreateTileLayerAsync(string urlTemplate, TileLayerOptions tileLayerOptions)
-    {
-        Module ??= await BundleInterop.GetModule();
-        var tileLayerOptionsJson = LeafletInterop.ObjectToJson(tileLayerOptions);
-        var tileLayerOptionsObject = await Module.InvokeAsync<IJSObjectReference>("jsonToJsObject", tileLayerOptionsJson);
-        return await Module.InvokeAsync<IJSObjectReference>("createTileLayer", urlTemplate, tileLayerOptionsObject);
     }
 
     /// <summary>
@@ -58,7 +48,7 @@ public class TileLayer : GridLayer, IAsyncDisposable
     public async Task SetUrl(string url, bool noRedraw = false)
     {
         if (TileRef is null) throw new NullReferenceException("TileRef is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         await Module.InvokeVoidAsync("setUrl", TileRef, url, noRedraw);
     }
 

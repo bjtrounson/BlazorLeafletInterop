@@ -17,8 +17,8 @@ public partial class Popup : IAsyncDisposable
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await base.OnAfterRenderAsync(firstRender);
-        if (MarkerRef is null) return;
-        Module ??= await BundleInterop.GetModule();
+        if (MarkerRef is null) return; ;
+        Module ??= await LayerFactory.GetModule();
         var popupContent = await Module.InvokeAsync<string>("getElementInnerHtml", Id);
         await BindPopup(MarkerRef, popupContent, PopupOptions);
         PopupRef = await GetPopup(MarkerRef);
