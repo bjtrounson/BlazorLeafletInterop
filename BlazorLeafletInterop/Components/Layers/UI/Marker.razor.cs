@@ -35,6 +35,11 @@ public partial class Marker : IAsyncDisposable
         await AddTo<Marker>(Map.MapRef, MarkerRef).ConfigureAwait(false);
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Icon is not null) await SetIcon(MarkerRef, Icon);
+    }
+
     public async Task Initialize(ILayerFactory layerFactory, Map map, LatLng? latLng, MarkerOptions? options)
     {
         LayerFactory = layerFactory;

@@ -3,24 +3,44 @@
 @using BlazorLeafletInterop.Components;
 @using BlazorLeafletInterop.Components.Layers.Raster
 @using BlazorLeafletInterop.Components.Layers.UI
-@using BlazorLeafletInterop.Interops
+@using BlazorLeafletInterop.Factories
 @using BlazorLeafletInterop.Models.Basics;
+@using BlazorLeafletInterop.Models.Options.Basic
+@using BlazorLeafletInterop.Models.Options.Layer.UI
 @using BlazorLeafletInterop.Models.Options.Map
 
-@inject IBundleInterop BundleInterop
+@inject IIconFactory IconFactory
 
-<Map @ref="_map" Class="map" MapOptions="Options">
+<Map @ref="_map" Class="map" MapOptions="_options">
 	<TileLayer UrlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
 	@* Create a large amount of markers with random positions *@
 	@for (var i = 0; i < 500; i++)
 	{
-		<Marker LatLng="@GetRandomLatLng()"/>
+		<Marker Icon="_icon" LatLng="@GetRandomLatLng()"/>
 	}
 </Map>
 
 @code {
 	private Map? _map;
-	private MapOptions Options = new() {  Center = new LatLng(0, 0), Zoom = 1 };
+	private readonly MapOptions _options = new() {  Center = new LatLng(0, 0), Zoom = 1 };
+
+	private IJSObjectReference? _icon;
+
+	protected override async Task OnInitializedAsync()
+    {
+		_icon = await IconFactory.CreateIcon(new IconOptions()
+		{
+			IconUrl = "https://leafletjs.com/examples/custom-icons/leaf-green.png",
+			IconSize = new Point(38, 95),
+			IconAnchor = new Point(22, 94),
+			PopupAnchor = new Point(-3, -76),
+			ShadowUrl = "https://leafletjs.com/examples/custom-icons/leaf-shadow.png",
+			ShadowSize = new Point(50, 64),
+			ShadowAnchor = new Point(4, 62),
+			IconRetinaUrl = "https://leafletjs.com/examples/custom-icons/leaf-green.png",
+			TooltipAnchor = new Point(0, -19),
+		});
+	}
 	
 	private LatLng GetRandomLatLng()
 	{
