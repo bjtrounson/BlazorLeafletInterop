@@ -49,7 +49,7 @@ public class GeoJson : FeatureGroup
     public async Task<IJSObjectReference> CreateGeoJson(FeatureCollection geoJsonData, bool markersInheritOptions)
     {
         var geoJsonDataJson = LeafletInterop.ObjectToJson(geoJsonData);
-        var module = await BundleInterop.GetModule();
+        var module = await LayerFactory.GetModule();
         var geoJsonDataObject = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", geoJsonDataJson);
         return await module.InvokeAsync<IJSObjectReference>("createGeoJson", 
             DotNetRef, geoJsonDataObject, markersInheritOptions, 
@@ -67,7 +67,7 @@ public class GeoJson : FeatureGroup
     {
         if (GeoJsonRef is null) throw new NullReferenceException();
         var geoJsonDataJson = LeafletInterop.ObjectToJson(geoJsonData);
-        var module = await BundleInterop.GetModule();
+        var module = await LayerFactory.GetModule();
         var geoJsonDataObject = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", geoJsonDataJson);
         await module.InvokeVoidAsync("addData", GeoJsonRef, geoJsonDataObject);
         return this;

@@ -2,20 +2,19 @@
 
 @using BlazorLeafletInterop.Components;
 @using BlazorLeafletInterop.Components.Layers.Raster
-@using BlazorLeafletInterop.Components.Layers.Misc
 @using BlazorLeafletInterop.Components.Layers.UI
 @using BlazorLeafletInterop.Interops
 @using BlazorLeafletInterop.Models.Basics;
-@using BlazorLeafletInterop.Models.Options.Layer.Raster
 @using BlazorLeafletInterop.Models.Options.Map
 
 @inject IBundleInterop BundleInterop
 
-<Map @ref="_map" Class="map" MapOptions="Options" AfterRender="OnMapReady">
+<Map @ref="_map" Class="map" MapOptions="Options">
+	<TileLayer UrlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
 	@* Create a large amount of markers with random positions *@
 	@for (var i = 0; i < 500; i++)
 	{
-		<Marker LatLng="@GetRandomLatLng()" />
+		<Marker LatLng="@GetRandomLatLng()"/>
 	}
 </Map>
 
@@ -29,12 +28,5 @@
 		var lat = random.NextDouble() * 180 - 90;
 		var lng = random.NextDouble() * 360 - 180;
 		return new LatLng(lat, lng);
-	}
-	
-	private async void OnMapReady()
-	{
-		var tileLayer = new TileLayer();
-		if (_map == null) return;
-		await tileLayer.Initialize(BundleInterop, _map, "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", new TileLayerOptions());
 	}
 }

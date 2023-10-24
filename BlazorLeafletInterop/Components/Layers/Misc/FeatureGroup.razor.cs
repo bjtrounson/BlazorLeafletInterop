@@ -17,14 +17,14 @@ public partial class FeatureGroup
     
     public async Task<IJSObjectReference> CreateFeatureGroup(LayerGroupOptions options)
     {
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         return await Module.InvokeAsync<IJSObjectReference>("createFeatureGroup", options);
     }
     
     public async Task<FeatureGroup> SetStyle(object style)
     {
         if (FeatureGroupRef is null) throw new NullReferenceException();
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         await Module.InvokeVoidAsync("setStyle", FeatureGroupRef, style);
         return this;
     }
@@ -32,7 +32,7 @@ public partial class FeatureGroup
     public async Task<FeatureGroup> BringToFront()
     {
         if (FeatureGroupRef is null) throw new NullReferenceException();
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         await Module.InvokeVoidAsync("bringToFront", FeatureGroupRef);
         return this;
     }
@@ -40,7 +40,7 @@ public partial class FeatureGroup
     public async Task<FeatureGroup> BringToBack()
     {
         if (FeatureGroupRef is null) throw new NullReferenceException();
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         await Module.InvokeVoidAsync("bringToBack", FeatureGroupRef);
         return this;
     }
@@ -48,7 +48,7 @@ public partial class FeatureGroup
     public async Task<IJSObjectReference> GetBounds()
     {
         if (FeatureGroupRef is null) throw new NullReferenceException();
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         return await Module.InvokeAsync<IJSObjectReference>("getBounds", FeatureGroupRef);
     }
 }

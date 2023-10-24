@@ -20,7 +20,7 @@ public class Layer : Evented
     public async Task<T> AddTo<T>(IJSObjectReference? map, IJSObjectReference? @ref)
     {
         if (@ref is null || map is null) throw new NullReferenceException("Ref or map is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         await Module.InvokeVoidAsync("addTo", @ref, map);
         return (T)(object)this;
     }
@@ -36,7 +36,7 @@ public class Layer : Evented
     public async Task<T> RemoveFrom<T>(IJSObjectReference? map, IJSObjectReference? @ref)
     {
         if (@ref is null || map is null) throw new NullReferenceException("Ref or map is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         await Module.InvokeVoidAsync("removeFrom", @ref, map);
         return (T)(object)this;
     }
@@ -51,7 +51,7 @@ public class Layer : Evented
     public async Task<T> Remove<T>(IJSObjectReference? @ref)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         await Module.InvokeVoidAsync("remove", @ref);
         return (T)(object)this;
     }
@@ -66,7 +66,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> GetPane(string? name, IJSObjectReference? @ref)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var paneRef = await Module.InvokeAsync<IJSObjectReference>("getPane", @ref, name);
         return paneRef;
     }
@@ -80,7 +80,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> GetAttribution(IJSObjectReference? @ref)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var attributionRef = await Module.InvokeAsync<IJSObjectReference>("getAttribution", @ref);
         return attributionRef;
     }
@@ -96,7 +96,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> BindPopup(IJSObjectReference? @ref, string content, PopupOptions? options)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var popupRef = await Module.InvokeAsync<IJSObjectReference>("bindPopup", @ref, content, options);
         return popupRef;
     }
@@ -110,7 +110,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> UnbindPopup(IJSObjectReference? @ref)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var popupRef = await Module.InvokeAsync<IJSObjectReference>("unbindPopup", @ref);
         return popupRef;
     }
@@ -125,7 +125,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> OpenPopup(IJSObjectReference? @ref, LatLng? latLng)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var popupRef = await Module.InvokeAsync<IJSObjectReference>("openPopup", @ref, latLng);
         return popupRef;
     }
@@ -139,7 +139,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> ClosePopup(IJSObjectReference? @ref)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var popupRef = await Module.InvokeAsync<IJSObjectReference>("closePopup", @ref);
         return popupRef;
     }
@@ -153,7 +153,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> TogglePopup(IJSObjectReference? @ref)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var popupRef = await Module.InvokeAsync<IJSObjectReference>("togglePopup", @ref);
         return popupRef;
     }
@@ -167,7 +167,7 @@ public class Layer : Evented
     public async Task<bool> IsPopupOpen(IJSObjectReference? @ref)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var isOpen = await Module.InvokeAsync<bool>("isPopupOpen", @ref);
         return isOpen;
     }
@@ -182,7 +182,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> SetPopupContent(IJSObjectReference? @ref, string content)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var popupRef = await Module.InvokeAsync<IJSObjectReference>("setPopupContent", @ref, content);
         return popupRef;
     }
@@ -196,7 +196,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> GetPopup(IJSObjectReference? @ref)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var popupRef = await Module.InvokeAsync<IJSObjectReference>("getPopup", @ref);
         return popupRef;
     }
@@ -212,7 +212,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> BindTooltip(IJSObjectReference? @ref, string content, TooltipOptions? options)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var tooltipRef = await Module.InvokeAsync<IJSObjectReference>("bindTooltip", @ref, content, options);
         return tooltipRef;
     }
@@ -226,7 +226,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> UnbindTooltip(IJSObjectReference? @ref)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var tooltipRef = await Module.InvokeAsync<IJSObjectReference>("unbindTooltip", @ref);
         return tooltipRef;
     }
@@ -241,7 +241,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> OpenTooltip(IJSObjectReference? @ref, LatLng? latLng)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var tooltipRef = await Module.InvokeAsync<IJSObjectReference>("openTooltip", @ref, latLng);
         return tooltipRef;
     }
@@ -255,7 +255,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> CloseTooltip(IJSObjectReference? @ref)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var tooltipRef = await Module.InvokeAsync<IJSObjectReference>("closeTooltip", @ref);
         return tooltipRef;
     }
@@ -269,7 +269,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> ToggleTooltip(IJSObjectReference? @ref)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var tooltipRef = await Module.InvokeAsync<IJSObjectReference>("toggleTooltip", @ref);
         return tooltipRef;
     }
@@ -283,7 +283,7 @@ public class Layer : Evented
     public async Task<bool> IsTooltipOpen(IJSObjectReference? @ref)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var isOpen = await Module.InvokeAsync<bool>("isTooltipOpen", @ref);
         return isOpen;
     }
@@ -298,7 +298,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> SetTooltipContent(IJSObjectReference? @ref, string content)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var tooltipRef = await Module.InvokeAsync<IJSObjectReference>("setTooltipContent", @ref, content);
         return tooltipRef;
     }
@@ -312,7 +312,7 @@ public class Layer : Evented
     public async Task<IJSObjectReference> GetTooltip(IJSObjectReference? @ref)
     {
         if (@ref is null) throw new NullReferenceException("Ref is null");
-        Module ??= await BundleInterop.GetModule();
+        Module ??= await LayerFactory.GetModule();
         var tooltipRef = await Module.InvokeAsync<IJSObjectReference>("getTooltip", @ref);
         return tooltipRef;
     }

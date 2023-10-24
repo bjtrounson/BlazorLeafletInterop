@@ -52,32 +52,11 @@ public partial class Map : IAsyncDisposable
     {
         await base.OnAfterRenderAsync(firstRender);
         if (!firstRender) return;
-        MapRef = await CreateMap(Id, MapOptions).ConfigureAwait(false);
+        MapRef = await LayerFactory.CreateMap(Id, MapOptions);
         if (MapRef is null) return;
         IsRendered = true;
         StateHasChanged();
         await AfterRender.InvokeAsync();
-    }
-
-    private async Task<IJSObjectReference> CreateMap(string id, MapOptions options)
-    {
-        Module ??= await BundleInterop.GetModule();
-        var mapOptionsJson = LeafletInterop.ObjectToJson(options);
-        var mapOptionsObject = await Module.InvokeAsync<IJSObjectReference>("jsonToJsObject", mapOptionsJson);
-        return await Module.InvokeAsync<IJSObjectReference>("createMap", id, mapOptionsObject);
-    }
-
-    /// <summary>
-    /// Iterates over the layers of the map, optionally specifying context of the iterator function.
-    /// </summary>
-    /// <param name="context"></param>
-    /// <returns></returns>
-    /// <exception cref="NullReferenceException"></exception>
-    public async Task<Map> EachLayer(object? context)
-    {
-        if (MapRef is null || Module is null) throw new NullReferenceException("MapRef or Module is null");
-        await Module.InvokeVoidAsync("eachLayer", MapRefDotNetObjectRef, "EachLayerDotNetToJs", MapRef, context);
-        return this;
     }
 
     /// <summary>
@@ -525,13 +504,11 @@ public partial class Map : IAsyncDisposable
         await Module.InvokeVoidAsync("removeLayer", MapRef, layer);
     }
 
-    public async ValueTask DisposeAsync()
+    public ValueTask DisposeAsync()
     {
-        if (MapRef is null) return;
-        async void LayerCallback(IJSObjectReference layer) => await RemoveLayer(layer);
-        EachLayerCallback = LayerCallback;
-        await EachLayer(null);
+        if (MapRef is null) return ValueTask.CompletedTask;
         MapRefDotNetObjectRef?.Dispose();
         GC.SuppressFinalize(this);
+        return ValueTask.CompletedTask;
     }
 }
