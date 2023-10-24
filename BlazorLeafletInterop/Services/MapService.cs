@@ -8,9 +8,9 @@ public static class MapService
 {
     public static IServiceCollection AddMapService(this IServiceCollection services)
     {
-        services.AddSingleton<IBundleInterop, BundleInterop>();
-        services.AddSingleton<ILayerFactory, LayerFactory>();
-        services.AddSingleton<IIconFactory, IconFactory>();
+        services.AddTransient<IBundleInterop, BundleInterop>();
+        services.AddTransient<ILayerFactory, LayerFactory>();
+        services.AddTransient<IIconFactory, IconFactory>();
         return services;
     }
 }
