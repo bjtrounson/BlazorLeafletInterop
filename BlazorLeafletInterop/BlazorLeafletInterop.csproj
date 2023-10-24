@@ -6,13 +6,15 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
         <LangVersion>11</LangVersion>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
         <PackageId>BlazorLeafletInterop</PackageId>
         <PackageTags>blazor; leaflet; interop; wasm;</PackageTags>
-        <Description>Blazor WASM interop for Leaflet</Description>
+        <Description>Blazor interop for Leaflet</Description>
+        <Authors>Benjamin Trounson</Authors>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/bjtrounson/BlazorLeafletInterop.git</RepositoryUrl>
-        
     </PropertyGroup>
   
     <Target Name="NpmInstall" Inputs="package.json" Outputs="node_modules/.install-stamp" BeforeTargets="Build">
@@ -37,16 +39,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="wwwroot\bundle.js" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Include="wwwroot\**" Pack="true" PackagePath="staticwebassets\" />
       <None Include="..\README.md" Pack="true" PackagePath="\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="wwwroot\" />
     </ItemGroup>
 
     <ItemGroup>

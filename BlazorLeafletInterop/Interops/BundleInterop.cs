@@ -2,29 +2,25 @@
 
 namespace BlazorLeafletInterop.Interops;
 
-public class BundleInterop : IAsyncDisposable, IBundleInterop
+public class  BundleInterop : IAsyncDisposable, IBundleInterop
 {
     private const string JsBundleFilePath = "./_content/BlazorLeafletInterop/bundle.js";
-    private readonly Lazy<Task<IJSObjectReference>> _moduleTask;
+    private readonly IJSRuntime _jsRuntime;
+    private IJSObjectReference? _module;
     
     public BundleInterop(IJSRuntime jsRuntime)
     {
-        _moduleTask = new Lazy<Task<IJSObjectReference>>(() => jsRuntime.InvokeAsync<IJSObjectReference>(
-            "import", JsBundleFilePath).AsTask());
+        _jsRuntime = jsRuntime;
     }
     
     public async ValueTask DisposeAsync()
     {
-        if (_moduleTask.IsValueCreated)
-        {
-            var module = await _moduleTask.Value;
-            await module.DisposeAsync();
-            GC.SuppressFinalize(this);
-        }
+        if (_module != null) await _module.DisposeAsync();
+        GC.SuppressFinalize(this);
     }
 
     public async Task<IJSObjectReference> GetModule()
     {
-        return await _moduleTask.Value;
+        return _module ??= await _jsRuntime.InvokeAsync<IJSObjectReference>("import", JsBundleFilePath);
     }
 }

@@ -1,4 +1,4 @@
-import * as L from "leaflet";
+import type * as L from "leaflet";
 import DotNetObject = DotNet.DotNetObject;
 
 export function addControl(map: L.Map, control: L.Control): L.Map {
@@ -63,6 +63,7 @@ type LatLngBounds = {
 };
 
 export function fitBounds(map: L.Map, bounds: LatLngBounds, options?: L.FitBoundsOptions): L.Map {
+    // @ts-ignore
     const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
     return map.fitBounds(newBounds, options);
 }
@@ -84,11 +85,13 @@ export function flyTo(map: L.Map, latlng: L.LatLngExpression, zoom?: number, opt
 }
 
 export function flyToBounds(map: L.Map, bounds: LatLngBounds, options?: L.FitBoundsOptions): L.Map {
+    // @ts-ignore
     const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
     return map.flyToBounds(newBounds, options);
 }
 
 export function setMaxBounds(map: L.Map, bounds: LatLngBounds): L.Map {
+    // @ts-ignore
     const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
     return map.setMaxBounds(newBounds);
 }
@@ -102,6 +105,7 @@ export function setMaxZoom(map: L.Map, zoom: number): L.Map {
 }
 
 export function panInsideBounds(map: L.Map, bounds: LatLngBounds, options?: L.PanOptions): L.Map {
+    // @ts-ignore
     const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
     return map.panInsideBounds(newBounds, options);
 }
@@ -139,6 +143,7 @@ export function getMaxZoom(map: L.Map): number {
 }
 
 export function getBoundsZoom(map: L.Map, bounds: LatLngBounds, inside?: boolean, padding?: L.Point): number {
+    // @ts-ignore
     const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
     return map.getBoundsZoom(newBounds, inside, padding);
 }

@@ -18,8 +18,8 @@ public partial class Popup : IAsyncDisposable
     {
         await base.OnAfterRenderAsync(firstRender);
         if (MarkerRef is null) return;
-        var module = await BundleInterop.GetModule();
-        var popupContent = await module.InvokeAsync<string>("getElementInnerHtml", Id);
+        Module ??= await BundleInterop.GetModule();
+        var popupContent = await Module.InvokeAsync<string>("getElementInnerHtml", Id);
         await BindPopup(MarkerRef, popupContent, PopupOptions);
         PopupRef = await GetPopup(MarkerRef);
     }

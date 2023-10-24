@@ -1,5 +1,4 @@
 ﻿using BlazorLeafletInterop.Interops;
-using BlazorLeafletInterop.Models;
 using BlazorLeafletInterop.Models.Options.Layer.Misc;
 using GeoJSON.Net.Feature;
 using Microsoft.AspNetCore.Components;
@@ -36,7 +35,8 @@ public class GeoJson : FeatureGroup
         await base.OnInitializedAsync();
         DotNetRef = DotNetObjectReference.Create(this);
         GeoJsonRef = await CreateGeoJson(Data, GeoJsonOptions.MarkersInheritOptions);
-        await AddTo(MapRef);
+        if (Map is null || GeoJsonRef is null) return;
+        await AddTo(Map.MapRef);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

@@ -1,6 +1,4 @@
-﻿using BlazorLeafletInterop.Interops;
-using BlazorLeafletInterop.Models;
-using BlazorLeafletInterop.Models.Options.Layer.Misc;
+﻿using BlazorLeafletInterop.Models.Options.Layer.Misc;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 
@@ -11,7 +9,7 @@ public partial class LayerGroup : IAsyncDisposable
     [Parameter] public LayerGroupOptions LayerGroupOptions { get; set; } = new();
     [Parameter] public RenderFragment? ChildContent { get; set; }
     
-    [CascadingParameter(Name = "MapRef")] public IJSObjectReference? MapRef { get; set; }
+    [CascadingParameter(Name = "Map")] public Map? Map { get; set; }
     
     public IJSObjectReference? LayerGroupRef { get; set; }
     
@@ -19,38 +17,36 @@ public partial class LayerGroup : IAsyncDisposable
     {
         await base.OnInitializedAsync();
         LayerGroupRef = await CreateLayerGroup(LayerGroupOptions);
-        if (MapRef is null || LayerGroupRef is null) return;
-        await AddTo<LayerGroup>(MapRef, LayerGroupRef);
+        if (Map is null || LayerGroupRef is null) return;
+        await AddTo<LayerGroup>(Map.MapRef, LayerGroupRef);
     }
     
     public async Task<IJSObjectReference> CreateLayerGroup(LayerGroupOptions options)
     {
-        var layerGroupOptionsJson = LeafletInterop.ObjectToJson(options);
-        var module = await BundleInterop.GetModule();
-        var layerGroupOptions = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", layerGroupOptionsJson);
-        return await module.InvokeAsync<IJSObjectReference>("createLayerGroup", layerGroupOptions);
+        Module ??= await BundleInterop.GetModule();
+        return await Module.InvokeAsync<IJSObjectReference>("createLayerGroup", options);
     }
     
     public async Task<LayerGroup> AddLayer(IJSObjectReference layer)
     {
         if (LayerGroupRef is null) throw new NullReferenceException();
-        var module = await BundleInterop.GetModule();
-        await module.InvokeVoidAsync("addLayer", LayerGroupRef, layer);
+        Module ??= await BundleInterop.GetModule();
+        await Module.InvokeVoidAsync("addLayer", LayerGroupRef, layer);
         return this;
     }
 
     public async Task<LayerGroup> RemoveLayer(IJSObjectReference layer)
     {
         if (LayerGroupRef is null) throw new NullReferenceException();
-        var module = await BundleInterop.GetModule();
-        await module.InvokeVoidAsync("removeLayer", LayerGroupRef, layer);
+        Module ??= await BundleInterop.GetModule();
+        await Module.InvokeVoidAsync("removeLayer", LayerGroupRef, layer);
         return this;
     }
 
     public async ValueTask DisposeAsync()
     {
-        if (LayerGroupRef is null || MapRef is null) return;
-        await RemoveFrom<LayerGroup>(LayerGroupRef, MapRef);
+        if (LayerGroupRef is null || Map is null) return;
+        await RemoveFrom<LayerGroup>(Map.MapRef, LayerGroupRef);
         if (LayerGroupRef != null) await LayerGroupRef.DisposeAsync();
         GC.SuppressFinalize(this);
     }

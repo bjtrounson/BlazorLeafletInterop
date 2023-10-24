@@ -1,4 +1,4 @@
-import * as L from 'leaflet';
+import type * as L from "leaflet";
 
 export function getContainer(layer: L.GridLayer): HTMLElement | null {
     return layer.getContainer();

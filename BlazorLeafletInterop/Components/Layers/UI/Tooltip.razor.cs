@@ -18,8 +18,8 @@ public partial class Tooltip : IAsyncDisposable
     {
         await base.OnAfterRenderAsync(firstRender);
         if (MarkerRef is null) return;
-        var module = await BundleInterop.GetModule();
-        var tooltipContent = await module.InvokeAsync<string>("getElementInnerHtml", Id);
+        Module ??= await BundleInterop.GetModule();
+        var tooltipContent = await Module.InvokeAsync<string>("getElementInnerHtml", Id);
         await BindTooltip(MarkerRef, tooltipContent, TooltipOptions);
         TooltipRef = await GetTooltip(MarkerRef);
     }

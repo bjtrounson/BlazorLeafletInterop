@@ -1,4 +1,4 @@
-﻿import * as L from "leaflet";
+﻿import type * as L from "leaflet";
 
 export * from "./evented";
 export * from "./layer";
@@ -54,14 +54,11 @@ export function jsonToJsObject(json: string) {
     return JSON.parse(json);
 }
 export function createMap(id: string, options: L.MapOptions): L.Map {
+    // @ts-ignore
     return L.map(id, options);
 }
 
 export function createTileLayer(urlTemplate: string, options: L.TileLayerOptions): L.TileLayer {
-    console.log(options)
+    // @ts-ignore
     return L.tileLayer(urlTemplate, options);
-}
-
-export function log(message: string) {
-    console.log(message);
 }

@@ -1,22 +1,27 @@
-﻿import * as L from 'leaflet';
+﻿import type * as L from "leaflet";
 
 export function createPolyline(latlngs: L.LatLngExpression[], options: L.PolylineOptions): L.Polyline {
+    // @ts-ignore
     return L.polyline(latlngs, options);
 }
 
 export function createPolygon(latlngs: L.LatLngExpression[], options: L.PolylineOptions): L.Polygon {
+    // @ts-ignore
     return L.polygon(latlngs, options);
 }
 
 export function createRectangle(bounds: L.LatLngBoundsExpression, options: L.PolylineOptions): L.Rectangle {
+    // @ts-ignore
     return L.rectangle(bounds, options);
 }
 
 export function createCircle(latlng: L.LatLngExpression, radius: number, options: L.PathOptions): L.Circle {
+    // @ts-ignore
     return L.circle(latlng, radius, options);
 }
 
 export function createCircleMarker(latlng: L.LatLngExpression, options: L.PathOptions): L.CircleMarker {
+    // @ts-ignore
     return L.circleMarker(latlng, options);
 }
 

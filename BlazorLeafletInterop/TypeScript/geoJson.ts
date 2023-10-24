@@ -1,5 +1,4 @@
-import * as L from "leaflet";
-import * as geojson from "geojson";
+import type * as L from "leaflet";
 import DotNetObject = DotNet.DotNetObject;
 export function createGeoJson(
     instance: DotNetObject,
@@ -17,6 +16,7 @@ export function createGeoJson(
     if (!disableOnEachFeature) options.onEachFeature = (...args) => instance.invokeMethod("OnEachFeatureCallback", ...args);
     if (!disableFilter) options.filter = (...args) => instance.invokeMethod("FilterCallback", ...args);
     options.markersInheritOptions = markersInheritOptions;
+    // @ts-ignore
     return L.geoJSON(geoJson, options);
 }
 

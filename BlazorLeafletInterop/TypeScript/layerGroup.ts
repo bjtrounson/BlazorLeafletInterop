@@ -1,10 +1,12 @@
-import * as L from 'leaflet';
+import type * as L from "leaflet";
 
 export function createLayerGroup(): L.LayerGroup {
+    // @ts-ignore
     return L.layerGroup();
 }
 
 export function createFeatureGroup(): L.FeatureGroup {
+    // @ts-ignore
     return L.featureGroup();
 }
 
