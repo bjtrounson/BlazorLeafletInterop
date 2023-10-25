@@ -18,14 +18,14 @@ public class TileLayer : GridLayer, IAsyncDisposable
     [Parameter] public string UrlTemplate { get; set; } = "";
     [Parameter] public TileLayerOptions TileLayerOptions{ get; set; } = new();
 
-    private IJSObjectReference? TileRef { get; set; } = null;
+    public IJSObjectReference? TileRef { get; set; } = null;
 
     protected override async Task OnInitializedAsync()
     {
         Module = Map?.Module;
         TileRef = await LayerFactory.CreateTileLayer(UrlTemplate, TileLayerOptions);
         if (Map is null || TileRef is null) return;
-        await AddTo<TileLayer>(Map.MapRef, TileRef).ConfigureAwait(false);
+        await AddTo<TileLayer>(Map.MapRef, TileRef);
     }
 
     public async Task Initialize(ILayerFactory layerFactory, Map map, string urlTemplate, TileLayerOptions options)
@@ -35,7 +35,7 @@ public class TileLayer : GridLayer, IAsyncDisposable
         Module = await layerFactory.GetModule();
         TileRef = await LayerFactory.CreateTileLayer(urlTemplate, options);
         if (Map is null || TileRef is null) return;
-        await AddTo<TileLayer>(Map.MapRef, TileRef).ConfigureAwait(false);
+        await AddTo<TileLayer>(Map.MapRef, TileRef);
     }
 
     /// <summary>

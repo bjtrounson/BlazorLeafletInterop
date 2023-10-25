@@ -4,16 +4,18 @@
 @using BlazorLeafletInterop.Components.Layers.Raster
 @using BlazorLeafletInterop.Components.Layers.Vector
 @using BlazorLeafletInterop.Components.Controls
+@using BlazorLeafletInterop.Plugins.Leaflet.MiniMap.Components
 @using BlazorLeafletInterop.Models.Basics
 @using BlazorLeafletInterop.Components.Layers.UI
 @using BlazorLeafletInterop.Factories
+@using BlazorLeafletInterop.Models.Options.Layer.Raster
 @using BlazorLeafletInterop.Models.Options.Map
 
 <Map @ref="Map" Class="map" MapOptions="Options" AfterRender="AfterRender">
-	<TileLayer @ref="TileLayer" UrlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-	<ControlZoom />
-	<ControlScale />
-	<ControlLayers OverlayLayers="OverlayLayers" />
+	<TileLayer UrlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
+	<ControlZoom/>
+	<ControlScale/>
+	<LeafletMiniMap TileRef="MiniMapTileLayer"/>
 	@if (IsFirstMarker)
 	{
 		<Marker @ref="Marker" LatLng="new LatLng(50, 8.9)">
@@ -51,13 +53,19 @@
 	public ILayerFactory LayerFactory { get; set; } = default!;
 	
     private Map? Map { get; set; }
-    private TileLayer? TileLayer { get; set; }
+	private IJSObjectReference? MiniMapTileLayer { get; set; }
     private MapOptions Options { get; set; } = new() { PreferCanvas = true, Center = new LatLng(50, 9), Zoom = 13 };
 	private Dictionary<string, IJSObjectReference> OverlayLayers { get; set; } = new();
 	private bool IsFirstMarker { get; set; } = true;
 	private Polyline? Polyline { get; set; }
 	private Marker? Marker { get; set; } = default!;
-	
+
+	protected override async Task OnInitializedAsync()
+	{
+		MiniMapTileLayer = await LayerFactory.CreateTileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", new TileLayerOptions());
+		await base.OnInitializedAsync();
+	}
+
 	private async void AfterRender()
 	{
 		Polyline = new Polyline();
