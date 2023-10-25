@@ -7,4 +7,5 @@ node_modules/
 .idea/
 bundle.js
 bundle.js.map
+global.json
 

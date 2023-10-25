@@ -11,10 +11,23 @@ export function createGeoJson(
 ): L.GeoJSON {
     // Check if option has a string of "disabled" if so, then remove it from the options object
     const options: L.GeoJSONOptions = {};
-    if (!disablePointToLayer) options.pointToLayer = (...args) => instance.invokeMethod("PointToLayerCallback", ...args);
-    if (!disableStyle) options.style = (...args) => instance.invokeMethod("StyleCallback", ...args);
-    if (!disableOnEachFeature) options.onEachFeature = (...args) => instance.invokeMethod("OnEachFeatureCallback", ...args);
-    if (!disableFilter) options.filter = (...args) => instance.invokeMethod("FilterCallback", ...args);
+    if (!disablePointToLayer) options.pointToLayer = (feature, latLng) => {
+        let featureString = JSON.stringify(feature);
+        let latLngString = JSON.stringify(latLng);
+        return instance.invokeMethod("PointToLayerCallback", featureString, latLngString);
+    }
+    if (!disableStyle) options.style = (feature) => {
+        let featureString = JSON.stringify(feature);
+        return instance.invokeMethod("StyleCallback", featureString);
+    }
+    if (!disableOnEachFeature) options.onEachFeature = (feature, layer) => {
+        let featureString = JSON.stringify(feature);
+        instance.invokeMethod("OnEachFeatureCallback", featureString, DotNet.createJSObjectReference(layer));
+    }
+    if (!disableFilter) options.filter = (geoJsonFeature) => {
+        let featureString = JSON.stringify(geoJsonFeature);
+        return instance.invokeMethod("FilterCallback", featureString);
+    }
     options.markersInheritOptions = markersInheritOptions;
     // @ts-ignore
     return L.geoJSON(geoJson, options);

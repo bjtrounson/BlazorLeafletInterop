@@ -1,8 +1,10 @@
 ﻿using BlazorLeafletInterop.Interops;
+using BlazorLeafletInterop.Models.Basics;
 using BlazorLeafletInterop.Models.Options.Layer.Misc;
 using GeoJSON.Net.Feature;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using Newtonsoft.Json;
 
 namespace BlazorLeafletInterop.Components.Layers.Misc;
 
@@ -10,22 +12,39 @@ public class GeoJson : FeatureGroup
 {
     [Parameter] public FeatureCollection Data { get; set; } = new();
     [Parameter] public GeoJsonOptions GeoJsonOptions { get; set; } = new();
-    [Parameter] public Func<IJSObjectReference, IJSObjectReference, IJSObjectReference>? PointToLayer { get; set; }
-    [Parameter] public Action<IJSObjectReference>? Style { get; set; }
-    [Parameter] public Action<IJSObjectReference, IJSObjectReference>? OnEachFeature { get; set; }
-    [Parameter] public Action<IJSObjectReference>? Filter { get; set; }
+    [Parameter] public Func<Feature?, LatLng?, IJSObjectReference>? PointToLayer { get; set; }
+    [Parameter] public Func<Feature?, IJSObjectReference>? Style { get; set; }
+    [Parameter] public Action<Feature?, IJSObjectReference>? OnEachFeature { get; set; }
+    [Parameter] public Func<Feature?, bool>? Filter { get; set; }
     
     [JSInvokable]
-    public void OnEachFeatureCallback(IJSObjectReference feature, IJSObjectReference layer) => OnEachFeature?.Invoke(feature, layer);
-    
+    public void OnEachFeatureCallback(string feature, IJSObjectReference layer)
+    {
+        var featureObject = LeafletInterop.JsonToObject<Feature>(feature);
+        OnEachFeature?.Invoke(featureObject, layer);
+    }
+
     [JSInvokable]
-    public IJSObjectReference? PointToLayerCallback(IJSObjectReference feature, IJSObjectReference latLng) => PointToLayer?.Invoke(feature, latLng);
-    
+    public IJSObjectReference? PointToLayerCallback(string feature, string latLng)
+    {
+        var featureObject = LeafletInterop.JsonToObject<Feature>(feature);
+        var latLngObject = LeafletInterop.JsonToObject<LatLng>(latLng);
+        return PointToLayer?.Invoke(featureObject, latLngObject);
+    }
+
     [JSInvokable]
-    public void StyleCallback(IJSObjectReference feature) => Style?.Invoke(feature);
-    
+    public IJSObjectReference StyleCallback(string feature)
+    {
+        var featureObject = LeafletInterop.JsonToObject<Feature>(feature);
+        return Style?.Invoke(featureObject);
+    }
+
     [JSInvokable]
-    public void FilterCallback(IJSObjectReference feature) => Filter?.Invoke(feature);
+    public bool FilterCallback(string feature)
+    {
+        var featureObject = LeafletInterop.JsonToObject<Feature>(feature);
+        return Filter?.Invoke(featureObject) ?? true;
+    }
 
     private IJSObjectReference? GeoJsonRef { get; set; }
     private DotNetObjectReference<GeoJson>? DotNetRef { get; set; }
@@ -52,7 +71,7 @@ public class GeoJson : FeatureGroup
         var module = await LayerFactory.GetModule();
         var geoJsonDataObject = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", geoJsonDataJson);
         return await module.InvokeAsync<IJSObjectReference>("createGeoJson", 
-            DotNetRef, geoJsonDataObject, markersInheritOptions, 
+            DotNetObjectReference.Create(this), geoJsonDataObject, markersInheritOptions, 
             PointToLayer is null, Style is null, OnEachFeature is null, Filter is null);
     }
 

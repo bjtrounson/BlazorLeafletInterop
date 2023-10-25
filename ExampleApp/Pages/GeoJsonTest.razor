@@ -1,0 +1,53 @@
+﻿@page "/GeoJsonTest"
+
+@using BlazorLeafletInterop.Factories
+@using BlazorLeafletInterop.Models.Options.Map
+@using BlazorLeafletInterop.Components
+@using BlazorLeafletInterop.Components.Layers.Raster
+@using BlazorLeafletInterop.Components.Layers.UI
+@using BlazorLeafletInterop.Components.Layers.Misc
+@using BlazorLeafletInterop.Models.Basics
+@using GeoJSON.Net.Feature
+@using GeoJSON.Net.Geometry
+@using Point = GeoJSON.Net.Geometry.Point
+
+<Map @ref="Map" Class="map" MapOptions="Options">
+	<TileLayer @ref="TileLayer" UrlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+	<GeoJson Data="FeatureCollection" OnEachFeature="_onEachFeature" />
+</Map>
+
+@code {
+	[Inject]
+	public IIconFactory IconFactoryInterop { get; set; } = default!;
+	
+	[Inject]
+	public ILayerFactory LayerFactory { get; set; } = default!;
+	
+	private Map? Map { get; set; }
+	private TileLayer? TileLayer { get; set; }
+	private MapOptions Options { get; set; } = new() { PreferCanvas = true, Center = new LatLng(50, 9), Zoom = 13 };
+	private FeatureCollection FeatureCollection { get; set; } = new();
+
+	private void CreateRandomMarkersForFeatureCollection()
+	{
+		var random = new Random();
+		for (var i = 0; i < 10; i++)
+		{
+			var point = new Point(new Position(random.Next(0, 100), random.Next(0, 100)));
+			FeatureCollection.Features.Add(new Feature(point));
+		}
+	}
+
+	private Action<Feature, IJSObjectReference> _onEachFeature = (feature, layer) =>
+	{
+		// add a popup to each marker
+		layer.InvokeVoidAsync("bindPopup", $"<b>Testing</b><br>Popup for {feature.Geometry.Type}");
+	};
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		CreateRandomMarkersForFeatureCollection();
+	}
+
+}
