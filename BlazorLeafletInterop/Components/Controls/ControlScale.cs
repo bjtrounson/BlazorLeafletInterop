@@ -16,7 +16,7 @@ public class ControlScale : Control
         await base.OnInitializedAsync();
         ScaleRef = await CreateLayers(ScaleOptions);
         if (Map is null || ScaleRef is null) return;
-        await AddTo<ControlLayers>(Map.MapRef, ScaleRef);
+        await AddTo<ControlScale>(Map.MapRef, ScaleRef);
     }
     
     private async Task<IJSObjectReference> CreateLayers(ControlScaleOptions? scaleOptions)
