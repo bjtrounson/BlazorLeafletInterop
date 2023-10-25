@@ -15,8 +15,8 @@ public class ControlZoom : Control
     {
         await base.OnInitializedAsync();
         ZoomRef = await CreateZoom(ZoomOptions);
-        if (MapRef is null || ZoomRef is null) return;
-        await AddTo<ControlZoom>(MapRef, ZoomRef);
+        if (Map is null || ZoomRef is null) return;
+        await AddTo<ControlZoom>(Map.MapRef, ZoomRef);
     }
 
     protected override async Task OnParametersSetAsync()
@@ -27,8 +27,8 @@ public class ControlZoom : Control
         await Remove<ControlZoom>(ZoomRef);
         // Create a new zoom control
         ZoomRef = await CreateZoom(ZoomOptions);
-        if (MapRef is null || ZoomRef is null) return;
-        await AddTo<ControlZoom>(MapRef, ZoomRef);
+        if (Map is null || ZoomRef is null) return;
+        await AddTo<ControlZoom>(Map.MapRef, ZoomRef);
     }
 
     private async Task<IJSObjectReference> CreateZoom(ControlZoomOptions? zoomOptions)

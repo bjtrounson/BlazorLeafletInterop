@@ -9,7 +9,7 @@ public class Control : ComponentBase
     [Inject]
     public ILayerFactory LayerFactory { get; set; } = default!;
     
-    [CascadingParameter(Name = "MapRef")] public IJSObjectReference? MapRef { get; set; }
+    [CascadingParameter(Name = "Map")] public Map? Map { get; set; }
 
     protected IJSObjectReference? Module { get; set; }
     

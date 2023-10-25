@@ -19,8 +19,8 @@ public class ControlLayers : Control
     {
         await base.OnInitializedAsync();
         LayersRef = await CreateLayers(BaseLayers, OverlayLayers, LayersOptions);
-        if (MapRef is null || LayersRef is null) return;
-        await AddTo<ControlLayers>(MapRef, LayersRef);
+        if (Map is null || LayersRef is null) return;
+        await AddTo<ControlLayers>(Map.MapRef, LayersRef);
     }
 
     protected override async Task OnParametersSetAsync()
@@ -31,8 +31,8 @@ public class ControlLayers : Control
         await Remove<ControlLayers>(LayersRef);
         // Create a new layers control
         LayersRef = await CreateLayers(BaseLayers, OverlayLayers, LayersOptions);
-        if (MapRef is null || LayersRef is null) return;
-        await AddTo<ControlLayers>(MapRef, LayersRef);
+        if (Map is null || LayersRef is null) return;
+        await AddTo<ControlLayers>(Map.MapRef, LayersRef);
     }
 
     private async Task<IJSObjectReference> CreateLayers(

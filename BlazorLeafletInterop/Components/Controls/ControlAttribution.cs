@@ -15,8 +15,8 @@ public class ControlAttribution : Control
     {
         await base.OnInitializedAsync();
         AttributionRef = await CreateAttribution(AttributionOptions);
-        if (MapRef is null || AttributionRef is null) return;
-        await AddTo<ControlAttribution>(MapRef, AttributionRef);
+        if (Map is null || AttributionRef is null) return;
+        await AddTo<ControlAttribution>(Map.MapRef, AttributionRef);
     }
 
     protected override async Task OnParametersSetAsync()
@@ -27,8 +27,8 @@ public class ControlAttribution : Control
         await Remove<ControlAttribution>(AttributionRef);
         // Create a new attribution control
         AttributionRef = await CreateAttribution(AttributionOptions);
-        if (MapRef is null || AttributionRef is null) return;
-        await AddTo<ControlAttribution>(MapRef, AttributionRef);
+        if (Map is null || AttributionRef is null) return;
+        await AddTo<ControlAttribution>(Map.MapRef, AttributionRef);
     }
 
     private async Task<IJSObjectReference> CreateAttribution(ControlAttributionOptions? attributionOptions)
