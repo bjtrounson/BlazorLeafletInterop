@@ -1,4 +1,5 @@
 ﻿using BlazorLeafletInterop.Models.Basics;
+using BlazorLeafletInterop.Models.Options.Layer.Misc;
 using BlazorLeafletInterop.Models.Options.Layer.Raster;
 using BlazorLeafletInterop.Models.Options.Layer.UI;
 using BlazorLeafletInterop.Models.Options.Map;
@@ -11,6 +12,8 @@ public interface ILayerFactory
     public Task<IJSObjectReference> CreateMap(string id, MapOptions mapOptions);
     public Task<IJSObjectReference> CreateTileLayer(string urlTemplate, TileLayerOptions tileLayerOptions);
     public Task<IJSObjectReference> CreateMarker(LatLng latLng, MarkerOptions markerOptions);
+    public Task<IJSObjectReference> CreateLayerGroup(LayerGroupOptions layerGroupOptions);
+    public Task<IJSObjectReference> CreateFeatureGroup(LayerGroupOptions featureGroupOptions);
     public Task<IJSObjectReference> GetModule();
 
 }
