@@ -3,7 +3,7 @@
 @using BlazorLeafletInterop.Components
 @using BlazorLeafletInterop.Components.Layers.Raster
 @using BlazorLeafletInterop.Components.Layers.Vector
-@using BlazorLeafletInterop.Interops
+@using BlazorLeafletInterop.Components.Controls
 @using BlazorLeafletInterop.Models.Basics
 @using BlazorLeafletInterop.Components.Layers.UI
 @using BlazorLeafletInterop.Factories
@@ -11,6 +11,9 @@
 
 <Map @ref="Map" Class="map" MapOptions="Options" AfterRender="AfterRender">
 	<TileLayer @ref="TileLayer" UrlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+	<ControlZoom />
+	<ControlScale />
+	<ControlLayers OverlayLayers="OverlayLayers" />
 	@if (IsFirstMarker)
 	{
 		<Marker @ref="Marker" LatLng="new LatLng(50, 8.9)">
@@ -50,6 +53,7 @@
     private Map? Map { get; set; }
     private TileLayer? TileLayer { get; set; }
     private MapOptions Options { get; set; } = new() { PreferCanvas = true, Center = new LatLng(50, 9), Zoom = 13 };
+	private Dictionary<string, IJSObjectReference> OverlayLayers { get; set; } = new();
 	private bool IsFirstMarker { get; set; } = true;
 	private Polyline? Polyline { get; set; }
 	private Marker? Marker { get; set; } = default!;
@@ -61,6 +65,7 @@
 		await Polyline.Initialize(LayerFactory, Map);
 		await Polyline.SetLatLngs(new List<LatLng>() { new LatLng(50, 8.9), new LatLng(50, 9) });
 		await Polyline.AddTo<Polyline>(Map.MapRef, Polyline.PolylineRef);
+		if (Polyline.PolylineRef is not null) OverlayLayers.Add("Polyline", Polyline.PolylineRef);
 		if (Marker is null) return;
 		var markerLatLng = await Marker.GetLatLng();
 		Console.WriteLine(markerLatLng?.Lat + " " + markerLatLng?.Lng);

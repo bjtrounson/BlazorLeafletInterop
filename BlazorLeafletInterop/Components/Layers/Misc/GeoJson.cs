@@ -45,29 +45,28 @@ public class GeoJson : FeatureGroup
         var featureObject = LeafletInterop.JsonToObject<Feature>(feature);
         return Filter?.Invoke(featureObject) ?? true;
     }
-
-    private IJSObjectReference? GeoJsonRef { get; set; }
+    
     private DotNetObjectReference<GeoJson>? DotNetRef { get; set; }
     
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
         DotNetRef = DotNetObjectReference.Create(this);
-        GeoJsonRef = await CreateGeoJson(Data, GeoJsonOptions.MarkersInheritOptions);
-        if (Map is null || GeoJsonRef is null) return;
-        await AddTo(Map.MapRef);
+        JsObjectReference = await CreateGeoJson(Data, GeoJsonOptions.MarkersInheritOptions);
+        if (Map is null || JsObjectReference is null) return;
+        await AddTo<GeoJson>(Map.MapRef, JsObjectReference);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
-        if (GeoJsonRef is null) return;
+        if (JsObjectReference is null) return;
         await AddData(Data);
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        if (GeoJsonRef is null) return;
+        if (JsObjectReference is null) return;
         await ClearLayers();
         await AddData(Data);
     }
@@ -81,29 +80,22 @@ public class GeoJson : FeatureGroup
             DotNetObjectReference.Create(this), geoJsonDataObject, markersInheritOptions, 
             PointToLayer is null, Style is null, OnEachFeature is null, Filter is null);
     }
-
-    public async Task<GeoJson> AddTo(IJSObjectReference? map)
-    {
-        if (GeoJsonRef is null || map is null) throw new NullReferenceException();
-        await AddTo<GeoJson>(map, GeoJsonRef);
-        return this;
-    }
     
     public async Task<GeoJson> AddData(FeatureCollection geoJsonData)
     {
-        if (GeoJsonRef is null) throw new NullReferenceException();
+        if (JsObjectReference is null) throw new NullReferenceException();
         var geoJsonDataJson = LeafletInterop.ObjectToJson(geoJsonData);
         var module = await LayerFactory.GetModule();
         var geoJsonDataObject = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", geoJsonDataJson);
-        await module.InvokeVoidAsync("addData", GeoJsonRef, geoJsonDataObject);
+        await module.InvokeVoidAsync("addData", JsObjectReference, geoJsonDataObject);
         return this;
     }
     
-    public async Task<GeoJson> ClearLayers()
+    public async Task<GeoJson> ResetStyle(IJSObjectReference? layer = null)
     {
-        if (GeoJsonRef is null) throw new NullReferenceException();
+        if (JsObjectReference is null) throw new NullReferenceException();
         var module = await LayerFactory.GetModule();
-        await module.InvokeVoidAsync("clearLayers", GeoJsonRef);
+        await module.InvokeVoidAsync("resetStyle", JsObjectReference, layer);
         return this;
     }
 }

@@ -37,6 +37,6 @@ export function addData(geoJson: L.GeoJSON, data: any) {
     geoJson.addData(data);
 }
 
-export function clearLayers(geoJson: L.GeoJSON) {
-    geoJson.clearLayers();
+export function resetStyle(geoJson: L.GeoJSON, layer?: L.Layer): L.GeoJSON {
+    return geoJson.resetStyle(layer);
 }
