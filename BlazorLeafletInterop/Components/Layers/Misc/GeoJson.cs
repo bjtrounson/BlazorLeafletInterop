@@ -60,8 +60,15 @@ public class GeoJson : FeatureGroup
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender) return;
+        if (!firstRender) return;
         if (GeoJsonRef is null) return;
+        await AddData(Data);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (GeoJsonRef is null) return;
+        await ClearLayers();
         await AddData(Data);
     }
 
@@ -89,6 +96,14 @@ public class GeoJson : FeatureGroup
         var module = await LayerFactory.GetModule();
         var geoJsonDataObject = await module.InvokeAsync<IJSObjectReference>("jsonToJsObject", geoJsonDataJson);
         await module.InvokeVoidAsync("addData", GeoJsonRef, geoJsonDataObject);
+        return this;
+    }
+    
+    public async Task<GeoJson> ClearLayers()
+    {
+        if (GeoJsonRef is null) throw new NullReferenceException();
+        var module = await LayerFactory.GetModule();
+        await module.InvokeVoidAsync("clearLayers", GeoJsonRef);
         return this;
     }
 }

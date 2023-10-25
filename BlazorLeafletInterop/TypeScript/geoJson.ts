@@ -36,3 +36,7 @@ export function createGeoJson(
 export function addData(geoJson: L.GeoJSON, data: any) {
     geoJson.addData(data);
 }
+
+export function clearLayers(geoJson: L.GeoJSON) {
+    geoJson.clearLayers();
+}
