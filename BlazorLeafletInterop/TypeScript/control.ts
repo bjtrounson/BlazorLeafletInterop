@@ -9,10 +9,6 @@ export function setPosition(control: L.Control, position: L.ControlPosition): L.
     return control.setPosition(position);
 }
 
-export function getContainer(control: L.Control): HTMLElement {
-    return control.getContainer();
-}
-
 export function setPrefix(control: L.Control.Attribution, prefix: string): L.Control {
     return control.setPrefix(prefix);
 }

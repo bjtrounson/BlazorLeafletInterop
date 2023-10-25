@@ -11,6 +11,7 @@ export * from "./layerGroup";
 export * from "./geoJson";
 export * from "./map";
 export * from "./vectorLayer";
+export * from "./control"
 
 export function getLatLng(divOverlay: L.DivOverlay | L.Marker): string {
     return JSON.stringify(divOverlay.getLatLng());
@@ -80,4 +81,8 @@ export function createLayerGroup(): L.LayerGroup {
 export function createFeatureGroup(): L.FeatureGroup {
     // @ts-ignore
     return L.featureGroup();
+}
+
+export function getContainer(layer: L.GridLayer | L.Control): HTMLElement | null {
+    return layer.getContainer();
 }
