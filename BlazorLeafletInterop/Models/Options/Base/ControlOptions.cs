@@ -2,5 +2,5 @@
 
 public class ControlOptions
 {
-    public string Position { get; set; } = "topright";
+    public virtual string Position { get; set; } = "topright";
 }

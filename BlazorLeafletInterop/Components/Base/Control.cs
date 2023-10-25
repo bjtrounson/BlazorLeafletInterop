@@ -16,8 +16,8 @@ public class Control : ComponentBase
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
-        await base.OnInitializedAsync();
-        Module = await LayerFactory.GetModule();
+        await base.OnAfterRenderAsync(firstRender);
+        Module ??= await LayerFactory.GetModule();
     }
     
     /// <summary>
