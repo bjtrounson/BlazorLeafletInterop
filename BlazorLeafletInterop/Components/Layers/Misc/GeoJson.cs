@@ -18,11 +18,21 @@ public class GeoJson : FeatureGroup
     [Parameter] public Action<Feature?, IJSObjectReference>? OnEachFeature { get; set; }
     [Parameter] public Func<Feature?, bool>? Filter { get; set; }
     
+    private Action<IJSObjectReference, Feature?>? EachLayerCallback { get; set; }
+    
     [JSInvokable]
     public void OnEachFeatureCallback(string feature, IJSObjectReference layer)
     {
         var featureObject = LeafletInterop.JsonToObject<Feature>(feature);
         OnEachFeature?.Invoke(featureObject, layer);
+    }
+    
+    
+    [JSInvokable]
+    public void OnEachFeatureCallback(IJSObjectReference layer, string feature)
+    {
+        var featureObject = LeafletInterop.JsonToObject<Feature>(feature);
+        EachLayerCallback?.Invoke(layer, featureObject);
     }
 
     [JSInvokable]
@@ -98,6 +108,14 @@ public class GeoJson : FeatureGroup
         var module = await LayerFactory.GetModule();
         await module.InvokeVoidAsync("resetStyle", JsObjectReference, layer);
         return this;
+    }
+    
+    public async Task EachLayer(Action<IJSObjectReference, Feature?> callback)
+    {
+        EachLayerCallback = callback;
+        if (JsObjectReference is null) throw new NullReferenceException();
+        var module = await LayerFactory.GetModule();
+        await module.InvokeVoidAsync("eachLayerGeoJson",  DotNetObjectReference.Create(callback), "EachLayerCallback", JsObjectReference);
     }
 }
     
