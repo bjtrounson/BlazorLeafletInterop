@@ -1,6 +1,7 @@
 ﻿using BlazorLeafletInterop.Interops;
 using BlazorLeafletInterop.Models.Basics;
 using BlazorLeafletInterop.Models.Options.Layer.Misc;
+using BlazorLeafletInterop.Models.Options.Layer.Vector;
 using GeoJSON.Net.Feature;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -13,7 +14,7 @@ public class GeoJson : FeatureGroup
     [Parameter] public FeatureCollection Data { get; set; } = new();
     [Parameter] public GeoJsonOptions GeoJsonOptions { get; set; } = new();
     [Parameter] public Func<Feature?, LatLng?, IJSObjectReference>? PointToLayer { get; set; }
-    [Parameter] public Func<Feature?, IJSObjectReference>? Style { get; set; }
+    [Parameter] public Func<Feature?, PathOptions>? Style { get; set; }
     [Parameter] public Action<Feature?, IJSObjectReference>? OnEachFeature { get; set; }
     [Parameter] public Func<Feature?, bool>? Filter { get; set; }
     
@@ -33,10 +34,10 @@ public class GeoJson : FeatureGroup
     }
 
     [JSInvokable]
-    public IJSObjectReference StyleCallback(string feature)
+    public PathOptions? StyleCallback(string feature)
     {
         var featureObject = LeafletInterop.JsonToObject<Feature>(feature);
-        return Style?.Invoke(featureObject);
+        return Style is null ? new PathOptions() : Style?.Invoke(featureObject);
     }
 
     [JSInvokable]
