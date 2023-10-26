@@ -12,7 +12,7 @@ export * from "./geoJson";
 export * from "./map";
 export * from "./vectorLayer";
 export * from "./control"
-export * from "./plugins/leaflet-minimap";
+export * from "./Plugins/leaflet-minimap";
 
 export function getLatLng(divOverlay: L.DivOverlay | L.Marker): string {
     return JSON.stringify(divOverlay.getLatLng());
