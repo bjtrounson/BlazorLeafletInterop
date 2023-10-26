@@ -40,3 +40,10 @@ export function addData(geoJson: L.GeoJSON, data: any) {
 export function resetStyle(geoJson: L.GeoJSON, layer?: L.Layer): L.GeoJSON {
     return geoJson.resetStyle(layer);
 }
+
+export function eachLayerGeoJson(instance: DotNetObject, callbackMethod: string, geoJson: L.GeoJSON): L.GeoJSON {
+    return geoJson.eachLayer((layer: any) => {
+        let feature = JSON.stringify(layer.feature);
+        instance.invokeMethod(callbackMethod, DotNet.createJSObjectReference(layer), feature);
+    });
+}
