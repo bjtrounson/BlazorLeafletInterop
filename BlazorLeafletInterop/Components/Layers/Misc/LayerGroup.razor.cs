@@ -150,7 +150,7 @@ public partial class LayerGroup : IAsyncDisposable
         return await Module.InvokeAsync<IJSObjectReference[]>("getLayers", JsObjectReference);
     }
 
-    public async ValueTask DisposeAsync()
+    public virtual async ValueTask DisposeAsync()
     {
         if (JsObjectReference is null || Map is null) return;
         await RemoveFrom<LayerGroup>(Map.MapRef, JsObjectReference);

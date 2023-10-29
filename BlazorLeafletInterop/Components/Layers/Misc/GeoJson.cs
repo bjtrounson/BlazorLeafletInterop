@@ -18,15 +18,12 @@ public class GeoJson : FeatureGroup
     [Parameter] public Action<Feature?, IJSObjectReference>? OnEachFeature { get; set; }
     [Parameter] public Func<Feature?, bool>? Filter { get; set; }
     
-    private Action<IJSObjectReference, Feature?>? EachLayerCallback { get; set; }
-    
     [JSInvokable]
     public void OnEachFeatureCallback(string feature, IJSObjectReference layer)
     {
         var featureObject = LeafletInterop.JsonToObject<Feature>(feature);
         OnEachFeature?.Invoke(featureObject, layer);
     }
-    
     
     [JSInvokable]
     public void OnEachLayerCallback(IJSObjectReference layer, string feature)
@@ -57,7 +54,9 @@ public class GeoJson : FeatureGroup
         return Filter?.Invoke(featureObject) ?? true;
     }
     
+    private Action<IJSObjectReference, Feature?>? EachLayerCallback { get; set; }
     private DotNetObjectReference<GeoJson>? DotNetRef { get; set; }
+    private bool EachLayerCallbackSet { get; set; }
     
     protected override async Task OnInitializedAsync()
     {
@@ -68,16 +67,10 @@ public class GeoJson : FeatureGroup
         await AddTo<GeoJson>(Map.MapRef, JsObjectReference);
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender) return;
-        if (JsObjectReference is null) return;
-        await AddData(Data);
-    }
-
     protected override async Task OnParametersSetAsync()
     {
         if (JsObjectReference is null) return;
+        if (EachLayerCallbackSet) EachLayerCallbackSet = false; return;
         await ClearLayers();
         await AddData(Data);
     }
@@ -113,9 +106,19 @@ public class GeoJson : FeatureGroup
     public async Task EachLayer(Action<IJSObjectReference, Feature?> callback)
     {
         EachLayerCallback = callback;
+        EachLayerCallbackSet = true;
         if (JsObjectReference is null) throw new NullReferenceException();
         var module = await LayerFactory.GetModule();
-        await module.InvokeVoidAsync("eachLayerGeoJson",  DotNetObjectReference.Create(callback), "OnEachLayerCallback", JsObjectReference);
+        await module.InvokeVoidAsync("eachLayerGeoJson",  DotNetRef, "OnEachLayerCallback", JsObjectReference);
+    }
+
+    public override async ValueTask DisposeAsync()
+    {
+        if (JsObjectReference is null || Map is null) return;
+        await RemoveFrom<GeoJson>(Map.MapRef, JsObjectReference);
+        if (JsObjectReference != null) await JsObjectReference.DisposeAsync();
+        DotNetRef?.Dispose();
+        GC.SuppressFinalize(this);
     }
 }
     

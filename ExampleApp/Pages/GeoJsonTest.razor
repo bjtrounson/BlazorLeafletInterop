@@ -4,7 +4,6 @@
 @using BlazorLeafletInterop.Models.Options.Map
 @using BlazorLeafletInterop.Components
 @using BlazorLeafletInterop.Components.Layers.Raster
-@using BlazorLeafletInterop.Components.Layers.UI
 @using BlazorLeafletInterop.Components.Layers.Misc
 @using BlazorLeafletInterop.Models.Basics
 @using GeoJSON.Net.Feature
@@ -13,8 +12,12 @@
 
 <Map @ref="Map" Class="map" MapOptions="Options">
 	<TileLayer @ref="TileLayer" UrlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-	<GeoJson Data="FeatureCollection" OnEachFeature="_onEachFeature" />
+	<GeoJson @ref="GeoJsonLayer" Data="FeatureCollection" OnEachFeature="_onEachFeature" />
 </Map>
+<div style="position: absolute; top: 5%; left: 5%; z-index: 10000; background-color: aquamarine; padding: 10px; border-radius: 10px;">
+	<h3>Blazor Leaflet Interop GeoJson Test</h3>
+	<button @onclick="@(() => GeoJsonLayer?.EachLayer(_onEachLayer))">Open Popup</button>
+</div>
 
 @code {
 	[Inject]
@@ -27,6 +30,7 @@
 	private TileLayer? TileLayer { get; set; }
 	private MapOptions Options { get; set; } = new() { PreferCanvas = true, Center = new LatLng(50, 9), Zoom = 13 };
 	private FeatureCollection FeatureCollection { get; set; } = new();
+	private GeoJson? GeoJsonLayer { get; set; }
 
 	private void CreateRandomMarkersForFeatureCollection()
 	{
@@ -34,7 +38,8 @@
 		for (var i = 0; i < 1000; i++)
 		{
 			var point = new Point(new Position(random.Next(0, 100), random.Next(0, 100)));
-			FeatureCollection.Features.Add(new Feature(point));
+			var properties = new Dictionary<string, object> { { "id", $"{i}" } };
+			FeatureCollection.Features.Add(new Feature(point, properties));
 		}
 	}
 
@@ -42,6 +47,12 @@
 	{
 		// add a popup to each marker
 		layer.InvokeVoidAsync("bindPopup", $"<b>Testing</b><br>Popup for {feature.Geometry.Type}");
+	};
+
+	private Action<IJSObjectReference, Feature?> _onEachLayer = (layer, feature) =>
+	{
+		var id = feature?.Properties["id"].ToString();
+		if (id == "12") layer.InvokeVoidAsync("openPopup");
 	};
 
 	protected override void OnInitialized()
