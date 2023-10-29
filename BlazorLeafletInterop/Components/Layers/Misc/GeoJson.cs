@@ -29,7 +29,7 @@ public class GeoJson : FeatureGroup
     
     
     [JSInvokable]
-    public void OnEachFeatureCallback(IJSObjectReference layer, string feature)
+    public void OnEachLayerCallback(IJSObjectReference layer, string feature)
     {
         var featureObject = LeafletInterop.JsonToObject<Feature>(feature);
         EachLayerCallback?.Invoke(layer, featureObject);
@@ -115,7 +115,7 @@ public class GeoJson : FeatureGroup
         EachLayerCallback = callback;
         if (JsObjectReference is null) throw new NullReferenceException();
         var module = await LayerFactory.GetModule();
-        await module.InvokeVoidAsync("eachLayerGeoJson",  DotNetObjectReference.Create(callback), "EachLayerCallback", JsObjectReference);
+        await module.InvokeVoidAsync("eachLayerGeoJson",  DotNetObjectReference.Create(callback), "OnEachLayerCallback", JsObjectReference);
     }
 }
     
