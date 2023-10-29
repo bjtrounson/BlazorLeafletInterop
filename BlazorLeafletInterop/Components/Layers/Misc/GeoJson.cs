@@ -70,7 +70,7 @@ public class GeoJson : FeatureGroup
     protected override async Task OnParametersSetAsync()
     {
         if (JsObjectReference is null) return;
-        if (EachLayerCallbackSet) EachLayerCallbackSet = false; return;
+        if (EachLayerCallbackSet) { EachLayerCallbackSet = false; return; }
         await ClearLayers();
         await AddData(Data);
     }
