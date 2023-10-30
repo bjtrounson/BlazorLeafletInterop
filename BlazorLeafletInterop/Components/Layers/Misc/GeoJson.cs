@@ -67,8 +67,9 @@ public class GeoJson : FeatureGroup
         await AddTo<GeoJson>(Map.MapRef, JsObjectReference);
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if (firstRender) return;
         if (JsObjectReference is null) return;
         if (EachLayerCallbackSet) { EachLayerCallbackSet = false; return; }
         await ClearLayers();
@@ -115,6 +116,7 @@ public class GeoJson : FeatureGroup
     public override async ValueTask DisposeAsync()
     {
         if (JsObjectReference is null || Map is null) return;
+        await ClearLayers();
         await RemoveFrom<GeoJson>(Map.MapRef, JsObjectReference);
         if (JsObjectReference != null) await JsObjectReference.DisposeAsync();
         DotNetRef?.Dispose();
