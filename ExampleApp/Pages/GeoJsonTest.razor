@@ -17,6 +17,7 @@
 <div style="position: absolute; top: 5%; left: 5%; z-index: 10000; background-color: aquamarine; padding: 10px; border-radius: 10px;">
 	<h3>Blazor Leaflet Interop GeoJson Test</h3>
 	<button @onclick="@(() => GeoJsonLayer?.EachLayer(_onEachLayer))">Open Popup</button>
+	<button @onclick=GenerateNewFeatureCollection>Generate More Markers</button>
 </div>
 
 @code {
@@ -35,7 +36,7 @@
 	private void CreateRandomMarkersForFeatureCollection()
 	{
 		var random = new Random();
-		for (var i = 0; i < 1000; i++)
+		for (var i = 0; i < 100; i++)
 		{
 			var point = new Point(new Position(random.Next(0, 100), random.Next(0, 100)));
 			var properties = new Dictionary<string, object> { { "id", $"{i}" } };
@@ -58,6 +59,11 @@
 	protected override void OnInitialized()
 	{
 		base.OnInitialized();
+		CreateRandomMarkersForFeatureCollection();
+	}
+	
+	private void GenerateNewFeatureCollection()
+	{
 		CreateRandomMarkersForFeatureCollection();
 	}
 
