@@ -21,7 +21,7 @@ public class LeafletMiniMap : Control
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         // Remove it from the map if it already exists
-        if (MiniMapRef is not null && Map is not null) await Remove<LeafletMiniMap>(MiniMapRef);
+        if (MiniMapRef is not null && Map is not null) await Map.RemoveControl(MiniMapRef);
         // Create a new minimap control
         if (TileRef is null) return;
         MiniMapRef = await CreateMiniMap(TileRef, MiniMapOptions);
