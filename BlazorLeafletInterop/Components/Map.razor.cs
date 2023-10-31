@@ -58,6 +58,20 @@ public partial class Map : IAsyncDisposable
         StateHasChanged();
         await AfterRender.InvokeAsync();
     }
+    
+    public async Task<Map> AddControl(IJSObjectReference control)
+    {
+        if (MapRef is null || Module is null) throw new NullReferenceException("MapRef or Module is null");
+        await Module.InvokeVoidAsync("addControl", MapRef, control);
+        return this;
+    }
+    
+    public async Task<Map> RemoveControl(IJSObjectReference control)
+    {
+        if (MapRef is null || Module is null) throw new NullReferenceException("MapRef or Module is null");
+        await Module.InvokeVoidAsync("removeControl", MapRef, control);
+        return this;
+    }
 
     /// <summary>
     /// Opens the specified popup while closing the previously opened (to make sure only one is opened at one time for usability).

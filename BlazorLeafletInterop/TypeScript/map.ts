@@ -1,5 +1,4 @@
 import type * as L from "leaflet";
-import DotNetObject = DotNet.DotNetObject;
 
 export function addControl(map: L.Map, control: L.Control): L.Map {
     return map.addControl(control);
