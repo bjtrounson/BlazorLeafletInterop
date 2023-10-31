@@ -7,25 +7,20 @@ namespace BlazorLeafletInterop.Factories;
 public class IconFactory : IIconFactory
 {
     
-    private readonly IBundleInterop _bundleInterop;
-    private IJSObjectReference? _module;
+    private readonly IJSRuntime _jsRuntime;
     
-    public IconFactory(IBundleInterop bundleInterop)
+    public IconFactory(IJSRuntime jsRuntime)
     {
-        _bundleInterop = bundleInterop;
+        _jsRuntime = jsRuntime;
     }
     
     public async Task<IJSObjectReference> CreateIcon(IconOptions options)
     {
-        _module ??= await _bundleInterop.GetModule();
-        var jsonOptions = LeafletInterop.ObjectToJson(options);
-        var jsObject = await _module.InvokeAsync<IJSObjectReference>("jsonToJsObject", jsonOptions);
-        return await _module.InvokeAsync<IJSObjectReference>("createIcon", jsObject);
+        return await _jsRuntime.InvokeAsync<IJSObjectReference>("L.icon", options);
     }
 
     public async Task<IJSObjectReference> CreateDefaultIcon()
     {
-        _module ??= await _bundleInterop.GetModule();
-        return await _module.InvokeAsync<IJSObjectReference>("createDefaultIcon");
+        return await _jsRuntime.InvokeAsync<IJSObjectReference>("L.Icon.Default");
     }
 }
