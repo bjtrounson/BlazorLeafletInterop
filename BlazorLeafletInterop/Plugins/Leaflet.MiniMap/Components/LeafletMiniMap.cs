@@ -18,7 +18,7 @@ public class LeafletMiniMap : Control
     
     private IJSObjectReference? MiniMapRef { get; set; }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
         // Remove it from the map if it already exists
         if (MiniMapRef is not null && Map is not null) await Map.RemoveControl(MiniMapRef);
