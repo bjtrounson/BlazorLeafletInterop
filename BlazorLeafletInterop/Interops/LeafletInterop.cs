@@ -1,25 +1,22 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace BlazorLeafletInterop.Interops;
 
 public class LeafletInterop
 {
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
     public static string ObjectToJson(object obj)
     {
-        var defaultContractResolver = new DefaultContractResolver
-        {
-            NamingStrategy = new CamelCaseNamingStrategy(),
-        };
-        return JsonConvert.SerializeObject(obj, new JsonSerializerSettings()
-        {
-            ContractResolver = defaultContractResolver,
-            NullValueHandling = NullValueHandling.Ignore
-        });
+        return JsonSerializer.Serialize(obj, JsonSerializerOptions);
     }
     
     public static T? JsonToObject<T>(string json)
     {
-        return JsonConvert.DeserializeObject<T>(json);
+        return JsonSerializer.Deserialize<T>(json, JsonSerializerOptions);
     }
 }

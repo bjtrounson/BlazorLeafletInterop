@@ -6,9 +6,9 @@
 @using BlazorLeafletInterop.Components.Layers.Raster
 @using BlazorLeafletInterop.Components.Layers.Misc
 @using BlazorLeafletInterop.Models.Basics
-@using GeoJSON.Net.Feature
-@using GeoJSON.Net.Geometry
-@using Point = GeoJSON.Net.Geometry.Point
+@using GeoJSON.Text.Feature
+@using GeoJSON.Text.Geometry
+@using Point = GeoJSON.Text.Geometry.Point
 
 <Map @ref="Map" Class="map" MapOptions="Options">
 	<TileLayer @ref="TileLayer" UrlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
