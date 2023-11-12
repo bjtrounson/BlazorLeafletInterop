@@ -2,7 +2,7 @@
 using BlazorLeafletInterop.Interops;
 using BlazorLeafletInterop.Models.Basics;
 using BlazorLeafletInterop.Models.Options.Layer.Vector;
-using GeoJSON.Net.Feature;
+using GeoJSON.Text.Feature;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 

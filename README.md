@@ -1,79 +1,117 @@
 ﻿# Blazor Leaflet Interop
 **It is a work in progress and only supports parts of the Leaflet API.** \
-**I have only tested this on Blazor WASM but should work with Blazor Server.**
+This project is a component based wrapper around the Leaflet API, but some components can be used outside of RenderTree.
 
-## Implemented Features
-- Map
-- Events
-- Base Layers
-    - GridLayer
-    - Layer
-    - InteractiveLayer
-- Raster Layers
-  - TileLayer
-- UI Layers
-  - Marker
-  - Popup
-  - Tooltip
-  - DivOverlay
-- Basic
-  - LatLng
-  - LatLngBounds
-  - Icon (Create this via the IconFactoryInterop service)
-  - Point
-- Other Layers
-  - GeoJSON
-  - FeatureGroup
-  - LayerGroup
-- Vector Layers
-  - Path
-  - Polyline
+## Implemented Components
+- [x] Map
+- [x] TileLayer
+- [x] Marker
+- [x] Popup, Tooltip
+- [x] Polyline, MultiPolyline
+- [x] FeatureGroup, LayerGroup, GeoJSON
+- [x] Control.Zoom, Control.Scale, Control.Attribution, Control.Layers
+- [x] Icon
+- [x] Events (**should work but are not tested**)
+- [ ] ImageOverlay, SVGOverlay, VideoOverlay
+- [ ] Renderers
+- [ ] Rectangle, Polygon, Circle, CircleMarker
+- [ ] Bounds, DivIcon
 
-**Events should work but are not tested yet.**
-## Before you start
+## Installation
+Install the package from NuGet
+```bash
+dotnet add package BlazorLeaflet
+```
+```powershell
+Install-Package BlazorLeafletInterop
+```
 Add the latest leaflet version to your index.html
 ```html
+<!-- ...index.html -->
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
 ```
 Add this service to your Program.cs
 ```csharp
+// ...Program.cs
 builder.Services.AddMapService();
 ```
 
-## Simple Usage
-To make a simple map use the following code:
+## Examples
+To make a simple map use the following code
 ```csharp
-@page "/"
+<Map MapOptions="Options">
+    <TileLayer UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
+</Map>
 
-@using BlazorLeafletInterop.Components
-@using BlazorLeafletInterop.Components.Base
-@using BlazorLeafletInterop.Models
-@using BlazorLeafletInterop.Models.Basics
+@code {
+	private MapOptions Options = new MapOptions() {
+		Center = new LatLng(51.505, -0.09),
+		Zoom = 13
+	};
+}
+```
 
-<Map Class="map" MapOptions="Options">
-    <TileLayer @ref="TileLayer" UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
-    <Marker LatLng="new LatLng(50, 9)">
-        <Popup>
-            Testing Popup Content
-        </Popup>
-        <Tooltip>
-            Testing Tooltip Content
-        </Tooltip>
+### Marker Usage
+```csharp
+<Map MapOptions="Options">
+    <TileLayer UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
+    <Marker LatLng="new LatLng(51.5, -0.0.9)"></Marker>
+</Map>
+
+@code {
+	private MapOptions Options = new MapOptions() {
+		Center = new LatLng(51.505, -0.09),
+		Zoom = 13
+	};
+}
+```
+
+### Popup Usage
+```csharp
+<Map MapOptions="Options">
+    <TileLayer UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
+    <Marker LatLng="new LatLng(51.5, -0.0.9)">
+	    <Popup>
+		    <b>Hello world!</b><br>
+		    I am a popup
+	    </Popup>
     </Marker>
 </Map>
 
 @code {
-    private MapOptions Options { get; set; } = new() { Center = new LatLng(50, 9), Zoom = 13 };
+	private MapOptions Options = new MapOptions() {
+		Center = new LatLng(51.505, -0.09),
+		Zoom = 13
+	};
 }
 ```
+### Accessing Leaflet Method's
+```csharp
+<Map MapOptions="Options">
+    <TileLayer UrlTemplate="https://tile.openstreetmap.org/{z}/{x}/{y}.png" />
+    <Marker @ref="MarkerRef" LatLng="new LatLng(51.5, -0.0.9)">
+	    <Popup>
+		    <b>Hello world!</b><br>
+		    I am a popup
+	    </Popup>
+    </Marker>
+</Map>
 
-## TODO
-- Add Controls
-- Add ImageOverlay, SVGOverlay, VideoOverlay
-- Add Renderers
-- Add Rectangle, Polygon, Circle, CircleMarker
-- Add Bounds, DivIcon
-- Plugin Support
+@code {
+	// Creating a reference to the component,
+	// gives you access to the Leaflet methods for that class.
+	private Marker? MarkerRef;
+	private MapOptions Options = new MapOptions() {
+		Center = new LatLng(51.505, -0.09),
+		Zoom = 13
+	};
+
+	protected override async Task OnAfterRenderAsync(bool firstRender) 
+	{
+		if (MarkerRef is not null) await MarkerRef.OpenPopup();
+	}
+}
+```
 
 ## Contributing
 If you want to contribute to this project, feel free to do so. Just fork the project and create a pull request.
