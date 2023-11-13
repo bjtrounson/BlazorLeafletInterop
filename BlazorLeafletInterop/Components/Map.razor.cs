@@ -170,6 +170,7 @@ public partial class Map : IAsyncDisposable
         if (MapRef is null || Module is null) throw new NullReferenceException("MapRef or Module is null");
         if (options is null)
         {
+            Console.WriteLine(bounds.ToBBoxString());
             await Module.InvokeVoidAsync("fitBounds", MapRef, bounds);
             return this;
         }
