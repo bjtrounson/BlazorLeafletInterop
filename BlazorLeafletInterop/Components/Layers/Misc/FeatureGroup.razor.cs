@@ -1,4 +1,6 @@
-﻿using BlazorLeafletInterop.Models.Options.Layer.Vector;
+﻿using System.Text.Json;
+using BlazorLeafletInterop.Models.Basics;
+using BlazorLeafletInterop.Models.Options.Layer.Vector;
 using Microsoft.JSInterop;
 
 namespace BlazorLeafletInterop.Components.Layers.Misc;
@@ -45,11 +47,12 @@ public partial class FeatureGroup
     /// </summary>
     /// <returns>IJSObjectReference</returns>
     /// <exception cref="NullReferenceException"></exception>
-    public async Task<IJSObjectReference> GetBounds()
+    public async Task<LatLngBounds?> GetBounds()
     {
         if (JsObjectReference is null) throw new NullReferenceException();
         Module ??= await LayerFactory.GetModule();
-        return await Module.InvokeAsync<IJSObjectReference>("getBounds", JsObjectReference);
+        var bounds = await Module.InvokeAsync<string>("getBounds", JsObjectReference);
+        return JsonSerializer.Deserialize<LatLngBounds>(bounds);
     }
 
     /// <summary>
