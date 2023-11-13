@@ -1,5 +1,8 @@
 import type * as L from "leaflet";
-
+type LatLngBounds = {
+    _southWest: L.LatLng;
+    _northEast: L.LatLng;
+}
 export function addControl(map: L.Map, control: L.Control): L.Map {
     return map.addControl(control);
 }
@@ -52,14 +55,9 @@ export function setZoomAround(map: L.Map, latlng: L.LatLngExpression, zoom: numb
     return map.setZoomAround(latlng, zoom, options);
 }
 
-type LatLngBounds = {
-    southWest: L.LatLng,
-    northEast: L.LatLng
-};
-
 export function fitBounds(map: L.Map, bounds: LatLngBounds, options?: L.FitBoundsOptions): L.Map {
     // @ts-ignore
-    const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
+    const newBounds = L.latLngBounds(bounds._southWest, bounds._northEast);
     return map.fitBounds(newBounds, options);
 }
 
@@ -81,13 +79,13 @@ export function flyTo(map: L.Map, latlng: L.LatLngExpression, zoom?: number, opt
 
 export function flyToBounds(map: L.Map, bounds: LatLngBounds, options?: L.FitBoundsOptions): L.Map {
     // @ts-ignore
-    const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
+    const newBounds = L.latLngBounds(bounds._southWest, bounds._northEast);
     return map.flyToBounds(newBounds, options);
 }
 
 export function setMaxBounds(map: L.Map, bounds: LatLngBounds): L.Map {
     // @ts-ignore
-    const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
+    const newBounds = L.latLngBounds(bounds._southWest, bounds._northEast);
     return map.setMaxBounds(newBounds);
 }
 
@@ -101,7 +99,7 @@ export function setMaxZoom(map: L.Map, zoom: number): L.Map {
 
 export function panInsideBounds(map: L.Map, bounds: LatLngBounds, options?: L.PanOptions): L.Map {
     // @ts-ignore
-    const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
+    const newBounds = L.latLngBounds(bounds._southWest, bounds._northEast);
     return map.panInsideBounds(newBounds, options);
 }
 
@@ -139,7 +137,7 @@ export function getMaxZoom(map: L.Map): number {
 
 export function getBoundsZoom(map: L.Map, bounds: LatLngBounds, inside?: boolean, padding?: L.Point): number {
     // @ts-ignore
-    const newBounds = L.latLngBounds(bounds.southWest, bounds.northEast);
+    const newBounds = L.latLngBounds(bounds._southWest, bounds._northEast);
     return map.getBoundsZoom(newBounds, inside, padding);
 }
 
