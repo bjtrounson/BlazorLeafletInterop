@@ -18,6 +18,7 @@
 	<h3>Blazor Leaflet Interop GeoJson Test</h3>
 	<button @onclick="@(() => GeoJsonLayer?.EachLayer(_onEachLayer))">Open Popup</button>
 	<button @onclick=GenerateNewFeatureCollection>Generate More Markers</button>
+	<button @onclick=GetBounds>Get GeoJSON bounds</button>
 </div>
 
 @code {
@@ -60,6 +61,13 @@
 	{
 		base.OnInitialized();
 		CreateRandomMarkersForFeatureCollection();
+	}
+
+	private async Task GetBounds()
+	{
+		if (GeoJsonLayer == null) return;
+		var bounds = await GeoJsonLayer.GetBounds();
+		if (bounds != null) Console.WriteLine(bounds.ToBBoxString());
 	}
 	
 	private void GenerateNewFeatureCollection()

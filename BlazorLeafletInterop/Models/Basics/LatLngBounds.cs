@@ -1,4 +1,6 @@
-﻿namespace BlazorLeafletInterop.Models.Basics;
+﻿using System.Text.Json.Serialization;
+
+namespace BlazorLeafletInterop.Models.Basics;
 
 public class LatLngBounds
 {
@@ -15,8 +17,10 @@ public class LatLngBounds
     }
 
     // ReSharper disable once MemberCanBePrivate.Global
+    [JsonPropertyName("_southWest")]
     public LatLng SouthWest { get; set; }
     // ReSharper disable once MemberCanBePrivate.Global
+    [JsonPropertyName("_northEast")]
     public LatLng NorthEast { get; set; }
 
     public LatLngBounds Extend(LatLng point)
