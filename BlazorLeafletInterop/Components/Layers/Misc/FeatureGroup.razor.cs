@@ -45,7 +45,7 @@ public partial class FeatureGroup
     /// <summary>
     /// Returns the LatLngBounds of the Feature Group (created from bounds and coordinates of its children).
     /// </summary>
-    /// <returns>IJSObjectReference</returns>
+    /// <returns>LatLngBounds</returns>
     /// <exception cref="NullReferenceException"></exception>
     public async Task<LatLngBounds?> GetBounds()
     {

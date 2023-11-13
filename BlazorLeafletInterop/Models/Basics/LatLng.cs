@@ -1,4 +1,6 @@
-﻿namespace BlazorLeafletInterop.Models.Basics;
+﻿using System.Text.Json.Serialization;
+
+namespace BlazorLeafletInterop.Models.Basics;
 
 public class LatLng
 {
@@ -20,8 +22,11 @@ public class LatLng
         Alt = alt;
     }
 
+    [JsonPropertyName("lat")]
     public double Lat { get; set; }
+    [JsonPropertyName("lng")]
     public double Lng { get; set; }
+    [JsonPropertyName("alt")]
     public double Alt { get; set; }
     
     public double GetDistanceToPointInMiles(LatLng to)
