@@ -6,5 +6,6 @@ namespace BlazorLeafletInterop.Factories;
 public interface IIconFactory
 {
     Task<IJSObjectReference> CreateIcon(IconOptions options);
+    Task<IJSObjectReference> CreateDivIcon(DivIconOptions options);
     Task<IJSObjectReference> CreateDefaultIcon();
 }

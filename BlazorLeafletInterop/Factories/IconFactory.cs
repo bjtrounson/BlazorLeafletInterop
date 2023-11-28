@@ -19,6 +19,11 @@ public class IconFactory : IIconFactory
         return await _jsRuntime.InvokeAsync<IJSObjectReference>("L.icon", options);
     }
 
+    public async Task<IJSObjectReference> CreateDivIcon(DivIconOptions options)
+    {
+        return await _jsRuntime.InvokeAsync<IJSObjectReference>("L.divIcon", options);
+    }
+
     public async Task<IJSObjectReference> CreateDefaultIcon()
     {
         return await _jsRuntime.InvokeAsync<IJSObjectReference>("L.Icon.Default");

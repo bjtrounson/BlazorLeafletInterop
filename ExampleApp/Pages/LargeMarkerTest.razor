@@ -28,17 +28,12 @@
 
 	protected override async Task OnInitializedAsync()
     {
-		_icon = await IconFactory.CreateIcon(new IconOptions()
+		_icon = await IconFactory.CreateDivIcon(new DivIconOptions
 		{
-			IconUrl = "https://leafletjs.com/examples/custom-icons/leaf-green.png",
+			Html = "<div style=\"background-color: red; width: 38px; height: 95px;\"></div>",
 			IconSize = new Point(38, 95),
 			IconAnchor = new Point(22, 94),
 			PopupAnchor = new Point(-3, -76),
-			ShadowUrl = "https://leafletjs.com/examples/custom-icons/leaf-shadow.png",
-			ShadowSize = new Point(50, 64),
-			ShadowAnchor = new Point(4, 62),
-			IconRetinaUrl = "https://leafletjs.com/examples/custom-icons/leaf-green.png",
-			TooltipAnchor = new Point(0, -19),
 		});
 	}
 	
