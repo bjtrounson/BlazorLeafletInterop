@@ -1,0 +1,32 @@
+﻿@using BlazorLeafletInterop.Components.Layers.Misc
+@using BlazorLeafletInterop.Components.Layers.Misc;
+@using BlazorLeafletInterop.Plugins.Leaflet.MarkerCluster.Models.Options;
+@using Microsoft.AspNetCore.Components;
+@using Microsoft.JSInterop;
+
+@namespace BlazorLeafletInterop.Plugins.Leaflet.MarkerCluster.Components
+
+@inherits FeatureGroup
+
+<CascadingValue Name="MarkerClusterGroup" Value="@this">
+	@ChildContent	
+</CascadingValue>
+
+@code {
+	[Parameter]
+	public MarkerClusterGroupOptions Options { get; set; } = new();
+    
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+		JsObjectReference = await CreateMarkerClusterGroup();
+		if (Map is null || JsObjectReference is null) return;
+		await AddTo<MarkerClusterGroup>(Map.MapRef, JsObjectReference);
+	}
+
+	private async Task<IJSObjectReference> CreateMarkerClusterGroup()
+	{
+		var module = await LayerFactory.GetModule();
+		return await module.InvokeAsync<IJSObjectReference>("createMarkerClusterGroup", Options);
+	}
+}

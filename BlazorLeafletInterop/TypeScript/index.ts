@@ -13,6 +13,7 @@ export * from "./map";
 export * from "./vectorLayer";
 export * from "./control"
 export * from "./Plugins/leaflet-minimap";
+export * from "./Plugins/leaflet-markercluster";
 
 export function getLatLng(divOverlay: L.DivOverlay | L.Marker): string {
     return JSON.stringify(divOverlay.getLatLng());
