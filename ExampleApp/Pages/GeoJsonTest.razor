@@ -5,6 +5,7 @@
 @using BlazorLeafletInterop.Components
 @using BlazorLeafletInterop.Components.Layers.Raster
 @using BlazorLeafletInterop.Components.Layers.Misc
+@using BlazorLeafletInterop.Plugins.Leaflet.MarkerCluster.Components
 @using BlazorLeafletInterop.Models.Basics
 @using GeoJSON.Text.Feature
 @using GeoJSON.Text.Geometry
@@ -12,7 +13,9 @@
 
 <Map @ref="Map" Class="map" MapOptions="Options">
 	<TileLayer @ref="TileLayer" UrlTemplate="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-	<GeoJson @ref="GeoJsonLayer" Data="FeatureCollection" OnEachFeature="_onEachFeature" />
+	<MarkerClusterGroup>
+		<GeoJson @ref="GeoJsonLayer" Data="FeatureCollection" OnEachFeature="_onEachFeature" />
+	</MarkerClusterGroup>
 </Map>
 <div style="position: absolute; top: 5%; left: 5%; z-index: 10000; background-color: aquamarine; padding: 10px; border-radius: 10px;">
 	<h3>Blazor Leaflet Interop GeoJson Test</h3>

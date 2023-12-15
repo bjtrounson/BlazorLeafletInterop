@@ -2,6 +2,7 @@
 using BlazorLeafletInterop.Models.Basics;
 using BlazorLeafletInterop.Models.Options.Layer.Misc;
 using BlazorLeafletInterop.Models.Options.Layer.Vector;
+using BlazorLeafletInterop.Plugins.Leaflet.MarkerCluster.Components;
 using GeoJSON.Text.Feature;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -16,6 +17,9 @@ public class GeoJson : FeatureGroup
     [Parameter] public Func<Feature?, PathOptions>? Style { get; set; }
     [Parameter] public Action<Feature?, IJSObjectReference>? OnEachFeature { get; set; }
     [Parameter] public Func<Feature?, bool>? Filter { get; set; }
+    
+    [CascadingParameter(Name = "MarkerClusterGroup")]
+    public MarkerClusterGroup? MarkerClusterGroup { get; set; }
     
     [JSInvokable]
     public void OnEachFeatureCallback(string feature, IJSObjectReference layer)
@@ -59,11 +63,11 @@ public class GeoJson : FeatureGroup
     
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
         DotNetRef = DotNetObjectReference.Create(this);
         JsObjectReference = await CreateGeoJson(Data, GeoJsonOptions.MarkersInheritOptions);
         if (Map is null || JsObjectReference is null) return;
-        await AddTo<GeoJson>(Map.MapRef, JsObjectReference);
+        if (MarkerClusterGroup is not null) await MarkerClusterGroup.AddLayer(JsObjectReference);
+        else await AddTo<GeoJson>(Map.MapRef, JsObjectReference);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -73,6 +77,11 @@ public class GeoJson : FeatureGroup
         if (EachLayerCallbackSet) { EachLayerCallbackSet = false; return; }
         await ClearLayers();
         await AddData(Data);
+        if (MarkerClusterGroup is not null)
+        {
+            await MarkerClusterGroup.ClearLayers();
+            await MarkerClusterGroup.AddLayer(JsObjectReference);
+        }
     }
 
     public async Task<IJSObjectReference> CreateGeoJson(FeatureCollection geoJsonData, bool markersInheritOptions)
