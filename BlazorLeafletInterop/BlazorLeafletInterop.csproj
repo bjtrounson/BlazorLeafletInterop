@@ -36,8 +36,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Include="wwwroot\**" Pack="true" PackagePath="staticwebassets\" />
-      <None Include="..\README.md" Pack="true" PackagePath="\" />
+        <None Remove="package.json"/>
+        <None Remove="package-lock.json"/>
+        <None Include="wwwroot\**" Pack="true" PackagePath="staticwebassets\" />
+        <None Include="..\README.md" Pack="true" PackagePath="\" />
     </ItemGroup>
 
     <ItemGroup>
